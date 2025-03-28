@@ -177,15 +177,25 @@
 			max="30"
 			min="0">
 			<form hidden="true" name="list_load_selection_modal" repeat="true">
-				<!-- Load Field. Type: Namespaces. (custom) -->
+				<!-- Load Field. Type: Modalselect. (custom) -->
 				<field
-					type="namespaces"
+					type="ModalSelect"
 					name="load"
 					label="COM_COMPONENTBUILDER_POWER_LOAD_LABEL"
-					layout="joomla.form.field.list-fancy-select"
-					multiple="false"
-					default="0"
-					button="false"
+					sql_title_table="#__componentbuilder_power"
+					sql_title_column="system_name"
+					sql_title_key="guid"
+					urlSelect="index.php?option=com_componentbuilder&amp;view=powers&amp;layout=modal&amp;tmpl=component&amp;titleKey=guid"
+					titleSelect="COM_COMPONENTBUILDER_POWER_LOAD_TITLESELECT"
+					iconSelect="icon-flash"
+					select="true"
+					new="false"
+					edit="false"
+					clear="true"
+					required="true"
+					class="input-large"
+					description="COM_COMPONENTBUILDER_POWER_LOAD_DESCRIPTION"
+					hint="COM_COMPONENTBUILDER_POWER_LOAD_HINT"
 				/>
 			</form>
 		</field>
@@ -491,16 +501,26 @@
 			max="100"
 			min="0">
 			<form hidden="true" name="list_use_selection_modal" repeat="true">
-				<!-- Use Field. Type: Namespaces. (custom) -->
+				<!-- Use Field. Type: Modalselect. (custom) -->
 				<field
-					type="namespaces"
+					type="ModalSelect"
 					name="use"
 					label="COM_COMPONENTBUILDER_POWER_USE_LABEL"
-					class="span12"
-					layout="joomla.form.field.list-fancy-select"
-					multiple="false"
-					default="0"
-					button="false"
+					sql_title_table="#__componentbuilder_power"
+					sql_title_column="system_name"
+					sql_title_key="guid"
+					urlSelect="index.php?option=com_componentbuilder&amp;view=powers&amp;layout=modal&amp;tmpl=component&amp;titleKey=guid"
+					urlEdit="index.php?option=com_componentbuilder&amp;task=power.edit&amp;guid={id}&amp;layout=modal&amp;tmpl=component&amp;titleKey=guid"
+					titleSelect="COM_COMPONENTBUILDER_POWER_USE_TITLESELECT"
+					iconSelect="icon-flash"
+					select="true"
+					new="false"
+					edit="true"
+					clear="true"
+					required="true"
+					class="input-large"
+					description="COM_COMPONENTBUILDER_POWER_USE_DESCRIPTION"
+					hint="COM_COMPONENTBUILDER_POWER_USE_HINT"
 				/>
 				<!-- As Field. Type: Text. (joomla) -->
 				<field

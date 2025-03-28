@@ -397,7 +397,7 @@ final class Structuresingle
 			return false;
 		}
 		// take action based on type
-		elseif ($details->type === 'file' && !File::exists($this->currentFullPath))
+		elseif ($details->type === 'file' && !is_file($this->currentFullPath))
 		{
 			$this->app->enqueueMessage(
 				Text::_('COM_COMPONENTBUILDER_HR_HTHREEFILE_PATH_ERRORHTHREE'), 'Error'

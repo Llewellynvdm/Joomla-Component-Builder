@@ -147,36 +147,43 @@ abstract class FileHelper
 	}
 
 	/**
-	 * Write a file to the server
+	 * Write a file to the server safely and efficiently.
+	 * This function will always overwrite the existing file with new data.
 	 *
-	 * @param  string   $path    The path and file name where to safe the data
-	 * @param  string   $data    The data to safe
+	 * @param  string  $path  The full path and file name where to save the data.
+	 * @param  string  $data  The data to save.
 	 *
-	 * @return  bool true   On success
-	 *
+	 * @return bool  Returns true on success, false on failure.
 	 * @since  3.0.9
 	 */
 	public static function write($path, $data): bool
 	{
-		$klaar = false;
-		if (StringHelper::check($data))
+		if (!is_string($path) || !is_string($data) || trim($path) === '')
 		{
-			// open the file
-			$fh = fopen($path, "w");
-			if (!is_resource($fh))
-			{
-				return $klaar;
-			}
-			// write to the file
-			if (fwrite($fh, $data))
-			{
-				// has been done
-				$klaar = true;
-			}
-			// close file.
-			fclose($fh);
+			return false;
 		}
-		return $klaar;
+
+		$handle = null;
+		$success = false;
+
+		try {
+			$handle = fopen($path, "wb"); // Open in write-binary mode to ensure full overwrite
+			if (!is_resource($handle))
+			{
+				return false;
+			}
+
+			$success = fwrite($handle, $data) !== false;
+		} catch (\Throwable $e) {
+			return false;
+		} finally {
+			if (is_resource($handle))
+			{
+				fclose($handle);
+			}
+		}
+
+		return $success;
 	}
 
 	/**

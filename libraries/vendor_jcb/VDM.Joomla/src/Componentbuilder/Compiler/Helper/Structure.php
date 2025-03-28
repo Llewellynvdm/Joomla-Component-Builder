@@ -679,7 +679,7 @@ class Structure extends Get
 					!isset($this->extentionTrackingFilesMoved[$check]))
 				{
 					// check files exist
-					if (File::exists(
+					if (is_file(
 						CFactory::_('Utilities.Paths')->component_path . '/admin/models/fields/'
 						. $field['type_name'] . '.php'
 					))
@@ -707,7 +707,7 @@ class Structure extends Get
 					!isset($this->extentionTrackingFilesMoved[$check]))
 				{
 					// check files exist
-					if (File::exists(
+					if (is_file(
 						CFactory::_('Utilities.Paths')->component_path . '/admin/models/rules/'
 						. CFactory::_('Registry')->get('validation.linked.' . $field['field'])
 						. '.php'

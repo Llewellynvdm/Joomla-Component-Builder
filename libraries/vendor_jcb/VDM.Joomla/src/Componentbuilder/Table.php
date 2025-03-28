@@ -42,6 +42,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'VARCHAR(255)',
 					'default' => '',
+					'GUID' => 'acfe906b-6e61-4f94-ae66-359e4bc3e4cc',
 					'null_switch' => 'NULL',
 					'unique_key' => false,
 					'key' => true,
@@ -59,6 +60,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'VARCHAR(255)',
 					'default' => '',
+					'GUID' => 'af7b6b08-e8c5-4551-b6e6-cde297e78e40',
 					'null_switch' => 'NULL',
 					'unique_key' => false,
 					'key' => true,
@@ -76,6 +78,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'VARCHAR(255)',
 					'default' => '',
+					'GUID' => '46503007-43d9-485f-8cd0-8427a6a8bef2',
 					'null_switch' => 'NULL',
 					'unique_key' => false,
 					'key' => false,
@@ -93,6 +96,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'CHAR(64)',
 					'default' => '',
+					'GUID' => 'f8c2c432-b756-4c67-bfa5-0871e58e55e3',
 					'null_switch' => 'NULL',
 					'unique_key' => false,
 					'key' => false,
@@ -110,6 +114,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'DATETIME',
 					'default' => 'CURRENT_TIMESTAMP',
+					'GUID' => 'e091bf65-58cb-4bf4-aba3-22015889acc6',
 					'null_switch' => 'NULL',
 					'unique_key' => false,
 					'key' => false,
@@ -127,6 +132,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'VARCHAR(255)',
 					'default' => '',
+					'GUID' => '9e7c209f-68df-411a-a6a3-591393bc9d62',
 					'null_switch' => 'NULL',
 					'unique_key' => false,
 					'key' => false,
@@ -144,6 +150,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'VARCHAR(255)',
 					'default' => '',
+					'GUID' => '58525d14-8cbf-49fc-8d8e-50a9ba0e846a',
 					'null_switch' => 'NULL',
 					'unique_key' => false,
 					'key' => false,
@@ -161,6 +168,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'MEDIUMTEXT',
 					'default' => 'EMPTY',
+					'GUID' => 'b877b188-693c-43a3-9121-a37a3943d7c1',
 					'null_switch' => 'NULL',
 					'unique_key' => false,
 					'key' => false,
@@ -178,6 +186,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'MEDIUMTEXT',
 					'default' => 'EMPTY',
+					'GUID' => 'ade283c3-937e-4502-a040-c69d6ddb3c50',
 					'null_switch' => 'NULL',
 					'unique_key' => false,
 					'key' => false,
@@ -195,6 +204,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'TEXT',
 					'default' => 'EMPTY',
+					'GUID' => '667a2147-05d1-4138-b666-e8a0ce54ffba',
 					'null_switch' => 'NULL',
 					'unique_key' => false,
 					'key' => false,
@@ -212,6 +222,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'TINYINT(1)',
 					'default' => '0',
+					'GUID' => '508b5e78-c91a-4aaa-b587-000759130d4e',
 					'null_switch' => 'NOT NULL',
 					'unique_key' => false,
 					'key' => true,
@@ -229,6 +240,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'TINYINT(1)',
 					'default' => '1',
+					'GUID' => '2089f202-667a-4fbd-881c-cc0fe1343ce4',
 					'null_switch' => 'NOT NULL',
 					'unique_key' => false,
 					'key' => true,
@@ -246,6 +258,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'TINYINT(1)',
 					'default' => '0',
+					'GUID' => '991ec7f9-257a-486c-9453-c6b1c3fd5bf0',
 					'null_switch' => 'NOT NULL',
 					'unique_key' => false,
 					'key' => true,
@@ -263,6 +276,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'MEDIUMTEXT',
 					'default' => 'EMPTY',
+					'GUID' => 'f4134f92-7dc5-4729-9a16-bfaa51de27f9',
 					'null_switch' => 'NULL',
 					'unique_key' => false,
 					'key' => false,
@@ -280,6 +294,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'TEXT',
 					'default' => 'EMPTY',
+					'GUID' => '3be0d9ca-afd6-47bc-87e5-8cb73e9f5e61',
 					'null_switch' => 'NULL',
 					'unique_key' => false,
 					'key' => false,
@@ -297,6 +312,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'TEXT',
 					'default' => 'EMPTY',
+					'GUID' => '749a9917-90c3-49c4-9e72-aa33b0683a87',
 					'null_switch' => 'NULL',
 					'unique_key' => false,
 					'key' => false,
@@ -314,6 +330,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'TINYINT(1)',
 					'default' => '0',
+					'GUID' => 'f5e0c377-6689-4f79-9a35-41a1bfc58ba5',
 					'null_switch' => 'NOT NULL',
 					'unique_key' => false,
 					'key' => true,
@@ -331,6 +348,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'VARCHAR(255)',
 					'default' => '',
+					'GUID' => 'd4a595fb-2264-4e18-8b80-7affee1a6abf',
 					'null_switch' => 'NULL',
 					'unique_key' => false,
 					'key' => false,
@@ -348,6 +366,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'MEDIUMTEXT',
 					'default' => 'EMPTY',
+					'GUID' => '8cb26845-73d8-438a-b28a-7a128a63a0d7',
 					'null_switch' => 'NULL',
 					'unique_key' => false,
 					'key' => false,
@@ -365,6 +384,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'VARCHAR(255)',
 					'default' => '',
+					'GUID' => '2a9d2cda-1be7-4ae7-b672-9139a8a62d14',
 					'null_switch' => 'NULL',
 					'unique_key' => false,
 					'key' => false,
@@ -382,6 +402,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'CHAR(255)',
 					'default' => '',
+					'GUID' => '9f474240-eb27-40d7-9512-fbb3acf370d5',
 					'null_switch' => 'NOT NULL',
 					'unique_key' => false,
 					'key' => false,
@@ -399,6 +420,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'TINYINT(1)',
 					'default' => '0',
+					'GUID' => '378a9839-97ce-4bdb-8961-a9164738a3bf',
 					'null_switch' => 'NOT NULL',
 					'unique_key' => false,
 					'key' => true,
@@ -416,6 +438,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'VARCHAR(255)',
 					'default' => '',
+					'GUID' => 'e5346711-63a0-45b8-a093-06486959a1d0',
 					'null_switch' => 'NULL',
 					'unique_key' => false,
 					'key' => false,
@@ -433,6 +456,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'TINYINT(1)',
 					'default' => '0',
+					'GUID' => 'a6c65a43-e305-42c1-bd9d-5db5e4920185',
 					'null_switch' => 'NOT NULL',
 					'unique_key' => false,
 					'key' => true,
@@ -450,6 +474,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'CHAR(64)',
 					'default' => '',
+					'GUID' => 'b659c01d-accd-4049-bd4c-083000740d5a',
 					'null_switch' => 'NOT NULL',
 					'unique_key' => false,
 					'key' => false,
@@ -467,6 +492,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'VARCHAR(255)',
 					'default' => '',
+					'GUID' => '4003ab3f-70d8-4092-a11b-b23215844ffa',
 					'null_switch' => 'NOT NULL',
 					'unique_key' => false,
 					'key' => false,
@@ -484,6 +510,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'MEDIUMTEXT',
 					'default' => 'EMPTY',
+					'GUID' => 'a8b0ea74-9315-4f24-be43-836f249645f3',
 					'null_switch' => 'NULL',
 					'unique_key' => false,
 					'key' => false,
@@ -501,6 +528,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'VARCHAR(255)',
 					'default' => '',
+					'GUID' => 'd4241cde-3446-4318-9269-905b7ea929f4',
 					'null_switch' => 'NULL',
 					'unique_key' => false,
 					'key' => false,
@@ -518,6 +546,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'MEDIUMTEXT',
 					'default' => 'EMPTY',
+					'GUID' => 'a052df3d-54b4-4da7-a0f6-f18703d1047b',
 					'null_switch' => 'NULL',
 					'unique_key' => false,
 					'key' => false,
@@ -535,6 +564,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'TEXT',
 					'default' => 'EMPTY',
+					'GUID' => '33c588ca-83b2-419d-b87f-b9f4e5e4ea54',
 					'null_switch' => 'NULL',
 					'unique_key' => false,
 					'key' => false,
@@ -552,6 +582,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'MEDIUMTEXT',
 					'default' => 'EMPTY',
+					'GUID' => '9f9b030b-31ba-4ae9-88da-76efd8a140dc',
 					'null_switch' => 'NULL',
 					'unique_key' => false,
 					'key' => false,
@@ -569,6 +600,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'CHAR(64)',
 					'default' => '',
+					'GUID' => 'dde96c4d-1528-402a-bdea-96ec481a11ef',
 					'null_switch' => 'NULL',
 					'unique_key' => false,
 					'key' => false,
@@ -586,6 +618,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'MEDIUMTEXT',
 					'default' => 'EMPTY',
+					'GUID' => '3ca01651-a5c3-46c3-b7a8-bfb0d9f6e105',
 					'null_switch' => 'NULL',
 					'unique_key' => false,
 					'key' => false,
@@ -603,6 +636,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'INT(11)',
 					'default' => '3',
+					'GUID' => 'e30ca545-0ccd-4925-b34d-96bc27d6a27c',
 					'null_switch' => 'NOT NULL',
 					'unique_key' => false,
 					'key' => false,
@@ -620,6 +654,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'MEDIUMTEXT',
 					'default' => 'EMPTY',
+					'GUID' => '8d837989-4a21-4943-bb4c-4d4abb9a7a55',
 					'null_switch' => 'NULL',
 					'unique_key' => false,
 					'key' => false,
@@ -637,6 +672,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'TINYINT(1)',
 					'default' => '1',
+					'GUID' => '9ae98a1d-cc61-49d4-8f80-b4e1257fce24',
 					'null_switch' => 'NOT NULL',
 					'unique_key' => false,
 					'key' => true,
@@ -654,6 +690,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'MEDIUMTEXT',
 					'default' => 'EMPTY',
+					'GUID' => 'e76cf555-112a-4021-9a1e-b4ee52d7be8a',
 					'null_switch' => 'NULL',
 					'unique_key' => false,
 					'key' => false,
@@ -671,6 +708,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'MEDIUMTEXT',
 					'default' => 'EMPTY',
+					'GUID' => '5eb879c0-f6e3-45b6-b220-cb5131422a83',
 					'null_switch' => 'NULL',
 					'unique_key' => false,
 					'key' => false,
@@ -688,6 +726,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'TINYINT(1)',
 					'default' => '0',
+					'GUID' => '03de1a61-d639-4d48-8ce6-fcf16c8f6270',
 					'null_switch' => 'NOT NULL',
 					'unique_key' => false,
 					'key' => true,
@@ -705,6 +744,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'VARCHAR(255)',
 					'default' => '',
+					'GUID' => 'e6c263b1-da39-4a73-8585-637dc3a5b8eb',
 					'null_switch' => 'NOT NULL',
 					'unique_key' => false,
 					'key' => false,
@@ -722,6 +762,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'TINYINT(1)',
 					'default' => '0',
+					'GUID' => '46bd236f-7d43-4038-ac40-936dfd18e910',
 					'null_switch' => 'NOT NULL',
 					'unique_key' => false,
 					'key' => true,
@@ -739,6 +780,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'TINYINT(1)',
 					'default' => '0',
+					'GUID' => '43d7329c-c5f7-4bde-ab6e-a9a743879b51',
 					'null_switch' => 'NOT NULL',
 					'unique_key' => false,
 					'key' => true,
@@ -756,6 +798,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'TEXT',
 					'default' => 'EMPTY',
+					'GUID' => '441646d1-27c5-4ea9-80d9-a1931de48b26',
 					'null_switch' => 'NULL',
 					'unique_key' => false,
 					'key' => false,
@@ -773,6 +816,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'MEDIUMTEXT',
 					'default' => 'EMPTY',
+					'GUID' => '98ad53ca-0da2-4aab-9a3c-1c7e1ee0a24e',
 					'null_switch' => 'NULL',
 					'unique_key' => false,
 					'key' => false,
@@ -790,6 +834,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'CHAR(1)',
 					'default' => '',
+					'GUID' => '50d55392-74b6-43e2-9b16-37c7f95a7402',
 					'null_switch' => 'NOT NULL',
 					'unique_key' => false,
 					'key' => true,
@@ -807,6 +852,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'VARCHAR(255)',
 					'default' => '',
+					'GUID' => 'b742dcb4-0d29-4a4a-88f9-eca218d79a19',
 					'null_switch' => 'NULL',
 					'unique_key' => false,
 					'key' => true,
@@ -824,6 +870,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'TINYINT(1)',
 					'default' => '0',
+					'GUID' => 'ff624860-89db-4465-97f1-962bf09dcc9f',
 					'null_switch' => 'NOT NULL',
 					'unique_key' => false,
 					'key' => true,
@@ -841,6 +888,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'TINYINT(1)',
 					'default' => '0',
+					'GUID' => '8b68326a-0e09-4df9-807e-4c32c3c9600a',
 					'null_switch' => 'NOT NULL',
 					'unique_key' => false,
 					'key' => true,
@@ -858,6 +906,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'CHAR(1)',
 					'default' => '',
+					'GUID' => '0e5f211c-d6d7-417a-af92-f3e956687f56',
 					'null_switch' => 'NOT NULL',
 					'unique_key' => false,
 					'key' => true,
@@ -875,6 +924,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'TINYINT(1)',
 					'default' => '0',
+					'GUID' => '7d31d363-03b6-4ca7-bbf4-df9a879e3006',
 					'null_switch' => 'NOT NULL',
 					'unique_key' => false,
 					'key' => true,
@@ -892,6 +942,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'VARCHAR(100)',
 					'default' => '',
+					'GUID' => '7971c559-0867-44a8-bfea-291881bad311',
 					'null_switch' => 'NULL',
 					'unique_key' => false,
 					'key' => true,
@@ -909,6 +960,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'TINYINT(1)',
 					'default' => '0',
+					'GUID' => 'c2afae90-c059-4efb-9705-b7cf161b0c2a',
 					'null_switch' => 'NOT NULL',
 					'unique_key' => false,
 					'key' => true,
@@ -926,6 +978,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'TINYINT(1)',
 					'default' => '0',
+					'GUID' => 'c5cbf873-d13a-4930-9c99-c8b1f03e1a06',
 					'null_switch' => 'NOT NULL',
 					'unique_key' => false,
 					'key' => true,
@@ -943,6 +996,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'TINYINT(1)',
 					'default' => '1',
+					'GUID' => '36fc971f-a446-49ae-94d0-2f270e60bd0b',
 					'null_switch' => 'NOT NULL',
 					'unique_key' => false,
 					'key' => false,
@@ -960,6 +1014,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'TEXT',
 					'default' => 'EMPTY',
+					'GUID' => 'cce91031-8bf4-435f-8b20-9224f230061a',
 					'null_switch' => 'NULL',
 					'unique_key' => false,
 					'key' => false,
@@ -977,6 +1032,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'VARCHAR(64)',
 					'default' => '',
+					'GUID' => 'b12fadb6-2825-465e-a1e7-1dde507ffde5',
 					'null_switch' => 'NOT NULL',
 					'unique_key' => false,
 					'key' => false,
@@ -1001,6 +1057,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'TINYINT(1)',
 					'default' => '0',
+					'GUID' => 'd5d03647-f29e-44a4-9e63-5feb9f4adbae',
 					'null_switch' => 'NOT NULL',
 					'unique_key' => false,
 					'key' => true,
@@ -1018,6 +1075,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'TINYINT(1)',
 					'default' => '0',
+					'GUID' => '365d08ee-fe6e-47c4-b567-a001212f2cb6',
 					'null_switch' => 'NOT NULL',
 					'unique_key' => false,
 					'key' => true,
@@ -1035,6 +1093,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'TEXT',
 					'default' => 'EMPTY',
+					'GUID' => 'a1aa4716-5ee0-495c-ac35-5a969277da39',
 					'null_switch' => 'NULL',
 					'unique_key' => false,
 					'key' => false,
@@ -1052,6 +1111,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'TINYINT(1)',
 					'default' => '0',
+					'GUID' => '3c1db8b4-65f2-4f6f-8391-5883f564eabe',
 					'null_switch' => 'NOT NULL',
 					'unique_key' => false,
 					'key' => true,
@@ -1069,6 +1129,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'VARCHAR(255)',
 					'default' => '',
+					'GUID' => 'de21cce1-44f6-4310-a2c2-08146fb21cbe',
 					'null_switch' => 'NOT NULL',
 					'unique_key' => false,
 					'key' => false,
@@ -1086,6 +1147,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'TINYINT(1)',
 					'default' => '0',
+					'GUID' => '22a668bc-d169-4346-9929-3819673c67ac',
 					'null_switch' => 'NOT NULL',
 					'unique_key' => false,
 					'key' => true,
@@ -1103,6 +1165,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'VARCHAR(255)',
 					'default' => '',
+					'GUID' => 'c8186809-e78b-4632-a2d1-ac2469ccb643',
 					'null_switch' => 'NOT NULL',
 					'unique_key' => false,
 					'key' => false,
@@ -1120,6 +1183,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'TINYINT(1)',
 					'default' => '0',
+					'GUID' => '70a2d820-64af-4f51-8b1a-522aed9572bf',
 					'null_switch' => 'NOT NULL',
 					'unique_key' => false,
 					'key' => true,
@@ -1137,6 +1201,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'TINYINT(1)',
 					'default' => '0',
+					'GUID' => '9a825342-c423-42d2-85ad-f74ce9625f99',
 					'null_switch' => 'NOT NULL',
 					'unique_key' => false,
 					'key' => true,
@@ -1154,6 +1219,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'TINYINT(1)',
 					'default' => '0',
+					'GUID' => '7c652c71-e00e-45ff-8acb-e1bc0344e4c0',
 					'null_switch' => 'NOT NULL',
 					'unique_key' => false,
 					'key' => true,
@@ -1171,6 +1237,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'TEXT',
 					'default' => 'EMPTY',
+					'GUID' => '8e416ff9-3bd1-4115-a08b-06594978ace6',
 					'null_switch' => 'NULL',
 					'unique_key' => false,
 					'key' => false,
@@ -1188,6 +1255,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'TINYINT(1)',
 					'default' => '0',
+					'GUID' => 'f22fd59e-4d06-4578-b0bb-a624b8efd145',
 					'null_switch' => 'NOT NULL',
 					'unique_key' => false,
 					'key' => true,
@@ -1205,6 +1273,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'TINYINT(1)',
 					'default' => '0',
+					'GUID' => '05e16c3f-1f5e-4355-a948-5331546f218c',
 					'null_switch' => 'NOT NULL',
 					'unique_key' => false,
 					'key' => true,
@@ -1222,6 +1291,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'TINYINT(1)',
 					'default' => '3',
+					'GUID' => '1831e024-aa0c-4fc7-b1e6-77ce4dd4c562',
 					'null_switch' => 'NOT NULL',
 					'unique_key' => false,
 					'key' => true,
@@ -1239,6 +1309,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'INT(11)',
 					'default' => '0',
+					'GUID' => 'c2ce0b7e-e917-40c0-9c63-016425dd11fd',
 					'null_switch' => 'NOT NULL',
 					'unique_key' => false,
 					'key' => false,
@@ -1256,6 +1327,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'TEXT',
 					'default' => 'EMPTY',
+					'GUID' => '87a4b892-c4cb-4032-8511-e18ba8c8c202',
 					'null_switch' => 'NULL',
 					'unique_key' => false,
 					'key' => false,
@@ -1273,6 +1345,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'TINYINT(1)',
 					'default' => '0',
+					'GUID' => 'db2835aa-b0c3-4c9a-abe6-5b09568fffda',
 					'null_switch' => 'NOT NULL',
 					'unique_key' => false,
 					'key' => true,
@@ -1290,6 +1363,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'TINYINT(1)',
 					'default' => '0',
+					'GUID' => 'b9f98c3d-a93a-4b19-b89e-4c62781f9b99',
 					'null_switch' => 'NOT NULL',
 					'unique_key' => false,
 					'key' => true,
@@ -1307,6 +1381,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'INT(11)',
 					'default' => '0',
+					'GUID' => '33fb33c3-1ff2-4d4c-8fe8-6aaa93c1646a',
 					'null_switch' => 'NOT NULL',
 					'unique_key' => false,
 					'key' => false,
@@ -1331,6 +1406,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'INT(11)',
 					'default' => '0',
+					'GUID' => '4553e8c2-3446-4e11-a967-0504509087a4',
 					'null_switch' => 'NOT NULL',
 					'unique_key' => false,
 					'key' => false,
@@ -1355,6 +1431,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'TINYINT(1)',
 					'default' => '0',
+					'GUID' => 'ec128453-f0a7-4b20-a109-56d85c6ce213',
 					'null_switch' => 'NOT NULL',
 					'unique_key' => false,
 					'key' => true,
@@ -1372,6 +1449,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'TINYINT(1)',
 					'default' => '0',
+					'GUID' => 'eac7c528-4764-45e8-8304-4b8701e10915',
 					'null_switch' => 'NULL',
 					'unique_key' => false,
 					'key' => true,
@@ -1389,6 +1467,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'TINYINT(1)',
 					'default' => '0',
+					'GUID' => '627ec119-f50c-4afc-bfe7-8455a7ace163',
 					'null_switch' => 'NOT NULL',
 					'unique_key' => false,
 					'key' => true,
@@ -1406,6 +1485,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'VARCHAR(255)',
 					'default' => '',
+					'GUID' => '7b181242-b4bc-4261-87cb-6210ec8b5af5',
 					'null_switch' => 'NULL',
 					'unique_key' => false,
 					'key' => false,
@@ -1423,6 +1503,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'TINYINT(1)',
 					'default' => '0',
+					'GUID' => 'ecdc0281-fc1b-4643-b9d0-41bf95674959',
 					'null_switch' => 'NOT NULL',
 					'unique_key' => false,
 					'key' => true,
@@ -1440,6 +1521,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'VARCHAR(255)',
 					'default' => '',
+					'GUID' => '763e5bdf-d4d3-449b-bb36-de2623d81540',
 					'null_switch' => 'NULL',
 					'unique_key' => false,
 					'key' => false,
@@ -1457,6 +1539,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'TINYINT(1)',
 					'default' => '0',
+					'GUID' => 'b4013eb9-0716-42a5-a479-6c4b53746cd6',
 					'null_switch' => 'NOT NULL',
 					'unique_key' => false,
 					'key' => true,
@@ -1474,6 +1557,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'TINYINT(1)',
 					'default' => '0',
+					'GUID' => '5dabe624-329e-48d6-82cf-1f417df55467',
 					'null_switch' => 'NOT NULL',
 					'unique_key' => false,
 					'key' => true,
@@ -1491,6 +1575,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'TEXT',
 					'default' => 'EMPTY',
+					'GUID' => '81cd22bd-ee49-470e-afa1-1f61b302734b',
 					'null_switch' => 'NULL',
 					'unique_key' => false,
 					'key' => false,
@@ -1508,6 +1593,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'MEDIUMTEXT',
 					'default' => 'EMPTY',
+					'GUID' => '16ec7ebd-d07a-4134-8537-d7b65bcd8bac',
 					'null_switch' => 'NULL',
 					'unique_key' => false,
 					'key' => false,
@@ -1525,6 +1611,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'TEXT',
 					'default' => 'EMPTY',
+					'GUID' => '0708c9c5-d918-43f9-8383-f3d4c7459cf9',
 					'null_switch' => 'NULL',
 					'unique_key' => false,
 					'key' => false,
@@ -1542,6 +1629,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'TINYINT(1)',
 					'default' => '0',
+					'GUID' => 'abc5e604-4a2b-4f4c-9add-9e371249adf8',
 					'null_switch' => 'NOT NULL',
 					'unique_key' => false,
 					'key' => true,
@@ -1559,6 +1647,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'TINYINT(1)',
 					'default' => '0',
+					'GUID' => '288e00d8-7ea3-4bfc-829c-3ab247ca9718',
 					'null_switch' => 'NOT NULL',
 					'unique_key' => false,
 					'key' => false,
@@ -1576,6 +1665,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'MEDIUMTEXT',
 					'default' => 'EMPTY',
+					'GUID' => '16a76125-d200-4bbf-aa00-91da3513a8f8',
 					'null_switch' => 'NULL',
 					'unique_key' => false,
 					'key' => false,
@@ -1593,6 +1683,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'VARCHAR(36)',
 					'default' => '',
+					'GUID' => '5aa57bbe-7b19-4db9-915c-561863458d2b',
 					'null_switch' => 'NULL',
 					'unique_key' => false,
 					'key' => true,
@@ -1610,6 +1701,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'TINYINT(1)',
 					'default' => '0',
+					'GUID' => 'f114341a-d271-4917-a5eb-8d5acdf0232d',
 					'null_switch' => 'NOT NULL',
 					'unique_key' => false,
 					'key' => true,
@@ -1627,6 +1719,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'DATETIME',
 					'default' => 'EMPTY',
+					'GUID' => '104b94e8-260f-4517-a4f8-80c6b3d4a10a',
 					'null_switch' => 'NULL',
 					'unique_key' => false,
 					'key' => false,
@@ -1644,6 +1737,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'CHAR(64)',
 					'default' => '',
+					'GUID' => 'b607dfed-bb4a-463d-9e14-f1264c67279b',
 					'null_switch' => 'NULL',
 					'unique_key' => false,
 					'key' => false,
@@ -1710,6 +1804,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'VARCHAR(255)',
 					'default' => '',
+					'GUID' => 'acfe906b-6e61-4f94-ae66-359e4bc3e4cc',
 					'null_switch' => 'NULL',
 					'unique_key' => false,
 					'key' => true,
@@ -1727,6 +1822,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'TINYINT(1)',
 					'default' => '0',
+					'GUID' => '88d58023-7ee7-46dc-a13e-064fbb3d8dc1',
 					'null_switch' => 'NOT NULL',
 					'unique_key' => false,
 					'key' => false,
@@ -1744,6 +1840,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'TEXT',
 					'default' => 'EMPTY',
+					'GUID' => '749a9917-90c3-49c4-9e72-aa33b0683a87',
 					'null_switch' => 'NULL',
 					'unique_key' => false,
 					'key' => false,
@@ -1761,6 +1858,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'TINYINT(1)',
 					'default' => '0',
+					'GUID' => '70a2d820-64af-4f51-8b1a-522aed9572bf',
 					'null_switch' => 'NOT NULL',
 					'unique_key' => false,
 					'key' => true,
@@ -1778,6 +1876,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'TINYINT(1)',
 					'default' => '0',
+					'GUID' => '22a668bc-d169-4346-9929-3819673c67ac',
 					'null_switch' => 'NOT NULL',
 					'unique_key' => false,
 					'key' => true,
@@ -1795,6 +1894,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'TINYINT(1)',
 					'default' => '0',
+					'GUID' => '3c1db8b4-65f2-4f6f-8391-5883f564eabe',
 					'null_switch' => 'NOT NULL',
 					'unique_key' => false,
 					'key' => true,
@@ -1812,6 +1912,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'TINYINT(1)',
 					'default' => '0',
+					'GUID' => '3bb6d77d-05bf-4447-a6bb-4af197ec9290',
 					'null_switch' => 'NOT NULL',
 					'unique_key' => false,
 					'key' => true,
@@ -1829,6 +1930,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'TINYINT(1)',
 					'default' => '0',
+					'GUID' => '03de1a61-d639-4d48-8ce6-fcf16c8f6270',
 					'null_switch' => 'NOT NULL',
 					'unique_key' => false,
 					'key' => true,
@@ -1846,6 +1948,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'MEDIUMTEXT',
 					'default' => 'EMPTY',
+					'GUID' => '6e214a72-6c96-40c0-abf3-5f09116d3018',
 					'null_switch' => 'NULL',
 					'unique_key' => false,
 					'key' => false,
@@ -1863,6 +1966,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'VARCHAR(36)',
 					'default' => '',
+					'GUID' => 'fc4bc2f3-1a12-4484-88dc-273199fe3b63',
 					'null_switch' => 'NULL',
 					'unique_key' => false,
 					'key' => true,
@@ -1887,6 +1991,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'TINYINT(1)',
 					'default' => '0',
+					'GUID' => '7c652c71-e00e-45ff-8acb-e1bc0344e4c0',
 					'null_switch' => 'NOT NULL',
 					'unique_key' => false,
 					'key' => true,
@@ -1904,6 +2009,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'TINYINT(1)',
 					'default' => '0',
+					'GUID' => 'b9f98c3d-a93a-4b19-b89e-4c62781f9b99',
 					'null_switch' => 'NOT NULL',
 					'unique_key' => false,
 					'key' => true,
@@ -1921,6 +2027,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'TINYINT(1)',
 					'default' => '0',
+					'GUID' => 'f22fd59e-4d06-4578-b0bb-a624b8efd145',
 					'null_switch' => 'NOT NULL',
 					'unique_key' => false,
 					'key' => true,
@@ -1938,6 +2045,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'INT(11)',
 					'default' => '0',
+					'GUID' => '33fb33c3-1ff2-4d4c-8fe8-6aaa93c1646a',
 					'null_switch' => 'NOT NULL',
 					'unique_key' => false,
 					'key' => false,
@@ -1962,6 +2070,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'TINYINT(1)',
 					'default' => '0',
+					'GUID' => 'db2835aa-b0c3-4c9a-abe6-5b09568fffda',
 					'null_switch' => 'NOT NULL',
 					'unique_key' => false,
 					'key' => true,
@@ -1979,6 +2088,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'TEXT',
 					'default' => 'EMPTY',
+					'GUID' => 'f17742b9-0096-4b03-b981-f0dcd3f7e8c1',
 					'null_switch' => 'NULL',
 					'unique_key' => false,
 					'key' => false,
@@ -2003,6 +2113,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'CHAR(64)',
 					'default' => '',
+					'GUID' => 'dfb4e6cd-5fb6-4476-9772-f2c8e2143bb6',
 					'null_switch' => 'NULL',
 					'unique_key' => false,
 					'key' => false,
@@ -2020,6 +2131,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'INT(11)',
 					'default' => '0',
+					'GUID' => '4553e8c2-3446-4e11-a967-0504509087a4',
 					'null_switch' => 'NOT NULL',
 					'unique_key' => false,
 					'key' => false,
@@ -2044,6 +2156,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'TEXT',
 					'default' => 'EMPTY',
+					'GUID' => 'bed7693b-ccd1-4803-b065-5e20fac13881',
 					'null_switch' => 'NULL',
 					'unique_key' => false,
 					'key' => false,
@@ -2068,6 +2181,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'MEDIUMTEXT',
 					'default' => 'EMPTY',
+					'GUID' => '9f9b030b-31ba-4ae9-88da-76efd8a140dc',
 					'null_switch' => 'NULL',
 					'unique_key' => false,
 					'key' => false,
@@ -2085,6 +2199,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'MEDIUMTEXT',
 					'default' => 'EMPTY',
+					'GUID' => '628147c3-5f93-4a49-a1bc-ac6685e06b64',
 					'null_switch' => 'NULL',
 					'unique_key' => false,
 					'key' => false,
@@ -2102,6 +2217,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'TEXT',
 					'default' => 'EMPTY',
+					'GUID' => 'a6138fdf-ad70-4ec6-aee7-b3e5fda2e2bb',
 					'null_switch' => 'NULL',
 					'unique_key' => false,
 					'key' => false,
@@ -2119,6 +2235,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'MEDIUMTEXT',
 					'default' => 'EMPTY',
+					'GUID' => '8d837989-4a21-4943-bb4c-4d4abb9a7a55',
 					'null_switch' => 'NULL',
 					'unique_key' => false,
 					'key' => false,
@@ -2136,6 +2253,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'TINYINT(1)',
 					'default' => '0',
+					'GUID' => 'f9b94931-2255-449d-aeab-60bfaa69c449',
 					'null_switch' => 'NOT NULL',
 					'unique_key' => false,
 					'key' => false,
@@ -2153,6 +2271,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'MEDIUMTEXT',
 					'default' => 'EMPTY',
+					'GUID' => 'ade283c3-937e-4502-a040-c69d6ddb3c50',
 					'null_switch' => 'NULL',
 					'unique_key' => false,
 					'key' => false,
@@ -2170,6 +2289,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'TINYINT(1)',
 					'default' => '0',
+					'GUID' => 'd2d81879-9190-45fd-b2a1-9ea6c0b0c12e',
 					'null_switch' => 'NOT NULL',
 					'unique_key' => false,
 					'key' => false,
@@ -2187,6 +2307,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'MEDIUMTEXT',
 					'default' => 'EMPTY',
+					'GUID' => 'e76cf555-112a-4021-9a1e-b4ee52d7be8a',
 					'null_switch' => 'NULL',
 					'unique_key' => false,
 					'key' => false,
@@ -2204,6 +2325,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'TEXT',
 					'default' => 'EMPTY',
+					'GUID' => '1be0f2e4-0270-4ef4-8449-369b9dabcf48',
 					'null_switch' => 'NULL',
 					'unique_key' => false,
 					'key' => false,
@@ -2221,6 +2343,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'MEDIUMTEXT',
 					'default' => 'EMPTY',
+					'GUID' => '5eb879c0-f6e3-45b6-b220-cb5131422a83',
 					'null_switch' => 'NULL',
 					'unique_key' => false,
 					'key' => false,
@@ -2238,6 +2361,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'MEDIUMTEXT',
 					'default' => 'EMPTY',
+					'GUID' => '74126149-0257-4844-956d-8f155181ba98',
 					'null_switch' => 'NULL',
 					'unique_key' => false,
 					'key' => false,
@@ -2255,6 +2379,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'MEDIUMTEXT',
 					'default' => 'EMPTY',
+					'GUID' => 'b877b188-693c-43a3-9121-a37a3943d7c1',
 					'null_switch' => 'NULL',
 					'unique_key' => false,
 					'key' => false,
@@ -2272,6 +2397,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'TEXT',
 					'default' => 'EMPTY',
+					'GUID' => '4982807f-9ad8-47a3-992c-8e18c626394f',
 					'null_switch' => 'NOT NULL',
 					'unique_key' => false,
 					'key' => false,
@@ -2289,6 +2415,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'TEXT',
 					'default' => 'EMPTY',
+					'GUID' => '87a4b892-c4cb-4032-8511-e18ba8c8c202',
 					'null_switch' => 'NULL',
 					'unique_key' => false,
 					'key' => false,
@@ -2306,6 +2433,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'TINYINT(1)',
 					'default' => '0',
+					'GUID' => 'f1deeb63-5df2-45ff-b281-a41d9b2cd122',
 					'null_switch' => 'NOT NULL',
 					'unique_key' => false,
 					'key' => true,
@@ -2323,6 +2451,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'VARCHAR(255)',
 					'default' => '',
+					'GUID' => 'e6c263b1-da39-4a73-8585-637dc3a5b8eb',
 					'null_switch' => 'NOT NULL',
 					'unique_key' => false,
 					'key' => false,
@@ -2340,6 +2469,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'MEDIUMTEXT',
 					'default' => 'EMPTY',
+					'GUID' => '8835dfef-4d87-4104-b93c-47c5e02e4acc',
 					'null_switch' => 'NULL',
 					'unique_key' => false,
 					'key' => false,
@@ -2357,6 +2487,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'TINYINT(1)',
 					'default' => '0',
+					'GUID' => 'd5d03647-f29e-44a4-9e63-5feb9f4adbae',
 					'null_switch' => 'NOT NULL',
 					'unique_key' => false,
 					'key' => true,
@@ -2374,6 +2505,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'MEDIUMTEXT',
 					'default' => 'EMPTY',
+					'GUID' => '3ca01651-a5c3-46c3-b7a8-bfb0d9f6e105',
 					'null_switch' => 'NULL',
 					'unique_key' => false,
 					'key' => false,
@@ -2391,6 +2523,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'TINYINT(1)',
 					'default' => '0',
+					'GUID' => '378a9839-97ce-4bdb-8961-a9164738a3bf',
 					'null_switch' => 'NOT NULL',
 					'unique_key' => false,
 					'key' => true,
@@ -2408,6 +2541,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'TINYINT(1)',
 					'default' => '0',
+					'GUID' => '365d08ee-fe6e-47c4-b567-a001212f2cb6',
 					'null_switch' => 'NOT NULL',
 					'unique_key' => false,
 					'key' => true,
@@ -2425,6 +2559,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'VARCHAR(36)',
 					'default' => '',
+					'GUID' => '5aa57bbe-7b19-4db9-915c-561863458d2b',
 					'null_switch' => 'NULL',
 					'unique_key' => false,
 					'key' => true,
@@ -2442,6 +2577,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'VARCHAR(255)',
 					'default' => '',
+					'GUID' => '5d3d34dd-4876-4c6a-86ab-b4e162f22c08',
 					'null_switch' => 'NULL',
 					'unique_key' => false,
 					'key' => true,
@@ -2475,6 +2611,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'VARCHAR(255)',
 					'default' => '',
+					'GUID' => 'acfe906b-6e61-4f94-ae66-359e4bc3e4cc',
 					'null_switch' => 'NULL',
 					'unique_key' => false,
 					'key' => true,
@@ -2492,6 +2629,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'VARCHAR(36)',
 					'default' => '',
+					'GUID' => 'f73b86df-6954-4689-bb74-9af8c9fc0c79',
 					'null_switch' => 'NULL',
 					'unique_key' => false,
 					'key' => true,
@@ -2516,6 +2654,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'VARCHAR(36)',
 					'default' => '',
+					'GUID' => 'd23a041c-6897-4cef-8941-a26a2114a865',
 					'null_switch' => 'NULL',
 					'unique_key' => false,
 					'key' => true,
@@ -2540,6 +2679,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'TINYINT(1)',
 					'default' => '0',
+					'GUID' => '7c652c71-e00e-45ff-8acb-e1bc0344e4c0',
 					'null_switch' => 'NOT NULL',
 					'unique_key' => false,
 					'key' => true,
@@ -2557,6 +2697,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'TINYINT(1)',
 					'default' => '0',
+					'GUID' => '70a2d820-64af-4f51-8b1a-522aed9572bf',
 					'null_switch' => 'NOT NULL',
 					'unique_key' => false,
 					'key' => true,
@@ -2574,6 +2715,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'TINYINT(1)',
 					'default' => '0',
+					'GUID' => '22a668bc-d169-4346-9929-3819673c67ac',
 					'null_switch' => 'NOT NULL',
 					'unique_key' => false,
 					'key' => true,
@@ -2591,6 +2733,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'TINYINT(1)',
 					'default' => '0',
+					'GUID' => '3c1db8b4-65f2-4f6f-8391-5883f564eabe',
 					'null_switch' => 'NOT NULL',
 					'unique_key' => false,
 					'key' => true,
@@ -2608,6 +2751,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'INT(11)',
 					'default' => '0',
+					'GUID' => '4553e8c2-3446-4e11-a967-0504509087a4',
 					'null_switch' => 'NOT NULL',
 					'unique_key' => false,
 					'key' => false,
@@ -2632,6 +2776,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'TINYINT(1)',
 					'default' => '0',
+					'GUID' => 'db2835aa-b0c3-4c9a-abe6-5b09568fffda',
 					'null_switch' => 'NOT NULL',
 					'unique_key' => false,
 					'key' => true,
@@ -2649,6 +2794,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'TEXT',
 					'default' => 'EMPTY',
+					'GUID' => 'e260d101-177f-4722-9b95-417f650f578e',
 					'null_switch' => 'NOT NULL',
 					'unique_key' => false,
 					'key' => false,
@@ -2666,6 +2812,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'TEXT',
 					'default' => 'EMPTY',
+					'GUID' => 'cc01a6b1-7f18-4452-bfa6-4d64fc595a49',
 					'null_switch' => 'NOT NULL',
 					'unique_key' => false,
 					'key' => false,
@@ -2683,6 +2830,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'TINYINT(1)',
 					'default' => '0',
+					'GUID' => '65341477-33f1-4d58-9b3c-c371168809da',
 					'null_switch' => 'NOT NULL',
 					'unique_key' => false,
 					'key' => false,
@@ -2700,6 +2848,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'TINYINT(1)',
 					'default' => '0',
+					'GUID' => 'f22fd59e-4d06-4578-b0bb-a624b8efd145',
 					'null_switch' => 'NOT NULL',
 					'unique_key' => false,
 					'key' => true,
@@ -2717,6 +2866,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'TINYINT(1)',
 					'default' => '0',
+					'GUID' => '03de1a61-d639-4d48-8ce6-fcf16c8f6270',
 					'null_switch' => 'NOT NULL',
 					'unique_key' => false,
 					'key' => true,
@@ -2734,6 +2884,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'TEXT',
 					'default' => 'EMPTY',
+					'GUID' => 'e4a3ccf7-e259-4b72-ad4c-216b15d6d4f7',
 					'null_switch' => 'NULL',
 					'unique_key' => false,
 					'key' => false,
@@ -2751,6 +2902,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'TINYINT(1)',
 					'default' => '0',
+					'GUID' => 'b9f98c3d-a93a-4b19-b89e-4c62781f9b99',
 					'null_switch' => 'NOT NULL',
 					'unique_key' => false,
 					'key' => true,
@@ -2768,6 +2920,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'MEDIUMTEXT',
 					'default' => 'EMPTY',
+					'GUID' => '145966d2-32bf-42a7-8a7b-cc44aa93490d',
 					'null_switch' => 'NULL',
 					'unique_key' => false,
 					'key' => false,
@@ -2785,6 +2938,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'INT(11)',
 					'default' => '0',
+					'GUID' => '33fb33c3-1ff2-4d4c-8fe8-6aaa93c1646a',
 					'null_switch' => 'NOT NULL',
 					'unique_key' => false,
 					'key' => false,
@@ -2809,6 +2963,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'TEXT',
 					'default' => 'EMPTY',
+					'GUID' => '749a9917-90c3-49c4-9e72-aa33b0683a87',
 					'null_switch' => 'NULL',
 					'unique_key' => false,
 					'key' => false,
@@ -2826,6 +2981,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'MEDIUMTEXT',
 					'default' => 'EMPTY',
+					'GUID' => '8d837989-4a21-4943-bb4c-4d4abb9a7a55',
 					'null_switch' => 'NULL',
 					'unique_key' => false,
 					'key' => false,
@@ -2843,6 +2999,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'CHAR(64)',
 					'default' => '',
+					'GUID' => '1133b764-a578-4159-abfb-bf3452801974',
 					'null_switch' => 'NULL',
 					'unique_key' => false,
 					'key' => false,
@@ -2860,6 +3017,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'MEDIUMTEXT',
 					'default' => 'EMPTY',
+					'GUID' => 'ade283c3-937e-4502-a040-c69d6ddb3c50',
 					'null_switch' => 'NULL',
 					'unique_key' => false,
 					'key' => false,
@@ -2877,6 +3035,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'TEXT',
 					'default' => 'EMPTY',
+					'GUID' => '6013de6f-f99d-4fa5-b75c-b1973a901e04',
 					'null_switch' => 'NOT NULL',
 					'unique_key' => false,
 					'key' => false,
@@ -2894,6 +3053,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'MEDIUMTEXT',
 					'default' => 'EMPTY',
+					'GUID' => 'e76cf555-112a-4021-9a1e-b4ee52d7be8a',
 					'null_switch' => 'NULL',
 					'unique_key' => false,
 					'key' => false,
@@ -2911,6 +3071,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'TINYINT(1)',
 					'default' => '0',
+					'GUID' => 'f1deeb63-5df2-45ff-b281-a41d9b2cd122',
 					'null_switch' => 'NOT NULL',
 					'unique_key' => false,
 					'key' => true,
@@ -2928,6 +3089,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'MEDIUMTEXT',
 					'default' => 'EMPTY',
+					'GUID' => '5eb879c0-f6e3-45b6-b220-cb5131422a83',
 					'null_switch' => 'NULL',
 					'unique_key' => false,
 					'key' => false,
@@ -2945,6 +3107,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'MEDIUMTEXT',
 					'default' => 'EMPTY',
+					'GUID' => '8835dfef-4d87-4104-b93c-47c5e02e4acc',
 					'null_switch' => 'NULL',
 					'unique_key' => false,
 					'key' => false,
@@ -2962,6 +3125,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'MEDIUMTEXT',
 					'default' => 'EMPTY',
+					'GUID' => 'b877b188-693c-43a3-9121-a37a3943d7c1',
 					'null_switch' => 'NULL',
 					'unique_key' => false,
 					'key' => false,
@@ -2979,6 +3143,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'TINYINT(1)',
 					'default' => '0',
+					'GUID' => 'd5d03647-f29e-44a4-9e63-5feb9f4adbae',
 					'null_switch' => 'NOT NULL',
 					'unique_key' => false,
 					'key' => true,
@@ -2996,6 +3161,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'TEXT',
 					'default' => 'EMPTY',
+					'GUID' => '87a4b892-c4cb-4032-8511-e18ba8c8c202',
 					'null_switch' => 'NULL',
 					'unique_key' => false,
 					'key' => false,
@@ -3013,6 +3179,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'MEDIUMTEXT',
 					'default' => 'EMPTY',
+					'GUID' => '3ca01651-a5c3-46c3-b7a8-bfb0d9f6e105',
 					'null_switch' => 'NULL',
 					'unique_key' => false,
 					'key' => false,
@@ -3030,6 +3197,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'VARCHAR(255)',
 					'default' => '',
+					'GUID' => 'e6c263b1-da39-4a73-8585-637dc3a5b8eb',
 					'null_switch' => 'NOT NULL',
 					'unique_key' => false,
 					'key' => false,
@@ -3047,6 +3215,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'TINYINT(1)',
 					'default' => '0',
+					'GUID' => '365d08ee-fe6e-47c4-b567-a001212f2cb6',
 					'null_switch' => 'NOT NULL',
 					'unique_key' => false,
 					'key' => true,
@@ -3064,6 +3233,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'MEDIUMTEXT',
 					'default' => 'EMPTY',
+					'GUID' => '9f9b030b-31ba-4ae9-88da-76efd8a140dc',
 					'null_switch' => 'NULL',
 					'unique_key' => false,
 					'key' => false,
@@ -3081,6 +3251,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'TINYINT(1)',
 					'default' => '0',
+					'GUID' => '3bb6d77d-05bf-4447-a6bb-4af197ec9290',
 					'null_switch' => 'NOT NULL',
 					'unique_key' => false,
 					'key' => true,
@@ -3098,6 +3269,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'TINYINT(1)',
 					'default' => '0',
+					'GUID' => '378a9839-97ce-4bdb-8961-a9164738a3bf',
 					'null_switch' => 'NOT NULL',
 					'unique_key' => false,
 					'key' => true,
@@ -3115,6 +3287,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'MEDIUMTEXT',
 					'default' => 'EMPTY',
+					'GUID' => '628147c3-5f93-4a49-a1bc-ac6685e06b64',
 					'null_switch' => 'NULL',
 					'unique_key' => false,
 					'key' => false,
@@ -3132,6 +3305,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'VARCHAR(36)',
 					'default' => '',
+					'GUID' => '5aa57bbe-7b19-4db9-915c-561863458d2b',
 					'null_switch' => 'NULL',
 					'unique_key' => false,
 					'key' => true,
@@ -3149,6 +3323,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'VARCHAR(255)',
 					'default' => '',
+					'GUID' => '5d3d34dd-4876-4c6a-86ab-b4e162f22c08',
 					'null_switch' => 'NULL',
 					'unique_key' => false,
 					'key' => true,
@@ -3182,6 +3357,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'VARCHAR(255)',
 					'default' => '',
+					'GUID' => 'acfe906b-6e61-4f94-ae66-359e4bc3e4cc',
 					'null_switch' => 'NULL',
 					'unique_key' => false,
 					'key' => true,
@@ -3199,6 +3375,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'TEXT',
 					'default' => 'EMPTY',
+					'GUID' => 'a1033166-8112-45f9-8af8-c15a53d30c04',
 					'null_switch' => 'NOT NULL',
 					'unique_key' => false,
 					'key' => false,
@@ -3216,6 +3393,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'VARCHAR(36)',
 					'default' => '',
+					'GUID' => '5aa57bbe-7b19-4db9-915c-561863458d2b',
 					'null_switch' => 'NULL',
 					'unique_key' => false,
 					'key' => true,
@@ -3233,6 +3411,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'TEXT',
 					'default' => 'EMPTY',
+					'GUID' => '749a9917-90c3-49c4-9e72-aa33b0683a87',
 					'null_switch' => 'NULL',
 					'unique_key' => false,
 					'key' => false,
@@ -3266,6 +3445,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'VARCHAR(255)',
 					'default' => '',
+					'GUID' => 'acfe906b-6e61-4f94-ae66-359e4bc3e4cc',
 					'null_switch' => 'NULL',
 					'unique_key' => false,
 					'key' => true,
@@ -3283,6 +3463,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'VARCHAR(255)',
 					'default' => '',
+					'GUID' => 'dde8525b-6cce-4922-a7e0-9dcad5622b4e',
 					'null_switch' => 'NULL',
 					'unique_key' => false,
 					'key' => true,
@@ -3300,6 +3481,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'VARCHAR(64)',
 					'default' => '',
+					'GUID' => '416df962-4468-4665-af1d-da81c9256464',
 					'null_switch' => 'NOT NULL',
 					'unique_key' => false,
 					'key' => true,
@@ -3317,6 +3499,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'CHAR(64)',
 					'default' => '',
+					'GUID' => '26e695f7-e7fe-47f4-a692-002dcd2df434',
 					'null_switch' => 'NULL',
 					'unique_key' => false,
 					'key' => false,
@@ -3334,6 +3517,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'TEXT',
 					'default' => 'EMPTY',
+					'GUID' => 'aeec50c6-9a39-45ff-8210-f5f3aa6a815b',
 					'null_switch' => 'NULL',
 					'unique_key' => false,
 					'key' => false,
@@ -3351,6 +3535,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'TEXT',
 					'default' => 'EMPTY',
+					'GUID' => '749a9917-90c3-49c4-9e72-aa33b0683a87',
 					'null_switch' => 'NULL',
 					'unique_key' => false,
 					'key' => false,
@@ -3368,6 +3553,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'TEXT',
 					'default' => 'EMPTY',
+					'GUID' => 'a015aceb-5024-480c-88ea-fd9e4ad2d9f1',
 					'null_switch' => 'NULL',
 					'unique_key' => false,
 					'key' => false,
@@ -3385,6 +3571,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'TEXT',
 					'default' => 'EMPTY',
+					'GUID' => 'aa4804ce-9099-4006-b089-d05990461668',
 					'null_switch' => 'NULL',
 					'unique_key' => false,
 					'key' => false,
@@ -3402,6 +3589,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'TINYINT(1)',
 					'default' => '0',
+					'GUID' => 'a0e9a1e1-d32b-4bb7-b3e8-e146b5427405',
 					'null_switch' => 'NOT NULL',
 					'unique_key' => false,
 					'key' => false,
@@ -3419,6 +3607,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'TEXT',
 					'default' => 'EMPTY',
+					'GUID' => '45a7e8c9-6e44-4e0c-b0c5-3055cdb81a12',
 					'null_switch' => 'NULL',
 					'unique_key' => false,
 					'key' => false,
@@ -3436,6 +3625,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'TINYINT(1)',
 					'default' => '0',
+					'GUID' => '65341477-33f1-4d58-9b3c-c371168809da',
 					'null_switch' => 'NOT NULL',
 					'unique_key' => false,
 					'key' => false,
@@ -3453,6 +3643,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'VARCHAR(36)',
 					'default' => '',
+					'GUID' => 'd42f8ec2-710c-41a9-98b6-b74b19213cdb',
 					'null_switch' => 'NULL',
 					'unique_key' => false,
 					'key' => false,
@@ -3477,6 +3668,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'VARCHAR(64)',
 					'default' => '',
+					'GUID' => '1a0ff40c-90bc-472f-a465-8afefb595a6b',
 					'null_switch' => 'NULL',
 					'unique_key' => false,
 					'key' => true,
@@ -3494,6 +3686,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'VARCHAR(1024)',
 					'default' => '',
+					'GUID' => '68dcb3dc-15b2-4357-8c87-f2fb316e9ae0',
 					'null_switch' => 'NULL',
 					'unique_key' => false,
 					'key' => true,
@@ -3511,6 +3704,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'TEXT',
 					'default' => 'EMPTY',
+					'GUID' => '82b08f94-4ed2-40cf-a311-e323e69d47b1',
 					'null_switch' => 'NULL',
 					'unique_key' => false,
 					'key' => false,
@@ -3535,6 +3729,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'TEXT',
 					'default' => 'EMPTY',
+					'GUID' => 'bdd69212-bb69-40b1-8a16-6b665ae94a36',
 					'null_switch' => 'NULL',
 					'unique_key' => false,
 					'key' => false,
@@ -3552,6 +3747,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'TEXT',
 					'default' => 'EMPTY',
+					'GUID' => '4e23487e-5052-4f04-9352-15c4b75031d8',
 					'null_switch' => 'NULL',
 					'unique_key' => false,
 					'key' => false,
@@ -3576,6 +3772,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'TEXT',
 					'default' => 'EMPTY',
+					'GUID' => '645ed24e-5159-40a2-bd50-4aa26e625848',
 					'null_switch' => 'NULL',
 					'unique_key' => false,
 					'key' => false,
@@ -3593,6 +3790,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'TEXT',
 					'default' => 'EMPTY',
+					'GUID' => '7ee9f69e-1b64-45c6-90db-d0558f6e40e7',
 					'null_switch' => 'NULL',
 					'unique_key' => false,
 					'key' => false,
@@ -3617,6 +3815,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'TEXT',
 					'default' => 'EMPTY',
+					'GUID' => 'e4a3ccf7-e259-4b72-ad4c-216b15d6d4f7',
 					'null_switch' => 'NULL',
 					'unique_key' => false,
 					'key' => false,
@@ -3634,6 +3833,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'TEXT',
 					'default' => 'EMPTY',
+					'GUID' => '00157fc5-d94e-4ac0-80fe-7e5ac5c356b5',
 					'null_switch' => 'NULL',
 					'unique_key' => false,
 					'key' => false,
@@ -3651,6 +3851,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'TINYINT(1)',
 					'default' => '1',
+					'GUID' => 'd937bf3c-2b58-4df4-a6a5-b497bb7b8245',
 					'null_switch' => 'NOT NULL',
 					'unique_key' => false,
 					'key' => true,
@@ -3668,6 +3869,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'MEDIUMTEXT',
 					'default' => 'EMPTY',
+					'GUID' => '145966d2-32bf-42a7-8a7b-cc44aa93490d',
 					'null_switch' => 'NULL',
 					'unique_key' => false,
 					'key' => false,
@@ -3685,6 +3887,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'VARCHAR(36)',
 					'default' => '',
+					'GUID' => '5aa57bbe-7b19-4db9-915c-561863458d2b',
 					'null_switch' => 'NULL',
 					'unique_key' => false,
 					'key' => true,
@@ -3702,6 +3905,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'VARCHAR(255)',
 					'default' => '',
+					'GUID' => '5d3d34dd-4876-4c6a-86ab-b4e162f22c08',
 					'null_switch' => 'NULL',
 					'unique_key' => false,
 					'key' => true,
@@ -3735,6 +3939,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'VARCHAR(255)',
 					'default' => '',
+					'GUID' => 'acfe906b-6e61-4f94-ae66-359e4bc3e4cc',
 					'null_switch' => 'NULL',
 					'unique_key' => false,
 					'key' => true,
@@ -3752,6 +3957,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'CHAR(64)',
 					'default' => '',
+					'GUID' => '7568fcc2-bd06-438c-9666-fe3bde32306f',
 					'null_switch' => 'NULL',
 					'unique_key' => false,
 					'key' => true,
@@ -3769,6 +3975,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'VARCHAR(255)',
 					'default' => '',
+					'GUID' => '46503007-43d9-485f-8cd0-8427a6a8bef2',
 					'null_switch' => 'NULL',
 					'unique_key' => false,
 					'key' => false,
@@ -3786,6 +3993,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'MEDIUMTEXT',
 					'default' => 'EMPTY',
+					'GUID' => '88173ddb-35c5-49a7-845d-0d4e12119a37',
 					'null_switch' => 'NULL',
 					'unique_key' => false,
 					'key' => false,
@@ -3803,6 +4011,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'MEDIUMTEXT',
 					'default' => 'EMPTY',
+					'GUID' => 'b97daa06-7589-43e1-aaf9-c9506756f7b4',
 					'null_switch' => 'NULL',
 					'unique_key' => false,
 					'key' => false,
@@ -3820,6 +4029,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'MEDIUMTEXT',
 					'default' => 'EMPTY',
+					'GUID' => '7dd15ec3-1830-4f4c-9497-d33618702263',
 					'null_switch' => 'NULL',
 					'unique_key' => false,
 					'key' => false,
@@ -3837,6 +4047,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'MEDIUMTEXT',
 					'default' => 'EMPTY',
+					'GUID' => 'b9c064cb-4266-4217-95b7-d2956e6bfefb',
 					'null_switch' => 'NULL',
 					'unique_key' => false,
 					'key' => false,
@@ -3854,6 +4065,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'MEDIUMTEXT',
 					'default' => 'EMPTY',
+					'GUID' => '0ec2dbcd-8acc-438f-ad28-906fc7b6474e',
 					'null_switch' => 'NULL',
 					'unique_key' => false,
 					'key' => false,
@@ -3871,6 +4083,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'CHAR(64)',
 					'default' => '',
+					'GUID' => 'c73c3033-f4d9-475a-977b-9e447b88272f',
 					'null_switch' => 'NULL',
 					'unique_key' => false,
 					'key' => true,
@@ -3888,6 +4101,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'VARCHAR(255)',
 					'default' => '',
+					'GUID' => '3b731d0a-3205-4409-a9fd-e74d1db25055',
 					'null_switch' => 'NOT NULL',
 					'unique_key' => false,
 					'key' => false,
@@ -3905,6 +4119,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'MEDIUMTEXT',
 					'default' => 'EMPTY',
+					'GUID' => '8dfde218-c13c-4e7e-be62-d651cafc9d43',
 					'null_switch' => 'NULL',
 					'unique_key' => false,
 					'key' => false,
@@ -3922,6 +4137,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'TINYINT(1)',
 					'default' => '0',
+					'GUID' => 'e1bcb366-b7e0-47d7-9a5f-58f8d8d0307d',
 					'null_switch' => 'NOT NULL',
 					'unique_key' => false,
 					'key' => true,
@@ -3939,6 +4155,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'TEXT',
 					'default' => 'EMPTY',
+					'GUID' => '749a9917-90c3-49c4-9e72-aa33b0683a87',
 					'null_switch' => 'NULL',
 					'unique_key' => false,
 					'key' => false,
@@ -3956,6 +4173,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'VARCHAR(255)',
 					'default' => '',
+					'GUID' => '0d2bdd49-7559-4cc1-a25b-56aacb830760',
 					'null_switch' => 'NOT NULL',
 					'unique_key' => false,
 					'key' => false,
@@ -3973,6 +4191,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'VARCHAR(255)',
 					'default' => '',
+					'GUID' => '92ff3e2c-081b-4b84-a10c-e1a9f3245063',
 					'null_switch' => 'NOT NULL',
 					'unique_key' => false,
 					'key' => false,
@@ -3990,6 +4209,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'MEDIUMTEXT',
 					'default' => 'EMPTY',
+					'GUID' => '5637623b-c82f-4ce2-be82-e262e9596fa2',
 					'null_switch' => 'NULL',
 					'unique_key' => false,
 					'key' => false,
@@ -4007,6 +4227,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'VARCHAR(64)',
 					'default' => '1',
+					'GUID' => '916b0b6e-b5dc-469e-bc9c-c809471903b4',
 					'null_switch' => 'NOT NULL',
 					'unique_key' => false,
 					'key' => true,
@@ -4024,6 +4245,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'MEDIUMTEXT',
 					'default' => 'EMPTY',
+					'GUID' => 'c56cf55d-fbc6-4246-b3c3-7810d42710b2',
 					'null_switch' => 'NULL',
 					'unique_key' => false,
 					'key' => false,
@@ -4041,6 +4263,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'INT(11)',
 					'default' => '0',
+					'GUID' => '5f2ddc22-11f5-49a5-bebf-8313d8006e46',
 					'null_switch' => 'NOT NULL',
 					'unique_key' => false,
 					'key' => true,
@@ -4058,6 +4281,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'MEDIUMTEXT',
 					'default' => 'EMPTY',
+					'GUID' => 'f23fc722-e0e2-422f-b0f5-ac17da162a63',
 					'null_switch' => 'NULL',
 					'unique_key' => false,
 					'key' => false,
@@ -4075,6 +4299,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'TINYINT(1)',
 					'default' => '0',
+					'GUID' => '21eff77d-da38-4ce1-96c5-e6af26463942',
 					'null_switch' => 'NOT NULL',
 					'unique_key' => false,
 					'key' => true,
@@ -4092,6 +4317,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'MEDIUMTEXT',
 					'default' => 'EMPTY',
+					'GUID' => 'a921c373-45bb-4919-a840-5b13511102cb',
 					'null_switch' => 'NULL',
 					'unique_key' => false,
 					'key' => false,
@@ -4109,6 +4335,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'TEXT',
 					'default' => 'EMPTY',
+					'GUID' => '6e7d306a-9210-41bd-b951-6e897fcff773',
 					'null_switch' => 'NULL',
 					'unique_key' => false,
 					'key' => false,
@@ -4126,6 +4353,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'MEDIUMTEXT',
 					'default' => 'EMPTY',
+					'GUID' => '887264da-8ea1-4333-8a12-de26f6041251',
 					'null_switch' => 'NULL',
 					'unique_key' => false,
 					'key' => false,
@@ -4143,6 +4371,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'MEDIUMTEXT',
 					'default' => 'EMPTY',
+					'GUID' => '120e7c82-ff53-44ec-bfa0-a1413d100d18',
 					'null_switch' => 'NULL',
 					'unique_key' => false,
 					'key' => false,
@@ -4160,6 +4389,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'TEXT',
 					'default' => 'EMPTY',
+					'GUID' => '0c06ec4b-448e-4c8a-8869-d424b6ab1f4a',
 					'null_switch' => 'NULL',
 					'unique_key' => false,
 					'key' => false,
@@ -4177,6 +4407,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'MEDIUMTEXT',
 					'default' => 'EMPTY',
+					'GUID' => '8ac3beb5-c100-41d6-8d2e-dd3e57f3701a',
 					'null_switch' => 'NULL',
 					'unique_key' => false,
 					'key' => false,
@@ -4194,6 +4425,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'MEDIUMTEXT',
 					'default' => 'EMPTY',
+					'GUID' => '2f0432b4-e601-474e-9edb-4b438517039b',
 					'null_switch' => 'NULL',
 					'unique_key' => false,
 					'key' => false,
@@ -4211,6 +4443,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'MEDIUMTEXT',
 					'default' => 'EMPTY',
+					'GUID' => '0523633b-2f83-4205-ad7a-f4a77dff3dd0',
 					'null_switch' => 'NULL',
 					'unique_key' => false,
 					'key' => false,
@@ -4228,6 +4461,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'TEXT',
 					'default' => 'EMPTY',
+					'GUID' => '70c62a1a-a141-4e0e-a271-c606744cb92c',
 					'null_switch' => 'NULL',
 					'unique_key' => false,
 					'key' => false,
@@ -4245,6 +4479,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'MEDIUMTEXT',
 					'default' => 'EMPTY',
+					'GUID' => '77067bb3-3cfa-4042-b3ac-8bdda9d8b492',
 					'null_switch' => 'NULL',
 					'unique_key' => false,
 					'key' => false,
@@ -4262,6 +4497,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'MEDIUMTEXT',
 					'default' => 'EMPTY',
+					'GUID' => 'e4b56d60-7171-43c9-89ad-03f04a2cdba1',
 					'null_switch' => 'NULL',
 					'unique_key' => false,
 					'key' => false,
@@ -4279,6 +4515,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'TINYINT(1)',
 					'default' => '0',
+					'GUID' => 'a5043582-b29c-4ede-a712-16de9346abed',
 					'null_switch' => 'NOT NULL',
 					'unique_key' => false,
 					'key' => false,
@@ -4296,6 +4533,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'MEDIUMTEXT',
 					'default' => 'EMPTY',
+					'GUID' => '8e8e12f8-8d8c-43f1-bbbd-8ef19b4d326e',
 					'null_switch' => 'NULL',
 					'unique_key' => false,
 					'key' => false,
@@ -4313,6 +4551,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'MEDIUMTEXT',
 					'default' => 'EMPTY',
+					'GUID' => 'e4d3c22b-1297-450b-8108-c389f834e354',
 					'null_switch' => 'NULL',
 					'unique_key' => false,
 					'key' => false,
@@ -4330,6 +4569,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'VARCHAR(64)',
 					'default' => '0',
+					'GUID' => '6336be5a-77e0-46e2-8d1f-9278a4b10080',
 					'null_switch' => 'NOT NULL',
 					'unique_key' => false,
 					'key' => true,
@@ -4347,6 +4587,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'VARCHAR(255)',
 					'default' => '',
+					'GUID' => '96e3d0e6-e8b5-488f-8758-7cec18bd5858',
 					'null_switch' => 'NOT NULL',
 					'unique_key' => false,
 					'key' => false,
@@ -4371,6 +4612,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'MEDIUMTEXT',
 					'default' => 'EMPTY',
+					'GUID' => '5eb879c0-f6e3-45b6-b220-cb5131422a83',
 					'null_switch' => 'NULL',
 					'unique_key' => false,
 					'key' => false,
@@ -4388,6 +4630,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'TINYINT(1)',
 					'default' => '0',
+					'GUID' => '95eb062e-f221-43b4-b4d4-c32e9d70e8a7',
 					'null_switch' => 'NOT NULL',
 					'unique_key' => false,
 					'key' => true,
@@ -4405,6 +4648,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'TINYINT(1)',
 					'default' => '1',
+					'GUID' => '7e6e7fa8-d17b-47ae-9a28-b02ea4936b81',
 					'null_switch' => 'NOT NULL',
 					'unique_key' => false,
 					'key' => true,
@@ -4422,6 +4666,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'TINYINT(1)',
 					'default' => '0',
+					'GUID' => '1eecc354-f454-48dd-ab12-4cf85b88f97b',
 					'null_switch' => 'NOT NULL',
 					'unique_key' => false,
 					'key' => true,
@@ -4439,6 +4684,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'TINYINT(1)',
 					'default' => '0',
+					'GUID' => '4b956c45-bbcd-4d01-82ce-a85270f44c10',
 					'null_switch' => 'NOT NULL',
 					'unique_key' => false,
 					'key' => true,
@@ -4456,6 +4702,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'TINYINT(1)',
 					'default' => '0',
+					'GUID' => 'f2581140-5d9c-4c29-b511-e12a826d15da',
 					'null_switch' => 'NOT NULL',
 					'unique_key' => false,
 					'key' => true,
@@ -4473,6 +4720,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'TINYINT(1)',
 					'default' => '0',
+					'GUID' => '6746d3ba-b120-4918-8bba-2a14260e99c8',
 					'null_switch' => 'NOT NULL',
 					'unique_key' => false,
 					'key' => true,
@@ -4490,6 +4738,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'TINYINT(1)',
 					'default' => '0',
+					'GUID' => '562bc505-cc89-4a55-956a-b53e1a87ef46',
 					'null_switch' => 'NOT NULL',
 					'unique_key' => false,
 					'key' => true,
@@ -4507,6 +4756,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'TEXT',
 					'default' => 'EMPTY',
+					'GUID' => '1ad12721-9ee9-4623-98d2-071ba013a373',
 					'null_switch' => 'NULL',
 					'unique_key' => false,
 					'key' => false,
@@ -4524,6 +4774,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'TINYINT(1)',
 					'default' => '0',
+					'GUID' => 'cc7954c1-d9f7-4a97-8b71-23f6f694bd6d',
 					'null_switch' => 'NOT NULL',
 					'unique_key' => false,
 					'key' => true,
@@ -4541,6 +4792,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'TINYINT(1)',
 					'default' => '0',
+					'GUID' => 'a2098911-926a-42b6-8498-d8a453c34d93',
 					'null_switch' => 'NOT NULL',
 					'unique_key' => false,
 					'key' => true,
@@ -4558,6 +4810,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'TINYINT(1)',
 					'default' => '0',
+					'GUID' => '5799fcb7-8de8-41bf-9a2a-dcf84cae3949',
 					'null_switch' => 'NOT NULL',
 					'unique_key' => false,
 					'key' => true,
@@ -4575,6 +4828,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'TEXT',
 					'default' => 'EMPTY',
+					'GUID' => '63d5585f-c9bd-485d-9c1d-4a29a4fbf4b2',
 					'null_switch' => 'NULL',
 					'unique_key' => false,
 					'key' => false,
@@ -4592,6 +4846,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'TINYINT(1)',
 					'default' => '0',
+					'GUID' => '45559d2a-7537-4719-8caa-aa99df171000',
 					'null_switch' => 'NOT NULL',
 					'unique_key' => false,
 					'key' => true,
@@ -4609,6 +4864,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'TINYINT(1)',
 					'default' => '0',
+					'GUID' => '42991cef-d988-4ad9-b3d2-f29d9809f0b3',
 					'null_switch' => 'NOT NULL',
 					'unique_key' => false,
 					'key' => true,
@@ -4626,6 +4882,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'TINYINT(1)',
 					'default' => '0',
+					'GUID' => '4550b372-974e-432c-8221-69b6fb65fdfd',
 					'null_switch' => 'NOT NULL',
 					'unique_key' => false,
 					'key' => true,
@@ -4643,6 +4900,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'TEXT',
 					'default' => 'EMPTY',
+					'GUID' => '5f7479f2-b499-4094-8294-d580e51244a1',
 					'null_switch' => 'NULL',
 					'unique_key' => false,
 					'key' => false,
@@ -4660,6 +4918,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'TINYINT(1)',
 					'default' => '0',
+					'GUID' => '30744253-e2cd-44c3-ac86-0de3741b9ce0',
 					'null_switch' => 'NOT NULL',
 					'unique_key' => false,
 					'key' => true,
@@ -4677,6 +4936,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'TINYINT(1)',
 					'default' => '0',
+					'GUID' => '9405da44-900c-4f7c-823d-734a68f5d6f6',
 					'null_switch' => 'NOT NULL',
 					'unique_key' => false,
 					'key' => true,
@@ -4694,6 +4954,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'TINYINT(1)',
 					'default' => '0',
+					'GUID' => '5b8bfcb4-a2b0-4ee9-931e-474ae9742e76',
 					'null_switch' => 'NOT NULL',
 					'unique_key' => false,
 					'key' => true,
@@ -4711,6 +4972,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'TEXT',
 					'default' => 'EMPTY',
+					'GUID' => 'a99c1f40-4b41-4167-ad29-85133375aa7a',
 					'null_switch' => 'NULL',
 					'unique_key' => false,
 					'key' => false,
@@ -4728,6 +4990,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'TINYINT(1)',
 					'default' => '0',
+					'GUID' => '1e5269aa-e342-4b63-830e-f0a7acb2dab4',
 					'null_switch' => 'NOT NULL',
 					'unique_key' => false,
 					'key' => true,
@@ -4745,6 +5008,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'TINYINT(1)',
 					'default' => '0',
+					'GUID' => 'e19c4fa4-804f-488b-90d7-1ea827bba52e',
 					'null_switch' => 'NOT NULL',
 					'unique_key' => false,
 					'key' => true,
@@ -4762,6 +5026,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'TINYINT(1)',
 					'default' => '0',
+					'GUID' => '0c7535bd-dbfa-4155-bc06-9ef34bf0f29a',
 					'null_switch' => 'NOT NULL',
 					'unique_key' => false,
 					'key' => true,
@@ -4779,6 +5044,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'TEXT',
 					'default' => 'EMPTY',
+					'GUID' => 'ec2db8b1-d779-4bf2-b4cd-374a894fdc83',
 					'null_switch' => 'NULL',
 					'unique_key' => false,
 					'key' => false,
@@ -4796,6 +5062,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'TINYINT(1)',
 					'default' => '0',
+					'GUID' => '90c08eb4-3097-4f59-a291-5959bbb174ad',
 					'null_switch' => 'NOT NULL',
 					'unique_key' => false,
 					'key' => true,
@@ -4813,6 +5080,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'TINYINT(1)',
 					'default' => '0',
+					'GUID' => '70995b9c-d0a9-4a57-b59b-54d39c379e66',
 					'null_switch' => 'NOT NULL',
 					'unique_key' => false,
 					'key' => true,
@@ -4830,6 +5098,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'TINYINT(1)',
 					'default' => '0',
+					'GUID' => '3b02a65c-1a0a-4e04-8306-34cb484c45fe',
 					'null_switch' => 'NOT NULL',
 					'unique_key' => false,
 					'key' => true,
@@ -4847,6 +5116,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'TEXT',
 					'default' => 'EMPTY',
+					'GUID' => '34bf9926-34a4-49a3-a29e-b602b1e5f9b2',
 					'null_switch' => 'NULL',
 					'unique_key' => false,
 					'key' => false,
@@ -4864,6 +5134,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'TINYINT(1)',
 					'default' => '0',
+					'GUID' => '3eb7643a-7205-4683-9b8b-80c2d65334eb',
 					'null_switch' => 'NOT NULL',
 					'unique_key' => false,
 					'key' => true,
@@ -4881,6 +5152,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'INT(1)',
 					'default' => '0',
+					'GUID' => 'ab222d85-e408-44de-a513-d6aeda48b286',
 					'null_switch' => 'NOT NULL',
 					'unique_key' => false,
 					'key' => true,
@@ -4898,6 +5170,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'TINYINT(1)',
 					'default' => '0',
+					'GUID' => '79a25c26-9ea4-481c-b833-6699dd6e34d0',
 					'null_switch' => 'NOT NULL',
 					'unique_key' => false,
 					'key' => true,
@@ -4915,6 +5188,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'TEXT',
 					'default' => 'EMPTY',
+					'GUID' => 'f962e778-623e-40a8-b7db-88df71fdac51',
 					'null_switch' => 'NULL',
 					'unique_key' => false,
 					'key' => false,
@@ -4932,6 +5206,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'TINYINT(1)',
 					'default' => '0',
+					'GUID' => '8272a897-9044-4e62-964f-89cd90e99bbb',
 					'null_switch' => 'NOT NULL',
 					'unique_key' => false,
 					'key' => true,
@@ -4949,6 +5224,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'MEDIUMTEXT',
 					'default' => 'EMPTY',
+					'GUID' => 'e268c7be-dc34-40d9-bf2c-5f1897a09f7c',
 					'null_switch' => 'NULL',
 					'unique_key' => false,
 					'key' => false,
@@ -4966,6 +5242,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'TINYINT(1)',
 					'default' => '0',
+					'GUID' => '46fa9c1e-5aa3-41ff-8f02-e9a80252ad9f',
 					'null_switch' => 'NOT NULL',
 					'unique_key' => false,
 					'key' => true,
@@ -4983,6 +5260,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'MEDIUMTEXT',
 					'default' => 'EMPTY',
+					'GUID' => '5e831983-665b-43f2-9786-5e7c9cbb9e96',
 					'null_switch' => 'NULL',
 					'unique_key' => false,
 					'key' => false,
@@ -5000,6 +5278,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'VARCHAR(64)',
 					'default' => '1',
+					'GUID' => '025cfab0-7736-4036-9eec-8f70e53f681b',
 					'null_switch' => 'NOT NULL',
 					'unique_key' => false,
 					'key' => true,
@@ -5017,6 +5296,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'MEDIUMTEXT',
 					'default' => 'EMPTY',
+					'GUID' => 'fe8a8811-1bcd-448a-a111-25e17ac47687',
 					'null_switch' => 'NULL',
 					'unique_key' => false,
 					'key' => false,
@@ -5034,6 +5314,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'VARCHAR(64)',
 					'default' => '1',
+					'GUID' => '29e8af00-5d33-4ddc-8643-9f331da7684e',
 					'null_switch' => 'NOT NULL',
 					'unique_key' => false,
 					'key' => true,
@@ -5051,6 +5332,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'MEDIUMTEXT',
 					'default' => 'EMPTY',
+					'GUID' => '46e5c9d6-6304-4e9f-a582-242308667e2f',
 					'null_switch' => 'NULL',
 					'unique_key' => false,
 					'key' => false,
@@ -5068,6 +5350,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'TINYINT(1)',
 					'default' => '0',
+					'GUID' => '7c652c71-e00e-45ff-8acb-e1bc0344e4c0',
 					'null_switch' => 'NOT NULL',
 					'unique_key' => false,
 					'key' => true,
@@ -5085,6 +5368,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'TINYINT(1)',
 					'default' => '0',
+					'GUID' => '625b65cb-7569-437a-a6dd-b3290c662e18',
 					'null_switch' => 'NOT NULL',
 					'unique_key' => false,
 					'key' => true,
@@ -5102,6 +5386,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'TEXT',
 					'default' => 'EMPTY',
+					'GUID' => '33a9df05-3e39-4cc8-af2b-234653aadb7a',
 					'null_switch' => 'NULL',
 					'unique_key' => false,
 					'key' => false,
@@ -5119,6 +5404,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'MEDIUMTEXT',
 					'default' => 'EMPTY',
+					'GUID' => 'c731b5f5-5bd3-4ad3-ac3e-9e0281104121',
 					'null_switch' => 'NULL',
 					'unique_key' => false,
 					'key' => false,
@@ -5136,6 +5422,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'VARCHAR(36)',
 					'default' => '',
+					'GUID' => '5aa57bbe-7b19-4db9-915c-561863458d2b',
 					'null_switch' => 'NULL',
 					'unique_key' => false,
 					'key' => true,
@@ -5153,6 +5440,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'TEXT',
 					'default' => 'EMPTY',
+					'GUID' => 'e407f6f1-e4e9-4f23-a8c7-8ad75e14a820',
 					'null_switch' => 'NULL',
 					'unique_key' => false,
 					'key' => false,
@@ -5186,6 +5474,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'VARCHAR(255)',
 					'default' => '',
+					'GUID' => 'acfe906b-6e61-4f94-ae66-359e4bc3e4cc',
 					'null_switch' => 'NULL',
 					'unique_key' => false,
 					'key' => false,
@@ -5203,6 +5492,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'VARCHAR(255)',
 					'default' => '',
+					'GUID' => '5d3d34dd-4876-4c6a-86ab-b4e162f22c08',
 					'null_switch' => 'NULL',
 					'unique_key' => false,
 					'key' => true,
@@ -5220,6 +5510,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'VARCHAR(255)',
 					'default' => '',
+					'GUID' => 'a5ef0756-5ecd-49ae-a36c-058b90758988',
 					'null_switch' => 'NULL',
 					'unique_key' => false,
 					'key' => false,
@@ -5237,6 +5528,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'VARCHAR(36)',
 					'default' => '',
+					'GUID' => 'd20027fe-4e74-4261-9bf2-7e573a3e883b',
 					'null_switch' => 'NULL',
 					'unique_key' => false,
 					'key' => true,
@@ -5261,6 +5553,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'TINYINT(1)',
 					'default' => '0',
+					'GUID' => '32564da8-5599-4577-bd93-fd425179612f',
 					'null_switch' => 'NOT NULL',
 					'unique_key' => false,
 					'key' => true,
@@ -5278,6 +5571,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'TEXT',
 					'default' => 'EMPTY',
+					'GUID' => 'fd03122f-8c74-468a-8f8c-704e927c3b65',
 					'null_switch' => 'NULL',
 					'unique_key' => false,
 					'key' => false,
@@ -5295,6 +5589,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'TEXT',
 					'default' => 'EMPTY',
+					'GUID' => '7d733ad8-a5bf-4e2f-859d-be1251b7d0f1',
 					'null_switch' => 'NULL',
 					'unique_key' => false,
 					'key' => false,
@@ -5312,6 +5607,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'TEXT',
 					'default' => 'EMPTY',
+					'GUID' => 'ccb3cb86-8403-4494-a284-ce1fb782f0af',
 					'null_switch' => 'NULL',
 					'unique_key' => false,
 					'key' => false,
@@ -5329,6 +5625,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'TEXT',
 					'default' => 'EMPTY',
+					'GUID' => '25c87995-f58f-4f6a-8f6b-2e462545bdd6',
 					'null_switch' => 'NULL',
 					'unique_key' => false,
 					'key' => false,
@@ -5346,6 +5643,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'VARCHAR(255)',
 					'default' => '',
+					'GUID' => '83871f4f-e406-416a-845e-a8257a4a34d3',
 					'null_switch' => 'NULL',
 					'unique_key' => false,
 					'key' => true,
@@ -5363,6 +5661,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'MEDIUMTEXT',
 					'default' => 'EMPTY',
+					'GUID' => '6e214a72-6c96-40c0-abf3-5f09116d3018',
 					'null_switch' => 'NULL',
 					'unique_key' => false,
 					'key' => false,
@@ -5380,6 +5679,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'VARCHAR(36)',
 					'default' => '',
+					'GUID' => 'fc4bc2f3-1a12-4484-88dc-273199fe3b63',
 					'null_switch' => 'NULL',
 					'unique_key' => false,
 					'key' => true,
@@ -5404,6 +5704,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'VARCHAR(255)',
 					'default' => '',
+					'GUID' => '3b731d0a-3205-4409-a9fd-e74d1db25055',
 					'null_switch' => 'NOT NULL',
 					'unique_key' => false,
 					'key' => false,
@@ -5421,6 +5722,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'TINYINT(1)',
 					'default' => '0',
+					'GUID' => '6ce6e81e-5cdf-4ea2-83b5-acde779f4297',
 					'null_switch' => 'NOT NULL',
 					'unique_key' => false,
 					'key' => true,
@@ -5438,6 +5740,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'VARCHAR(255)',
 					'default' => '',
+					'GUID' => 'c7b20fcd-0849-49cc-84c2-0dbb73a19fda',
 					'null_switch' => 'NULL',
 					'unique_key' => false,
 					'key' => true,
@@ -5455,6 +5758,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'TINYINT(1)',
 					'default' => '0',
+					'GUID' => 'f76ffc06-f4c9-417e-8584-bc2f65184d18',
 					'null_switch' => 'NOT NULL',
 					'unique_key' => false,
 					'key' => true,
@@ -5472,6 +5776,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'TEXT',
 					'default' => 'EMPTY',
+					'GUID' => 'bed7693b-ccd1-4803-b065-5e20fac13881',
 					'null_switch' => 'NULL',
 					'unique_key' => false,
 					'key' => false,
@@ -5496,6 +5801,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'TINYINT(1)',
 					'default' => '0',
+					'GUID' => '075b5082-3fb1-46f1-a838-da558b3afb54',
 					'null_switch' => 'NOT NULL',
 					'unique_key' => false,
 					'key' => true,
@@ -5513,6 +5819,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'MEDIUMTEXT',
 					'default' => 'EMPTY',
+					'GUID' => 'c731b5f5-5bd3-4ad3-ac3e-9e0281104121',
 					'null_switch' => 'NULL',
 					'unique_key' => false,
 					'key' => false,
@@ -5530,6 +5837,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'TINYINT(1)',
 					'default' => '0',
+					'GUID' => '4a8003fa-7458-405e-90d3-7728b1af9e86',
 					'null_switch' => 'NOT NULL',
 					'unique_key' => false,
 					'key' => true,
@@ -5547,6 +5855,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'TINYINT(1)',
 					'default' => '0',
+					'GUID' => '46fa9c1e-5aa3-41ff-8f02-e9a80252ad9f',
 					'null_switch' => 'NOT NULL',
 					'unique_key' => false,
 					'key' => true,
@@ -5564,6 +5873,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'TINYINT(1)',
 					'default' => '0',
+					'GUID' => '14c857e3-e684-49a3-8b34-1cf7448ed0c4',
 					'null_switch' => 'NOT NULL',
 					'unique_key' => false,
 					'key' => true,
@@ -5581,6 +5891,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'TINYINT(1)',
 					'default' => '0',
+					'GUID' => '8b09aaf9-546c-4f03-8b1f-3170ba4b5491',
 					'null_switch' => 'NOT NULL',
 					'unique_key' => false,
 					'key' => true,
@@ -5598,6 +5909,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'TINYINT(1)',
 					'default' => '0',
+					'GUID' => '625b65cb-7569-437a-a6dd-b3290c662e18',
 					'null_switch' => 'NOT NULL',
 					'unique_key' => false,
 					'key' => true,
@@ -5615,6 +5927,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'TEXT',
 					'default' => 'EMPTY',
+					'GUID' => 'f17742b9-0096-4b03-b981-f0dcd3f7e8c1',
 					'null_switch' => 'NULL',
 					'unique_key' => false,
 					'key' => false,
@@ -5639,6 +5952,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'TEXT',
 					'default' => 'EMPTY',
+					'GUID' => 'e407f6f1-e4e9-4f23-a8c7-8ad75e14a820',
 					'null_switch' => 'NULL',
 					'unique_key' => false,
 					'key' => false,
@@ -5656,6 +5970,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'VARCHAR(36)',
 					'default' => '',
+					'GUID' => 'c37aa662-719c-4ed5-bbf2-e36672a3ce33',
 					'null_switch' => 'NULL',
 					'unique_key' => false,
 					'key' => true,
@@ -5680,6 +5995,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'MEDIUMTEXT',
 					'default' => 'EMPTY',
+					'GUID' => 'e4d3c22b-1297-450b-8108-c389f834e354',
 					'null_switch' => 'NULL',
 					'unique_key' => false,
 					'key' => false,
@@ -5697,6 +6013,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'MEDIUMTEXT',
 					'default' => 'EMPTY',
+					'GUID' => 'e27df414-cf8a-45c3-bc38-cc48e6146fef',
 					'null_switch' => 'NULL',
 					'unique_key' => false,
 					'key' => false,
@@ -5714,6 +6031,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'INT(1)',
 					'default' => '0',
+					'GUID' => 'ab222d85-e408-44de-a513-d6aeda48b286',
 					'null_switch' => 'NOT NULL',
 					'unique_key' => false,
 					'key' => true,
@@ -5731,6 +6049,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'MEDIUMTEXT',
 					'default' => 'EMPTY',
+					'GUID' => '96963615-e3bb-4d37-83df-4ad3fca74536',
 					'null_switch' => 'NULL',
 					'unique_key' => false,
 					'key' => false,
@@ -5748,6 +6067,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'TEXT',
 					'default' => 'EMPTY',
+					'GUID' => 'f962e778-623e-40a8-b7db-88df71fdac51',
 					'null_switch' => 'NULL',
 					'unique_key' => false,
 					'key' => false,
@@ -5765,6 +6085,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'MEDIUMTEXT',
 					'default' => 'EMPTY',
+					'GUID' => 'ffecfa82-c326-4703-9cc3-69d6f313bd32',
 					'null_switch' => 'NULL',
 					'unique_key' => false,
 					'key' => false,
@@ -5782,6 +6103,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'MEDIUMTEXT',
 					'default' => 'EMPTY',
+					'GUID' => 'e268c7be-dc34-40d9-bf2c-5f1897a09f7c',
 					'null_switch' => 'NULL',
 					'unique_key' => false,
 					'key' => false,
@@ -5799,6 +6121,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'VARCHAR(36)',
 					'default' => '',
+					'GUID' => '5aa57bbe-7b19-4db9-915c-561863458d2b',
 					'null_switch' => 'NULL',
 					'unique_key' => false,
 					'key' => true,
@@ -5816,6 +6139,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'MEDIUMTEXT',
 					'default' => 'EMPTY',
+					'GUID' => '5e831983-665b-43f2-9786-5e7c9cbb9e96',
 					'null_switch' => 'NULL',
 					'unique_key' => false,
 					'key' => false,
@@ -5849,6 +6173,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'VARCHAR(255)',
 					'default' => '',
+					'GUID' => 'acfe906b-6e61-4f94-ae66-359e4bc3e4cc',
 					'null_switch' => 'NULL',
 					'unique_key' => false,
 					'key' => false,
@@ -5866,6 +6191,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'VARCHAR(255)',
 					'default' => '',
+					'GUID' => '5d3d34dd-4876-4c6a-86ab-b4e162f22c08',
 					'null_switch' => 'NULL',
 					'unique_key' => false,
 					'key' => true,
@@ -5883,6 +6209,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'VARCHAR(255)',
 					'default' => '',
+					'GUID' => 'a5ef0756-5ecd-49ae-a36c-058b90758988',
 					'null_switch' => 'NULL',
 					'unique_key' => false,
 					'key' => false,
@@ -5900,6 +6227,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'VARCHAR(36)',
 					'default' => '',
+					'GUID' => 'd20027fe-4e74-4261-9bf2-7e573a3e883b',
 					'null_switch' => 'NULL',
 					'unique_key' => false,
 					'key' => true,
@@ -5924,6 +6252,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'TINYINT(1)',
 					'default' => '0',
+					'GUID' => '32564da8-5599-4577-bd93-fd425179612f',
 					'null_switch' => 'NOT NULL',
 					'unique_key' => false,
 					'key' => true,
@@ -5941,6 +6270,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'TINYINT(1)',
 					'default' => '0',
+					'GUID' => '46fa9c1e-5aa3-41ff-8f02-e9a80252ad9f',
 					'null_switch' => 'NOT NULL',
 					'unique_key' => false,
 					'key' => true,
@@ -5958,6 +6288,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'TINYINT(1)',
 					'default' => '0',
+					'GUID' => '8b09aaf9-546c-4f03-8b1f-3170ba4b5491',
 					'null_switch' => 'NOT NULL',
 					'unique_key' => false,
 					'key' => true,
@@ -5975,6 +6306,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'TEXT',
 					'default' => 'EMPTY',
+					'GUID' => 'ccb3cb86-8403-4494-a284-ce1fb782f0af',
 					'null_switch' => 'NULL',
 					'unique_key' => false,
 					'key' => false,
@@ -5992,6 +6324,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'VARCHAR(255)',
 					'default' => '',
+					'GUID' => '83871f4f-e406-416a-845e-a8257a4a34d3',
 					'null_switch' => 'NULL',
 					'unique_key' => false,
 					'key' => true,
@@ -6009,6 +6342,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'TEXT',
 					'default' => 'EMPTY',
+					'GUID' => '25c87995-f58f-4f6a-8f6b-2e462545bdd6',
 					'null_switch' => 'NULL',
 					'unique_key' => false,
 					'key' => false,
@@ -6026,6 +6360,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'VARCHAR(255)',
 					'default' => '',
+					'GUID' => 'c7b20fcd-0849-49cc-84c2-0dbb73a19fda',
 					'null_switch' => 'NULL',
 					'unique_key' => false,
 					'key' => true,
@@ -6043,6 +6378,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'MEDIUMTEXT',
 					'default' => 'EMPTY',
+					'GUID' => '6e214a72-6c96-40c0-abf3-5f09116d3018',
 					'null_switch' => 'NULL',
 					'unique_key' => false,
 					'key' => false,
@@ -6060,6 +6396,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'VARCHAR(36)',
 					'default' => '',
+					'GUID' => 'fc4bc2f3-1a12-4484-88dc-273199fe3b63',
 					'null_switch' => 'NULL',
 					'unique_key' => false,
 					'key' => true,
@@ -6084,6 +6421,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'TINYINT(1)',
 					'default' => '0',
+					'GUID' => '6ce6e81e-5cdf-4ea2-83b5-acde779f4297',
 					'null_switch' => 'NOT NULL',
 					'unique_key' => false,
 					'key' => true,
@@ -6101,6 +6439,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'TEXT',
 					'default' => 'EMPTY',
+					'GUID' => 'bed7693b-ccd1-4803-b065-5e20fac13881',
 					'null_switch' => 'NULL',
 					'unique_key' => false,
 					'key' => false,
@@ -6125,6 +6464,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'TEXT',
 					'default' => 'EMPTY',
+					'GUID' => 'fd03122f-8c74-468a-8f8c-704e927c3b65',
 					'null_switch' => 'NULL',
 					'unique_key' => false,
 					'key' => false,
@@ -6142,6 +6482,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'TINYINT(1)',
 					'default' => '0',
+					'GUID' => '075b5082-3fb1-46f1-a838-da558b3afb54',
 					'null_switch' => 'NOT NULL',
 					'unique_key' => false,
 					'key' => true,
@@ -6159,6 +6500,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'TEXT',
 					'default' => 'EMPTY',
+					'GUID' => '7d733ad8-a5bf-4e2f-859d-be1251b7d0f1',
 					'null_switch' => 'NULL',
 					'unique_key' => false,
 					'key' => false,
@@ -6176,6 +6518,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'TINYINT(1)',
 					'default' => '0',
+					'GUID' => 'f76ffc06-f4c9-417e-8584-bc2f65184d18',
 					'null_switch' => 'NOT NULL',
 					'unique_key' => false,
 					'key' => true,
@@ -6193,6 +6536,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'MEDIUMTEXT',
 					'default' => 'EMPTY',
+					'GUID' => 'c731b5f5-5bd3-4ad3-ac3e-9e0281104121',
 					'null_switch' => 'NULL',
 					'unique_key' => false,
 					'key' => false,
@@ -6210,6 +6554,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'TINYINT(1)',
 					'default' => '0',
+					'GUID' => '4a8003fa-7458-405e-90d3-7728b1af9e86',
 					'null_switch' => 'NOT NULL',
 					'unique_key' => false,
 					'key' => true,
@@ -6227,6 +6572,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'TEXT',
 					'default' => 'EMPTY',
+					'GUID' => 'f17742b9-0096-4b03-b981-f0dcd3f7e8c1',
 					'null_switch' => 'NULL',
 					'unique_key' => false,
 					'key' => false,
@@ -6251,6 +6597,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'TINYINT(1)',
 					'default' => '0',
+					'GUID' => '14c857e3-e684-49a3-8b34-1cf7448ed0c4',
 					'null_switch' => 'NOT NULL',
 					'unique_key' => false,
 					'key' => true,
@@ -6268,6 +6615,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'VARCHAR(36)',
 					'default' => '',
+					'GUID' => 'c37aa662-719c-4ed5-bbf2-e36672a3ce33',
 					'null_switch' => 'NULL',
 					'unique_key' => false,
 					'key' => true,
@@ -6292,6 +6640,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'TINYINT(1)',
 					'default' => '0',
+					'GUID' => '625b65cb-7569-437a-a6dd-b3290c662e18',
 					'null_switch' => 'NOT NULL',
 					'unique_key' => false,
 					'key' => true,
@@ -6309,6 +6658,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'TEXT',
 					'default' => 'EMPTY',
+					'GUID' => 'e407f6f1-e4e9-4f23-a8c7-8ad75e14a820',
 					'null_switch' => 'NULL',
 					'unique_key' => false,
 					'key' => false,
@@ -6326,6 +6676,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'INT(1)',
 					'default' => '0',
+					'GUID' => 'ab222d85-e408-44de-a513-d6aeda48b286',
 					'null_switch' => 'NOT NULL',
 					'unique_key' => false,
 					'key' => true,
@@ -6343,6 +6694,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'MEDIUMTEXT',
 					'default' => 'EMPTY',
+					'GUID' => 'e4d3c22b-1297-450b-8108-c389f834e354',
 					'null_switch' => 'NULL',
 					'unique_key' => false,
 					'key' => false,
@@ -6360,6 +6712,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'TINYINT(1)',
 					'default' => '1',
+					'GUID' => '29a26946-d7c3-4ea0-be64-8e376d2a7f25',
 					'null_switch' => 'NOT NULL',
 					'unique_key' => false,
 					'key' => true,
@@ -6377,6 +6730,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'MEDIUMTEXT',
 					'default' => 'EMPTY',
+					'GUID' => 'e27df414-cf8a-45c3-bc38-cc48e6146fef',
 					'null_switch' => 'NULL',
 					'unique_key' => false,
 					'key' => false,
@@ -6394,6 +6748,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'MEDIUMTEXT',
 					'default' => 'EMPTY',
+					'GUID' => '96963615-e3bb-4d37-83df-4ad3fca74536',
 					'null_switch' => 'NULL',
 					'unique_key' => false,
 					'key' => false,
@@ -6411,6 +6766,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'TEXT',
 					'default' => 'EMPTY',
+					'GUID' => 'f962e778-623e-40a8-b7db-88df71fdac51',
 					'null_switch' => 'NULL',
 					'unique_key' => false,
 					'key' => false,
@@ -6428,6 +6784,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'MEDIUMTEXT',
 					'default' => 'EMPTY',
+					'GUID' => 'ffecfa82-c326-4703-9cc3-69d6f313bd32',
 					'null_switch' => 'NULL',
 					'unique_key' => false,
 					'key' => false,
@@ -6445,6 +6802,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'MEDIUMTEXT',
 					'default' => 'EMPTY',
+					'GUID' => 'e268c7be-dc34-40d9-bf2c-5f1897a09f7c',
 					'null_switch' => 'NULL',
 					'unique_key' => false,
 					'key' => false,
@@ -6462,6 +6820,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'VARCHAR(36)',
 					'default' => '',
+					'GUID' => '5aa57bbe-7b19-4db9-915c-561863458d2b',
 					'null_switch' => 'NULL',
 					'unique_key' => false,
 					'key' => true,
@@ -6479,6 +6838,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'MEDIUMTEXT',
 					'default' => 'EMPTY',
+					'GUID' => '5e831983-665b-43f2-9786-5e7c9cbb9e96',
 					'null_switch' => 'NULL',
 					'unique_key' => false,
 					'key' => false,
@@ -6512,6 +6872,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'VARCHAR(255)',
 					'default' => '',
+					'GUID' => '5d3d34dd-4876-4c6a-86ab-b4e162f22c08',
 					'null_switch' => 'NULL',
 					'unique_key' => false,
 					'key' => true,
@@ -6529,6 +6890,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'VARCHAR(255)',
 					'default' => '',
+					'GUID' => 'a5ef0756-5ecd-49ae-a36c-058b90758988',
 					'null_switch' => 'NULL',
 					'unique_key' => false,
 					'key' => false,
@@ -6546,6 +6908,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'VARCHAR(36)',
 					'default' => '',
+					'GUID' => '5087f379-710b-4e76-9b9d-86b842933991',
 					'null_switch' => 'NULL',
 					'unique_key' => false,
 					'key' => true,
@@ -6570,6 +6933,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'VARCHAR(36)',
 					'default' => '',
+					'GUID' => '5aa57bbe-7b19-4db9-915c-561863458d2b',
 					'null_switch' => 'NULL',
 					'unique_key' => false,
 					'key' => true,
@@ -6587,6 +6951,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'MEDIUMTEXT',
 					'default' => 'EMPTY',
+					'GUID' => 'e27df414-cf8a-45c3-bc38-cc48e6146fef',
 					'null_switch' => 'NULL',
 					'unique_key' => false,
 					'key' => false,
@@ -6604,6 +6969,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'TINYINT(1)',
 					'default' => '0',
+					'GUID' => '8b09aaf9-546c-4f03-8b1f-3170ba4b5491',
 					'null_switch' => 'NOT NULL',
 					'unique_key' => false,
 					'key' => true,
@@ -6621,6 +6987,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'TEXT',
 					'default' => 'EMPTY',
+					'GUID' => '7b57c7ca-f4e8-4358-948a-987b1f36b3fb',
 					'null_switch' => 'NULL',
 					'unique_key' => false,
 					'key' => false,
@@ -6638,6 +7005,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'VARCHAR(36)',
 					'default' => '',
+					'GUID' => 'fc4bc2f3-1a12-4484-88dc-273199fe3b63',
 					'null_switch' => 'NULL',
 					'unique_key' => false,
 					'key' => true,
@@ -6662,6 +7030,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'TEXT',
 					'default' => 'EMPTY',
+					'GUID' => 'f17742b9-0096-4b03-b981-f0dcd3f7e8c1',
 					'null_switch' => 'NULL',
 					'unique_key' => false,
 					'key' => false,
@@ -6686,6 +7055,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'VARCHAR(255)',
 					'default' => '',
+					'GUID' => '477832a1-7a25-4774-ad1a-4ff69ed4b374',
 					'null_switch' => 'NULL',
 					'unique_key' => false,
 					'key' => true,
@@ -6719,6 +7089,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'VARCHAR(255)',
 					'default' => '',
+					'GUID' => '5d3d34dd-4876-4c6a-86ab-b4e162f22c08',
 					'null_switch' => 'NULL',
 					'unique_key' => false,
 					'key' => true,
@@ -6736,6 +7107,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'VARCHAR(255)',
 					'default' => '',
+					'GUID' => 'a5ef0756-5ecd-49ae-a36c-058b90758988',
 					'null_switch' => 'NULL',
 					'unique_key' => false,
 					'key' => false,
@@ -6753,6 +7125,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'VARCHAR(36)',
 					'default' => '',
+					'GUID' => '5087f379-710b-4e76-9b9d-86b842933991',
 					'null_switch' => 'NULL',
 					'unique_key' => false,
 					'key' => true,
@@ -6777,6 +7150,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'VARCHAR(36)',
 					'default' => '',
+					'GUID' => 'fc4bc2f3-1a12-4484-88dc-273199fe3b63',
 					'null_switch' => 'NULL',
 					'unique_key' => false,
 					'key' => true,
@@ -6801,6 +7175,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'VARCHAR(36)',
 					'default' => '',
+					'GUID' => '5aa57bbe-7b19-4db9-915c-561863458d2b',
 					'null_switch' => 'NULL',
 					'unique_key' => false,
 					'key' => true,
@@ -6818,6 +7193,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'MEDIUMTEXT',
 					'default' => 'EMPTY',
+					'GUID' => 'e27df414-cf8a-45c3-bc38-cc48e6146fef',
 					'null_switch' => 'NULL',
 					'unique_key' => false,
 					'key' => false,
@@ -6835,6 +7211,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'TINYINT(1)',
 					'default' => '0',
+					'GUID' => '8b09aaf9-546c-4f03-8b1f-3170ba4b5491',
 					'null_switch' => 'NOT NULL',
 					'unique_key' => false,
 					'key' => true,
@@ -6852,6 +7229,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'TEXT',
 					'default' => 'EMPTY',
+					'GUID' => '7c9289e1-b326-4596-9dd8-f6ebe861a0ef',
 					'null_switch' => 'NULL',
 					'unique_key' => false,
 					'key' => false,
@@ -6869,6 +7247,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'TEXT',
 					'default' => 'EMPTY',
+					'GUID' => 'f17742b9-0096-4b03-b981-f0dcd3f7e8c1',
 					'null_switch' => 'NULL',
 					'unique_key' => false,
 					'key' => false,
@@ -6893,6 +7272,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'VARCHAR(255)',
 					'default' => '',
+					'GUID' => '477832a1-7a25-4774-ad1a-4ff69ed4b374',
 					'null_switch' => 'NULL',
 					'unique_key' => false,
 					'key' => true,
@@ -6926,6 +7306,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'VARCHAR(255)',
 					'default' => '',
+					'GUID' => '5d3d34dd-4876-4c6a-86ab-b4e162f22c08',
 					'null_switch' => 'NULL',
 					'unique_key' => false,
 					'key' => true,
@@ -6943,6 +7324,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'TINYINT(1)',
 					'default' => '0',
+					'GUID' => '1709c1a3-b26a-4e78-82f9-ff05a08738c9',
 					'null_switch' => 'NOT NULL',
 					'unique_key' => false,
 					'key' => true,
@@ -6960,6 +7342,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'TINYINT(1)',
 					'default' => '0',
+					'GUID' => '5377a931-8a17-4eed-92dd-8a8808408a5a',
 					'null_switch' => 'NOT NULL',
 					'unique_key' => false,
 					'key' => true,
@@ -6977,6 +7360,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'MEDIUMTEXT',
 					'default' => 'EMPTY',
+					'GUID' => '9b6768ae-8d6a-461e-9b41-61d49431a401',
 					'null_switch' => 'NULL',
 					'unique_key' => false,
 					'key' => false,
@@ -6994,6 +7378,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'MEDIUMTEXT',
 					'default' => 'EMPTY',
+					'GUID' => '88ffbef3-064c-4f87-997a-30af1c88f2ec',
 					'null_switch' => 'NULL',
 					'unique_key' => false,
 					'key' => false,
@@ -7011,6 +7396,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'TINYINT(1)',
 					'default' => '0',
+					'GUID' => '01ae4944-ceba-4c21-a02d-38222e1a3733',
 					'null_switch' => 'NOT NULL',
 					'unique_key' => false,
 					'key' => true,
@@ -7028,6 +7414,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'TINYINT(1)',
 					'default' => '0',
+					'GUID' => 'd4b30bcc-414d-403b-9627-037bcbbd1c6b',
 					'null_switch' => 'NOT NULL',
 					'unique_key' => false,
 					'key' => true,
@@ -7045,6 +7432,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'TEXT',
 					'default' => 'EMPTY',
+					'GUID' => '14f4d49c-7e54-494e-b103-eaccb6428ee8',
 					'null_switch' => 'NULL',
 					'unique_key' => false,
 					'key' => false,
@@ -7062,6 +7450,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'TINYINT(1)',
 					'default' => '0',
+					'GUID' => 'b7aaa1d0-4577-46eb-9d09-b4c1104a02a8',
 					'null_switch' => 'NOT NULL',
 					'unique_key' => false,
 					'key' => true,
@@ -7079,6 +7468,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'TINYINT(1)',
 					'default' => '0',
+					'GUID' => 'bd40a792-2b63-446a-af75-0510f8c7cc2c',
 					'null_switch' => 'NOT NULL',
 					'unique_key' => false,
 					'key' => true,
@@ -7096,6 +7486,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'TINYINT(1)',
 					'default' => '0',
+					'GUID' => 'c1754272-da91-4a17-9567-c2566552cdc9',
 					'null_switch' => 'NOT NULL',
 					'unique_key' => false,
 					'key' => true,
@@ -7113,6 +7504,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'VARCHAR(255)',
 					'default' => '',
+					'GUID' => '4c744096-3d1c-406d-87f4-71169002e85f',
 					'null_switch' => 'NOT NULL',
 					'unique_key' => false,
 					'key' => false,
@@ -7137,6 +7529,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'MEDIUMTEXT',
 					'default' => 'EMPTY',
+					'GUID' => '8aba2f06-8fd1-4256-add5-1e233e581315',
 					'null_switch' => 'NULL',
 					'unique_key' => false,
 					'key' => false,
@@ -7154,6 +7547,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'VARCHAR(255)',
 					'default' => '',
+					'GUID' => '13637273-b286-42f5-b092-90e507484751',
 					'null_switch' => 'NOT NULL',
 					'unique_key' => false,
 					'key' => false,
@@ -7171,6 +7565,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'TEXT',
 					'default' => 'EMPTY',
+					'GUID' => '661c16f9-71be-41e2-8428-efd5509e6291',
 					'null_switch' => 'NULL',
 					'unique_key' => false,
 					'key' => false,
@@ -7188,6 +7583,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'VARCHAR(36)',
 					'default' => '',
+					'GUID' => 'f398a2ca-122e-47ad-8e4e-3ee2ac30bf26',
 					'null_switch' => 'NOT NULL',
 					'unique_key' => false,
 					'key' => false,
@@ -7212,6 +7608,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'TINYINT(1)',
 					'default' => '0',
+					'GUID' => 'f2581140-5d9c-4c29-b511-e12a826d15da',
 					'null_switch' => 'NOT NULL',
 					'unique_key' => false,
 					'key' => true,
@@ -7229,6 +7626,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'TEXT',
 					'default' => 'EMPTY',
+					'GUID' => '6c75d3ff-93aa-493b-b25c-733e78408fa2',
 					'null_switch' => 'NULL',
 					'unique_key' => false,
 					'key' => false,
@@ -7246,6 +7644,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'TINYINT(1)',
 					'default' => '0',
+					'GUID' => 'fbb918ff-70bf-41ee-b1fd-110e38cbdba0',
 					'null_switch' => 'NOT NULL',
 					'unique_key' => false,
 					'key' => true,
@@ -7263,6 +7662,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'MEDIUMTEXT',
 					'default' => 'EMPTY',
+					'GUID' => 'c3bb9074-505a-4085-878b-f7ad3d5522a6',
 					'null_switch' => 'NULL',
 					'unique_key' => false,
 					'key' => false,
@@ -7280,6 +7680,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'VARCHAR(255)',
 					'default' => '',
+					'GUID' => '6c486f71-abfd-49c7-91e2-165f594fa658',
 					'null_switch' => 'NULL',
 					'unique_key' => false,
 					'key' => true,
@@ -7297,6 +7698,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'MEDIUMTEXT',
 					'default' => 'EMPTY',
+					'GUID' => 'fc0dcf64-f6a8-48d7-8ed7-6ecea942cf21',
 					'null_switch' => 'NULL',
 					'unique_key' => false,
 					'key' => false,
@@ -7314,6 +7716,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'TINYINT(1)',
 					'default' => '1',
+					'GUID' => 'b99a8df9-27ce-4502-9f44-863799cd2cc9',
 					'null_switch' => 'NOT NULL',
 					'unique_key' => false,
 					'key' => true,
@@ -7331,6 +7734,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'MEDIUMTEXT',
 					'default' => 'EMPTY',
+					'GUID' => 'b9c064cb-4266-4217-95b7-d2956e6bfefb',
 					'null_switch' => 'NULL',
 					'unique_key' => false,
 					'key' => false,
@@ -7348,6 +7752,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'MEDIUMTEXT',
 					'default' => 'EMPTY',
+					'GUID' => '71680787-5da5-4ab8-afdf-1e109556743b',
 					'null_switch' => 'NULL',
 					'unique_key' => false,
 					'key' => false,
@@ -7365,6 +7770,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'TEXT',
 					'default' => 'EMPTY',
+					'GUID' => 'bf2293c7-5c8b-4b77-a880-c63ca4777e3e',
 					'null_switch' => 'NULL',
 					'unique_key' => false,
 					'key' => false,
@@ -7382,6 +7788,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'MEDIUMTEXT',
 					'default' => 'EMPTY',
+					'GUID' => '1ae39469-cd74-4d82-84af-fec8af28be61',
 					'null_switch' => 'NULL',
 					'unique_key' => false,
 					'key' => false,
@@ -7399,6 +7806,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'TEXT',
 					'default' => 'EMPTY',
+					'GUID' => '81466df0-3571-45cf-b520-cee2a9f5e03b',
 					'null_switch' => 'NULL',
 					'unique_key' => false,
 					'key' => false,
@@ -7416,6 +7824,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'TEXT',
 					'default' => 'EMPTY',
+					'GUID' => '007dc9f8-9b06-4211-83c9-4134b23d6561',
 					'null_switch' => 'NULL',
 					'unique_key' => false,
 					'key' => false,
@@ -7433,6 +7842,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'TINYINT(1)',
 					'default' => '0',
+					'GUID' => '6e7bb46d-fda5-46b8-b08e-31a2e6884e24',
 					'null_switch' => 'NOT NULL',
 					'unique_key' => false,
 					'key' => false,
@@ -7450,6 +7860,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'TEXT',
 					'default' => 'EMPTY',
+					'GUID' => 'f37d69ac-ba75-4b2f-8793-91b77b86751f',
 					'null_switch' => 'NOT NULL',
 					'unique_key' => false,
 					'key' => false,
@@ -7467,6 +7878,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'TEXT',
 					'default' => 'EMPTY',
+					'GUID' => 'fa2f73d6-8427-47de-abd8-4290da426b49',
 					'null_switch' => 'NULL',
 					'unique_key' => false,
 					'key' => false,
@@ -7484,6 +7896,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'VARCHAR(36)',
 					'default' => '',
+					'GUID' => '5aa57bbe-7b19-4db9-915c-561863458d2b',
 					'null_switch' => 'NULL',
 					'unique_key' => false,
 					'key' => true,
@@ -7501,6 +7914,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'TEXT',
 					'default' => 'EMPTY',
+					'GUID' => '79ab7f6c-a6b5-4bad-bcdd-c113d49db876',
 					'null_switch' => 'NULL',
 					'unique_key' => false,
 					'key' => false,
@@ -7534,6 +7948,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'VARCHAR(255)',
 					'default' => '',
+					'GUID' => 'acfe906b-6e61-4f94-ae66-359e4bc3e4cc',
 					'null_switch' => 'NULL',
 					'unique_key' => false,
 					'key' => true,
@@ -7551,6 +7966,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'TEXT',
 					'default' => 'EMPTY',
+					'GUID' => 'b7942a37-45cc-4005-b4b5-e716cbf176f9',
 					'null_switch' => 'NULL',
 					'unique_key' => false,
 					'key' => false,
@@ -7568,6 +7984,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'TINYINT(1)',
 					'default' => '0',
+					'GUID' => 'b4fce451-7c6d-4cf9-8b1c-f8be6dbcec5b',
 					'null_switch' => 'NOT NULL',
 					'unique_key' => false,
 					'key' => true,
@@ -7585,6 +8002,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'TINYINT(1)',
 					'default' => '0',
+					'GUID' => 'd1c48683-2655-4e49-9f13-6b25f2b0a0d0',
 					'null_switch' => 'NULL',
 					'unique_key' => false,
 					'key' => true,
@@ -7602,6 +8020,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'TINYINT(1)',
 					'default' => '1',
+					'GUID' => '176c63c6-65b1-4a91-97f2-db4d1e36911a',
 					'null_switch' => 'NOT NULL',
 					'unique_key' => false,
 					'key' => false,
@@ -7619,6 +8038,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'INT(11)',
 					'default' => '3',
+					'GUID' => 'a6c87660-f1fe-490d-b1c5-9755e6db1e19',
 					'null_switch' => 'NOT NULL',
 					'unique_key' => false,
 					'key' => false,
@@ -7636,6 +8056,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'VARCHAR(255)',
 					'default' => '',
+					'GUID' => '3a3c43e6-18c2-4fc6-aebe-0ed8d5c6416f',
 					'null_switch' => 'NULL',
 					'unique_key' => false,
 					'key' => true,
@@ -7653,6 +8074,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'MEDIUMTEXT',
 					'default' => 'EMPTY',
+					'GUID' => '777b846c-f3f4-4eb3-a73a-a460d28976dc',
 					'null_switch' => 'NULL',
 					'unique_key' => false,
 					'key' => false,
@@ -7670,6 +8092,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'VARCHAR(64)',
 					'default' => '',
+					'GUID' => '3347f841-b8e8-4f52-acbd-0bada696e540',
 					'null_switch' => 'NULL',
 					'unique_key' => false,
 					'key' => false,
@@ -7687,6 +8110,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'VARCHAR(100)',
 					'default' => '',
+					'GUID' => 'ebbfce08-7d5a-416a-aad2-b23b78bd926b',
 					'null_switch' => 'NULL',
 					'unique_key' => false,
 					'key' => true,
@@ -7704,6 +8128,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'VARCHAR(100)',
 					'default' => '',
+					'GUID' => '82e196f5-cc38-4045-8be3-c1067b23df72',
 					'null_switch' => 'NULL',
 					'unique_key' => false,
 					'key' => true,
@@ -7721,6 +8146,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'VARCHAR(64)',
 					'default' => '',
+					'GUID' => 'e0272089-9156-409b-8444-61e2e3e755bf',
 					'null_switch' => 'NULL',
 					'unique_key' => false,
 					'key' => false,
@@ -7738,6 +8164,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'VARCHAR(36)',
 					'default' => '',
+					'GUID' => '04886e45-7821-40a6-ae2b-2f46c6b45906',
 					'null_switch' => 'NULL',
 					'unique_key' => false,
 					'key' => true,
@@ -7778,6 +8205,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'VARCHAR(255)',
 					'default' => '',
+					'GUID' => '5d3d34dd-4876-4c6a-86ab-b4e162f22c08',
 					'null_switch' => 'NULL',
 					'unique_key' => false,
 					'key' => true,
@@ -7795,6 +8223,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'VARCHAR(255)',
 					'default' => '',
+					'GUID' => '7222c742-0092-439c-84de-1973e4e2b180',
 					'null_switch' => 'NOT NULL',
 					'unique_key' => false,
 					'key' => true,
@@ -7812,6 +8241,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'VARCHAR(64)',
 					'default' => '',
+					'GUID' => '7e059ab7-d79b-4218-9488-6f38d85d17a0',
 					'null_switch' => 'NOT NULL',
 					'unique_key' => false,
 					'key' => false,
@@ -7829,6 +8259,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'VARCHAR(36)',
 					'default' => '',
+					'GUID' => '5aa57bbe-7b19-4db9-915c-561863458d2b',
 					'null_switch' => 'NULL',
 					'unique_key' => false,
 					'key' => true,
@@ -7846,6 +8277,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'TEXT',
 					'default' => 'EMPTY',
+					'GUID' => 'dd400eb4-8762-4ab5-bc4e-fa1feacc4dfd',
 					'null_switch' => 'NULL',
 					'unique_key' => false,
 					'key' => false,
@@ -7863,6 +8295,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'VARCHAR(36)',
 					'default' => '',
+					'GUID' => 'd23a041c-6897-4cef-8941-a26a2114a865',
 					'null_switch' => 'NULL',
 					'unique_key' => false,
 					'key' => true,
@@ -7887,6 +8320,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'TEXT',
 					'default' => 'EMPTY',
+					'GUID' => '73ef5c00-c8c5-4cb7-9f69-6aed98346818',
 					'null_switch' => 'NULL',
 					'unique_key' => false,
 					'key' => false,
@@ -7920,6 +8354,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'VARCHAR(255)',
 					'default' => '',
+					'GUID' => '5d3d34dd-4876-4c6a-86ab-b4e162f22c08',
 					'null_switch' => 'NULL',
 					'unique_key' => false,
 					'key' => true,
@@ -7937,6 +8372,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'VARCHAR(255)',
 					'default' => '',
+					'GUID' => '7222c742-0092-439c-84de-1973e4e2b180',
 					'null_switch' => 'NOT NULL',
 					'unique_key' => false,
 					'key' => true,
@@ -7954,6 +8390,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'VARCHAR(64)',
 					'default' => '',
+					'GUID' => '7e059ab7-d79b-4218-9488-6f38d85d17a0',
 					'null_switch' => 'NOT NULL',
 					'unique_key' => false,
 					'key' => false,
@@ -7971,6 +8408,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'VARCHAR(36)',
 					'default' => '',
+					'GUID' => '5aa57bbe-7b19-4db9-915c-561863458d2b',
 					'null_switch' => 'NULL',
 					'unique_key' => false,
 					'key' => true,
@@ -7988,6 +8426,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'MEDIUMTEXT',
 					'default' => 'EMPTY',
+					'GUID' => 'abaff633-2a9f-4be1-b057-241f657953a1',
 					'null_switch' => 'NULL',
 					'unique_key' => false,
 					'key' => false,
@@ -8005,6 +8444,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'TEXT',
 					'default' => 'EMPTY',
+					'GUID' => 'dd400eb4-8762-4ab5-bc4e-fa1feacc4dfd',
 					'null_switch' => 'NULL',
 					'unique_key' => false,
 					'key' => false,
@@ -8022,6 +8462,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'VARCHAR(36)',
 					'default' => '',
+					'GUID' => 'd23a041c-6897-4cef-8941-a26a2114a865',
 					'null_switch' => 'NULL',
 					'unique_key' => false,
 					'key' => true,
@@ -8046,6 +8487,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'TEXT',
 					'default' => 'EMPTY',
+					'GUID' => 'd2a2f6cf-1689-438b-b2c2-b244b8cbf078',
 					'null_switch' => 'NULL',
 					'unique_key' => false,
 					'key' => false,
@@ -8079,6 +8521,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'VARCHAR(255)',
 					'default' => '',
+					'GUID' => '65b533a8-0d70-44af-a9d1-785983eb4ef3',
 					'null_switch' => 'NULL',
 					'unique_key' => false,
 					'key' => true,
@@ -8096,6 +8539,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'TEXT',
 					'default' => 'EMPTY',
+					'GUID' => 'b14c6496-2aaf-4198-8fc1-cf034525fb91',
 					'null_switch' => 'NULL',
 					'unique_key' => false,
 					'key' => false,
@@ -8129,6 +8573,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'VARCHAR(255)',
 					'default' => '',
+					'GUID' => '5d3d34dd-4876-4c6a-86ab-b4e162f22c08',
 					'null_switch' => 'NULL',
 					'unique_key' => false,
 					'key' => true,
@@ -8146,6 +8591,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'TINYINT(1)',
 					'default' => '1',
+					'GUID' => '07c71471-04cd-4217-a63e-4ca97d880950',
 					'null_switch' => 'NOT NULL',
 					'unique_key' => false,
 					'key' => false,
@@ -8163,6 +8609,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'TINYINT(1)',
 					'default' => '1',
+					'GUID' => '0051004f-b0ec-47c4-bfdb-0d8e76adbbb8',
 					'null_switch' => 'NOT NULL',
 					'unique_key' => false,
 					'key' => true,
@@ -8187,6 +8634,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'TINYINT(1)',
 					'default' => '0',
+					'GUID' => 'f2940a48-f104-4c11-86ef-ed6456a1211c',
 					'null_switch' => 'NOT NULL',
 					'unique_key' => false,
 					'key' => false,
@@ -8204,6 +8652,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'VARCHAR(255)',
 					'default' => '',
+					'GUID' => '09b25ca3-6c9f-4b6d-ad80-e0989c221289',
 					'null_switch' => 'NULL',
 					'unique_key' => false,
 					'key' => false,
@@ -8221,6 +8670,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'TEXT',
 					'default' => 'EMPTY',
+					'GUID' => '7e1418d5-5515-49f6-99ed-166365b9b963',
 					'null_switch' => 'NOT NULL',
 					'unique_key' => false,
 					'key' => false,
@@ -8245,6 +8695,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'MEDIUMTEXT',
 					'default' => 'EMPTY',
+					'GUID' => 'b70529a1-30bb-42c0-822f-802c23bd616b',
 					'null_switch' => 'NULL',
 					'unique_key' => false,
 					'key' => false,
@@ -8262,6 +8713,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'MEDIUMTEXT',
 					'default' => 'EMPTY',
+					'GUID' => '48d69b71-6eba-480a-b17b-c67243f02d06',
 					'null_switch' => 'NOT NULL',
 					'unique_key' => false,
 					'key' => false,
@@ -8279,6 +8731,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'VARCHAR(36)',
 					'default' => '',
+					'GUID' => '5aa57bbe-7b19-4db9-915c-561863458d2b',
 					'null_switch' => 'NULL',
 					'unique_key' => false,
 					'key' => true,
@@ -8312,6 +8765,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'VARCHAR(255)',
 					'default' => '',
+					'GUID' => '5d3d34dd-4876-4c6a-86ab-b4e162f22c08',
 					'null_switch' => 'NULL',
 					'unique_key' => false,
 					'key' => true,
@@ -8329,6 +8783,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'VARCHAR(255)',
 					'default' => '',
+					'GUID' => 'd29d6854-bb4a-4fa2-83a1-5a1b9c9a0eaf',
 					'null_switch' => 'NOT NULL',
 					'unique_key' => false,
 					'key' => false,
@@ -8346,6 +8801,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'VARCHAR(36)',
 					'default' => '',
+					'GUID' => '0cc69ef6-eb4d-4a0d-ad40-84bc1845e48f',
 					'null_switch' => 'NULL',
 					'unique_key' => false,
 					'key' => true,
@@ -8370,6 +8826,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'VARCHAR(255)',
 					'default' => '',
+					'GUID' => 'fc671dc8-a9be-43d9-b42a-671750ad869d',
 					'null_switch' => 'NULL',
 					'unique_key' => false,
 					'key' => false,
@@ -8387,6 +8844,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'VARCHAR(36)',
 					'default' => '',
+					'GUID' => '8b97aaa3-28ae-45f1-80ad-6f37116264cf',
 					'null_switch' => 'NULL',
 					'unique_key' => false,
 					'key' => true,
@@ -8411,6 +8869,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'VARCHAR(36)',
 					'default' => '',
+					'GUID' => '5aa57bbe-7b19-4db9-915c-561863458d2b',
 					'null_switch' => 'NULL',
 					'unique_key' => false,
 					'key' => true,
@@ -8428,6 +8887,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'VARCHAR(255)',
 					'default' => '',
+					'GUID' => '1e0608ea-045b-494b-aac6-060dc76da782',
 					'null_switch' => 'NULL',
 					'unique_key' => false,
 					'key' => false,
@@ -8445,6 +8905,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'VARCHAR(255)',
 					'default' => '',
+					'GUID' => '6803fdeb-c251-4588-85c9-d0e8636d18ab',
 					'null_switch' => 'NULL',
 					'unique_key' => false,
 					'key' => false,
@@ -8462,6 +8923,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'VARCHAR(255)',
 					'default' => '',
+					'GUID' => '3a1db9fd-204e-4693-bcf7-2084d26c1013',
 					'null_switch' => 'NULL',
 					'unique_key' => false,
 					'key' => false,
@@ -8479,6 +8941,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'VARCHAR(255)',
 					'default' => '',
+					'GUID' => 'cef2d060-95cf-409a-92c9-02de0c164640',
 					'null_switch' => 'NULL',
 					'unique_key' => false,
 					'key' => false,
@@ -8496,6 +8959,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'TEXT',
 					'default' => 'EMPTY',
+					'GUID' => '144a1f95-97d5-42b4-be3e-39f21215780e',
 					'null_switch' => 'NULL',
 					'unique_key' => false,
 					'key' => false,
@@ -8513,6 +8977,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'TEXT',
 					'default' => 'EMPTY',
+					'GUID' => '155d8238-a2cf-446c-91a5-c8322ee1d890',
 					'null_switch' => 'NULL',
 					'unique_key' => false,
 					'key' => false,
@@ -8530,6 +8995,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'TEXT',
 					'default' => 'EMPTY',
+					'GUID' => '749a9917-90c3-49c4-9e72-aa33b0683a87',
 					'null_switch' => 'NULL',
 					'unique_key' => false,
 					'key' => false,
@@ -8563,6 +9029,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'VARCHAR(255)',
 					'default' => '',
+					'GUID' => '9a98c57f-bf01-49b0-91e3-e72e1b9551f1',
 					'null_switch' => 'NULL',
 					'unique_key' => false,
 					'key' => true,
@@ -8580,6 +9047,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'VARCHAR(255)',
 					'default' => '',
+					'GUID' => '46503007-43d9-485f-8cd0-8427a6a8bef2',
 					'null_switch' => 'NULL',
 					'unique_key' => false,
 					'key' => false,
@@ -8597,6 +9065,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'CHAR(64)',
 					'default' => '',
+					'GUID' => '419fa655-e64a-4e39-b124-29eeb3198bc7',
 					'null_switch' => 'NOT NULL',
 					'unique_key' => false,
 					'key' => false,
@@ -8621,6 +9090,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'MEDIUMTEXT',
 					'default' => 'EMPTY',
+					'GUID' => '24ed6b0e-c86c-4131-91a7-5205ac931ad5',
 					'null_switch' => 'NULL',
 					'unique_key' => false,
 					'key' => false,
@@ -8654,6 +9124,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'VARCHAR(255)',
 					'default' => '',
+					'GUID' => '5d3d34dd-4876-4c6a-86ab-b4e162f22c08',
 					'null_switch' => 'NULL',
 					'unique_key' => false,
 					'key' => true,
@@ -8671,6 +9142,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'VARCHAR(36)',
 					'default' => '',
+					'GUID' => '91a4f538-1383-4ae4-85d8-55ddada7d6cd',
 					'null_switch' => 'NULL',
 					'unique_key' => false,
 					'key' => true,
@@ -8695,6 +9167,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'CHAR(64)',
 					'default' => '',
+					'GUID' => 'e41e74b2-a265-4269-8ec6-1d890c893798',
 					'null_switch' => 'NOT NULL',
 					'unique_key' => false,
 					'key' => true,
@@ -8712,6 +9185,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'CHAR(64)',
 					'default' => '',
+					'GUID' => '63ff758d-a866-4d37-bc2a-a7432bd9bb44',
 					'null_switch' => 'NOT NULL',
 					'unique_key' => false,
 					'key' => true,
@@ -8729,6 +9203,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'CHAR(64)',
 					'default' => '',
+					'GUID' => '6a3d21ad-7cb1-4456-a623-20aa71ba0b12',
 					'null_switch' => 'NOT NULL',
 					'unique_key' => false,
 					'key' => true,
@@ -8746,6 +9221,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'INT(11)',
 					'default' => '0',
+					'GUID' => '48b78ab1-bfb0-44eb-9ec8-4f5cdbf4a32c',
 					'null_switch' => 'NOT NULL',
 					'unique_key' => false,
 					'key' => false,
@@ -8763,6 +9239,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'INT(11)',
 					'default' => '0',
+					'GUID' => 'ef722d2d-0fa0-4aa7-92d2-7783ec1c9f7f',
 					'null_switch' => 'NOT NULL',
 					'unique_key' => false,
 					'key' => true,
@@ -8780,6 +9257,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'TEXT',
 					'default' => 'EMPTY',
+					'GUID' => 'dc69b6d4-2e6f-4f2d-86d9-0fb6534164ca',
 					'null_switch' => 'NULL',
 					'unique_key' => false,
 					'key' => false,
@@ -8797,6 +9275,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'TEXT',
 					'default' => 'EMPTY',
+					'GUID' => '0f0ef89c-e305-408d-ac95-6a86efe28c5a',
 					'null_switch' => 'NULL',
 					'unique_key' => false,
 					'key' => false,
@@ -8814,6 +9293,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'TEXT',
 					'default' => 'EMPTY',
+					'GUID' => '9d32c0a5-e010-44f2-8b53-3372c87da08d',
 					'null_switch' => 'NULL',
 					'unique_key' => false,
 					'key' => false,
@@ -8831,6 +9311,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'TEXT',
 					'default' => 'EMPTY',
+					'GUID' => '83a3c115-1a4f-44a7-9572-e91043acdbaa',
 					'null_switch' => 'NULL',
 					'unique_key' => false,
 					'key' => false,
@@ -8848,6 +9329,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'CHAR(64)',
 					'default' => '',
+					'GUID' => 'b3ea0d94-1029-41d8-9f6b-bcbec6b715f4',
 					'null_switch' => 'NOT NULL',
 					'unique_key' => false,
 					'key' => true,
@@ -8865,6 +9347,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'TEXT',
 					'default' => 'EMPTY',
+					'GUID' => 'a99c1f40-4b41-4167-ad29-85133375aa7a',
 					'null_switch' => 'NULL',
 					'unique_key' => false,
 					'key' => false,
@@ -8882,6 +9365,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'TEXT',
 					'default' => 'EMPTY',
+					'GUID' => '63d5585f-c9bd-485d-9c1d-4a29a4fbf4b2',
 					'null_switch' => 'NULL',
 					'unique_key' => false,
 					'key' => false,
@@ -8899,6 +9383,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'TEXT',
 					'default' => 'EMPTY',
+					'GUID' => '1ad12721-9ee9-4623-98d2-071ba013a373',
 					'null_switch' => 'NULL',
 					'unique_key' => false,
 					'key' => false,
@@ -8916,6 +9401,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'CHAR(64)',
 					'default' => '',
+					'GUID' => '6b2277f3-44e1-4bbb-8e55-3315bdba736e',
 					'null_switch' => 'NULL',
 					'unique_key' => false,
 					'key' => true,
@@ -8933,6 +9419,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'CHAR(64)',
 					'default' => '',
+					'GUID' => '6ba76a0f-55a4-49ce-911a-0a3f05674bef',
 					'null_switch' => 'NOT NULL',
 					'unique_key' => false,
 					'key' => true,
@@ -8950,6 +9437,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'CHAR(64)',
 					'default' => '',
+					'GUID' => 'fd7ff7b0-a8e9-476c-8e9d-ac4ca338c589',
 					'null_switch' => 'NULL',
 					'unique_key' => false,
 					'key' => true,
@@ -8967,6 +9455,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'TEXT',
 					'default' => 'EMPTY',
+					'GUID' => '34bf9926-34a4-49a3-a29e-b602b1e5f9b2',
 					'null_switch' => 'NULL',
 					'unique_key' => false,
 					'key' => false,
@@ -8984,6 +9473,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'TINYINT(1)',
 					'default' => '0',
+					'GUID' => '6746d3ba-b120-4918-8bba-2a14260e99c8',
 					'null_switch' => 'NOT NULL',
 					'unique_key' => false,
 					'key' => true,
@@ -9001,6 +9491,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'TINYINT(1)',
 					'default' => '0',
+					'GUID' => 'a2098911-926a-42b6-8498-d8a453c34d93',
 					'null_switch' => 'NOT NULL',
 					'unique_key' => false,
 					'key' => true,
@@ -9018,6 +9509,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'TINYINT(1)',
 					'default' => '0',
+					'GUID' => '9405da44-900c-4f7c-823d-734a68f5d6f6',
 					'null_switch' => 'NOT NULL',
 					'unique_key' => false,
 					'key' => true,
@@ -9035,6 +9527,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'TINYINT(1)',
 					'default' => '0',
+					'GUID' => '70995b9c-d0a9-4a57-b59b-54d39c379e66',
 					'null_switch' => 'NOT NULL',
 					'unique_key' => false,
 					'key' => true,
@@ -9052,6 +9545,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'TEXT',
 					'default' => 'EMPTY',
+					'GUID' => '49a285a3-2c16-4846-9dbf-94c9cc6496c1',
 					'null_switch' => 'NULL',
 					'unique_key' => false,
 					'key' => false,
@@ -9069,6 +9563,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'VARCHAR(36)',
 					'default' => '',
+					'GUID' => '5aa57bbe-7b19-4db9-915c-561863458d2b',
 					'null_switch' => 'NULL',
 					'unique_key' => false,
 					'key' => true,
@@ -9102,6 +9597,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'VARCHAR(255)',
 					'default' => '',
+					'GUID' => '5d3d34dd-4876-4c6a-86ab-b4e162f22c08',
 					'null_switch' => 'NULL',
 					'unique_key' => false,
 					'key' => true,
@@ -9119,6 +9615,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'INT(11)',
 					'default' => '0',
+					'GUID' => '48b78ab1-bfb0-44eb-9ec8-4f5cdbf4a32c',
 					'null_switch' => 'NOT NULL',
 					'unique_key' => false,
 					'key' => false,
@@ -9136,6 +9633,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'CHAR(64)',
 					'default' => '',
+					'GUID' => '6a3d21ad-7cb1-4456-a623-20aa71ba0b12',
 					'null_switch' => 'NOT NULL',
 					'unique_key' => false,
 					'key' => true,
@@ -9153,6 +9651,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'CHAR(64)',
 					'default' => '',
+					'GUID' => '63ff758d-a866-4d37-bc2a-a7432bd9bb44',
 					'null_switch' => 'NOT NULL',
 					'unique_key' => false,
 					'key' => true,
@@ -9170,6 +9669,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'CHAR(64)',
 					'default' => '',
+					'GUID' => '6b2277f3-44e1-4bbb-8e55-3315bdba736e',
 					'null_switch' => 'NULL',
 					'unique_key' => false,
 					'key' => true,
@@ -9187,6 +9687,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'CHAR(64)',
 					'default' => '',
+					'GUID' => '6ba76a0f-55a4-49ce-911a-0a3f05674bef',
 					'null_switch' => 'NOT NULL',
 					'unique_key' => false,
 					'key' => true,
@@ -9204,6 +9705,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'VARCHAR(255)',
 					'default' => '',
+					'GUID' => '46503007-43d9-485f-8cd0-8427a6a8bef2',
 					'null_switch' => 'NULL',
 					'unique_key' => false,
 					'key' => false,
@@ -9221,6 +9723,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'CHAR(64)',
 					'default' => '',
+					'GUID' => 'e41e74b2-a265-4269-8ec6-1d890c893798',
 					'null_switch' => 'NOT NULL',
 					'unique_key' => false,
 					'key' => true,
@@ -9238,6 +9741,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'TINYINT(1)',
 					'default' => '0',
+					'GUID' => 'ec2ec4a2-a32f-4407-b318-46b5780774e2',
 					'null_switch' => 'NOT NULL',
 					'unique_key' => false,
 					'key' => true,
@@ -9255,6 +9759,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'TEXT',
 					'default' => 'EMPTY',
+					'GUID' => 'ddb8f57f-77c8-4cad-a8cb-0cdc799ce4a1',
 					'null_switch' => 'NULL',
 					'unique_key' => false,
 					'key' => false,
@@ -9272,6 +9777,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'TEXT',
 					'default' => 'EMPTY',
+					'GUID' => '749a9917-90c3-49c4-9e72-aa33b0683a87',
 					'null_switch' => 'NULL',
 					'unique_key' => false,
 					'key' => false,
@@ -9289,6 +9795,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'CHAR(64)',
 					'default' => '',
+					'GUID' => 'b3ea0d94-1029-41d8-9f6b-bcbec6b715f4',
 					'null_switch' => 'NOT NULL',
 					'unique_key' => false,
 					'key' => true,
@@ -9306,6 +9813,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'CHAR(64)',
 					'default' => '',
+					'GUID' => 'fd7ff7b0-a8e9-476c-8e9d-ac4ca338c589',
 					'null_switch' => 'NULL',
 					'unique_key' => false,
 					'key' => true,
@@ -9323,6 +9831,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'VARCHAR(36)',
 					'default' => '',
+					'GUID' => '5aa57bbe-7b19-4db9-915c-561863458d2b',
 					'null_switch' => 'NULL',
 					'unique_key' => false,
 					'key' => true,
@@ -9340,6 +9849,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'INT(11)',
 					'default' => '0',
+					'GUID' => '7cc4ab46-0d77-4ef8-a2a7-d5b656546a30',
 					'null_switch' => 'NOT NULL',
 					'unique_key' => false,
 					'key' => true,
@@ -9373,6 +9883,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'MEDIUMTEXT',
 					'default' => 'EMPTY',
+					'GUID' => 'c2f5d193-ef76-422b-aae5-421cd0a4b22b',
 					'null_switch' => 'NULL',
 					'unique_key' => false,
 					'key' => false,
@@ -9390,6 +9901,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'TEXT',
 					'default' => 'EMPTY',
+					'GUID' => '6e1717a7-99b8-4101-a0b0-fcf2a5e1cfa0',
 					'null_switch' => 'NULL',
 					'unique_key' => false,
 					'key' => false,
@@ -9414,6 +9926,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'TEXT',
 					'default' => 'EMPTY',
+					'GUID' => 'd3468164-df0a-4f0d-a679-1aa95ae408fe',
 					'null_switch' => 'NULL',
 					'unique_key' => false,
 					'key' => false,
@@ -9438,6 +9951,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'TEXT',
 					'default' => 'EMPTY',
+					'GUID' => '61990265-efe5-49d3-ae08-4bd0e8f3e4ce',
 					'null_switch' => 'NULL',
 					'unique_key' => false,
 					'key' => false,
@@ -9462,6 +9976,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'TEXT',
 					'default' => 'EMPTY',
+					'GUID' => '36edbdce-b9b7-4b89-b2d9-03f91bb56019',
 					'null_switch' => 'NULL',
 					'unique_key' => false,
 					'key' => false,
@@ -9495,6 +10010,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'VARCHAR(255)',
 					'default' => '',
+					'GUID' => '5d3d34dd-4876-4c6a-86ab-b4e162f22c08',
 					'null_switch' => 'NULL',
 					'unique_key' => false,
 					'key' => true,
@@ -9512,6 +10028,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'VARCHAR(64)',
 					'default' => '',
+					'GUID' => '8fdf3640-8668-4818-be46-36c74f9e103e',
 					'null_switch' => 'NULL',
 					'unique_key' => false,
 					'key' => false,
@@ -9545,6 +10062,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'VARCHAR(255)',
 					'default' => '',
+					'GUID' => '5d3d34dd-4876-4c6a-86ab-b4e162f22c08',
 					'null_switch' => 'NULL',
 					'unique_key' => false,
 					'key' => true,
@@ -9562,6 +10080,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'TINYINT(1)',
 					'default' => '0',
+					'GUID' => 'a5bb2b19-d773-465c-a7e3-ce6400735734',
 					'null_switch' => 'NOT NULL',
 					'unique_key' => false,
 					'key' => true,
@@ -9579,6 +10098,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'TEXT',
 					'default' => 'EMPTY',
+					'GUID' => '59688b83-dca9-4491-aefb-39c18057394e',
 					'null_switch' => 'NULL',
 					'unique_key' => false,
 					'key' => false,
@@ -9596,6 +10116,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'TEXT',
 					'default' => 'EMPTY',
+					'GUID' => '29b8c31d-6e2a-4f8d-90c7-febfbb9cc16c',
 					'null_switch' => 'NULL',
 					'unique_key' => false,
 					'key' => false,
@@ -9613,6 +10134,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'TEXT',
 					'default' => 'EMPTY',
+					'GUID' => 'c6ccb2ba-4d74-487a-99a8-f2bfe40a23f1',
 					'null_switch' => 'NOT NULL',
 					'unique_key' => false,
 					'key' => false,
@@ -9630,6 +10152,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'TEXT',
 					'default' => 'EMPTY',
+					'GUID' => '0a6939be-aabc-46df-b922-f083cf0c5bd4',
 					'null_switch' => 'NOT NULL',
 					'unique_key' => false,
 					'key' => false,
@@ -9647,6 +10170,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'TEXT',
 					'default' => 'EMPTY',
+					'GUID' => '2c689678-6cef-40ef-97da-d59ab7d039d1',
 					'null_switch' => 'NULL',
 					'unique_key' => false,
 					'key' => false,
@@ -9664,6 +10188,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'TINYINT(1)',
 					'default' => '0',
+					'GUID' => '452b22ac-adfc-4fca-9d82-5461806bf847',
 					'null_switch' => 'NOT NULL',
 					'unique_key' => false,
 					'key' => false,
@@ -9681,6 +10206,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'TEXT',
 					'default' => 'EMPTY',
+					'GUID' => '593fe848-22f3-45d1-8d8d-7824542a7381',
 					'null_switch' => 'NULL',
 					'unique_key' => false,
 					'key' => false,
@@ -9698,6 +10224,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'TEXT',
 					'default' => 'EMPTY',
+					'GUID' => '5a64961d-8aa6-4de4-92e2-997199e5a707',
 					'null_switch' => 'NULL',
 					'unique_key' => false,
 					'key' => false,
@@ -9715,6 +10242,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'TEXT',
 					'default' => 'EMPTY',
+					'GUID' => '3eed4f04-46cc-43e8-9712-b6e339e71241',
 					'null_switch' => 'NULL',
 					'unique_key' => false,
 					'key' => false,
@@ -9732,6 +10260,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'TEXT',
 					'default' => 'EMPTY',
+					'GUID' => '41152cdd-e774-4edf-be9b-280d272d5712',
 					'null_switch' => 'NULL',
 					'unique_key' => false,
 					'key' => false,
@@ -9765,6 +10294,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'VARCHAR(255)',
 					'default' => '',
+					'GUID' => 'acfe906b-6e61-4f94-ae66-359e4bc3e4cc',
 					'null_switch' => 'NULL',
 					'unique_key' => false,
 					'key' => true,
@@ -9782,6 +10312,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'VARCHAR(255)',
 					'default' => '',
+					'GUID' => 'eaaca317-58c7-4b72-9c20-166c12c04b67',
 					'null_switch' => 'NULL',
 					'unique_key' => false,
 					'key' => true,
@@ -9799,6 +10330,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'VARCHAR(255)',
 					'default' => '',
+					'GUID' => '4c224b6d-7b6b-4e5d-8df7-b96c26559476',
 					'null_switch' => 'NULL',
 					'unique_key' => false,
 					'key' => true,
@@ -9816,6 +10348,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'TINYINT(7)',
 					'default' => '1',
+					'GUID' => 'd22126a7-7e85-4a7a-94d0-6ba9ab194772',
 					'null_switch' => 'NOT NULL',
 					'unique_key' => false,
 					'key' => true,
@@ -9833,6 +10366,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'TINYINT(1)',
 					'default' => '1',
+					'GUID' => '3557698d-cfae-4a57-93fc-6030bac2768a',
 					'null_switch' => 'NOT NULL',
 					'unique_key' => false,
 					'key' => true,
@@ -9850,6 +10384,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'VARCHAR(255)',
 					'default' => '',
+					'GUID' => '0ca15427-abfa-4fac-8ce2-e70e5b8b2c0f',
 					'null_switch' => 'NOT NULL',
 					'unique_key' => false,
 					'key' => false,
@@ -9867,6 +10402,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'VARCHAR(36)',
 					'default' => '',
+					'GUID' => '5aa57bbe-7b19-4db9-915c-561863458d2b',
 					'null_switch' => 'NULL',
 					'unique_key' => false,
 					'key' => true,
@@ -9884,6 +10420,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'TEXT',
 					'default' => 'EMPTY',
+					'GUID' => 'fb4e322b-46c0-47e5-b9eb-70c39456d80d',
 					'null_switch' => 'NULL',
 					'unique_key' => false,
 					'key' => false,
@@ -9901,6 +10438,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'TINYINT(1)',
 					'default' => '0',
+					'GUID' => '5e9038cf-bf09-4ec7-aa1d-60df007b96e2',
 					'null_switch' => 'NULL',
 					'unique_key' => false,
 					'key' => true,
@@ -9918,6 +10456,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'VARCHAR(255)',
 					'default' => '',
+					'GUID' => '8a5addab-5545-4c33-bc1a-7aad217e04c6',
 					'null_switch' => 'NULL',
 					'unique_key' => false,
 					'key' => true,
@@ -9935,6 +10474,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'VARCHAR(255)',
 					'default' => '',
+					'GUID' => 'ce236d83-959b-4d1c-a736-b1717bee29bc',
 					'null_switch' => 'NULL',
 					'unique_key' => false,
 					'key' => true,
@@ -9952,6 +10492,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'VARCHAR(255)',
 					'default' => '',
+					'GUID' => 'f8aa483a-71b9-46c1-a08e-0f546076fd78',
 					'null_switch' => 'NULL',
 					'unique_key' => false,
 					'key' => true,
@@ -9969,6 +10510,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'VARCHAR(255)',
 					'default' => '',
+					'GUID' => 'fcbab2f2-51bb-4f44-a5ac-a6266e187522',
 					'null_switch' => 'NULL',
 					'unique_key' => false,
 					'key' => true,
@@ -10002,6 +10544,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'CHAR(64)',
 					'default' => '',
+					'GUID' => 'edda1847-ef2e-4a76-9763-c41c82b08c00',
 					'null_switch' => 'NULL',
 					'unique_key' => false,
 					'key' => true,
@@ -10019,6 +10562,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'TINYINT(1)',
 					'default' => '0',
+					'GUID' => '8487b70c-4a32-46ba-aacb-ea07a1e3d278',
 					'null_switch' => 'NOT NULL',
 					'unique_key' => false,
 					'key' => true,
@@ -10036,6 +10580,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'TEXT',
 					'default' => 'EMPTY',
+					'GUID' => '59a0cad6-26cc-43b6-8af8-2242eb595d76',
 					'null_switch' => 'NULL',
 					'unique_key' => false,
 					'key' => false,
@@ -10053,6 +10598,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'TINYINT(1)',
 					'default' => '0',
+					'GUID' => '0d06a4f6-acd5-4acc-8a3f-28813de178ac',
 					'null_switch' => 'NOT NULL',
 					'unique_key' => false,
 					'key' => true,
@@ -10070,6 +10616,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'CHAR(255)',
 					'default' => '',
+					'GUID' => 'd7f97213-2aa1-457c-9e60-d691cfcd905f',
 					'null_switch' => 'NOT NULL',
 					'unique_key' => false,
 					'key' => false,
@@ -10094,6 +10641,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'CHAR(255)',
 					'default' => '',
+					'GUID' => 'd52f96cd-df76-494b-8c25-146bb434b6af',
 					'null_switch' => 'NOT NULL',
 					'unique_key' => false,
 					'key' => false,
@@ -10118,6 +10666,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'CHAR(64)',
 					'default' => '',
+					'GUID' => '335866ce-b81b-4329-901d-c20254135c9c',
 					'null_switch' => 'NULL',
 					'unique_key' => false,
 					'key' => true,
@@ -10135,6 +10684,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'TEXT',
 					'default' => 'EMPTY',
+					'GUID' => '8b9665d1-f1d9-4d7e-bc2c-72479bf4686f',
 					'null_switch' => 'NULL',
 					'unique_key' => false,
 					'key' => false,
@@ -10152,6 +10702,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'TINYINT(1)',
 					'default' => '0',
+					'GUID' => 'f312a8f7-34b9-4731-af00-3ff2092c65b9',
 					'null_switch' => 'NOT NULL',
 					'unique_key' => false,
 					'key' => true,
@@ -10176,6 +10727,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'VARCHAR(255)',
 					'default' => '',
+					'GUID' => 'd29d6854-bb4a-4fa2-83a1-5a1b9c9a0eaf',
 					'null_switch' => 'NOT NULL',
 					'unique_key' => false,
 					'key' => false,
@@ -10193,6 +10745,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'TINYINT(1)',
 					'default' => '0',
+					'GUID' => '5810dc57-35ac-436e-88ff-117e1f501e67',
 					'null_switch' => 'NOT NULL',
 					'unique_key' => false,
 					'key' => true,
@@ -10212,6 +10765,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'VARCHAR(36)',
 					'default' => '',
+					'GUID' => '3ac1327d-75d6-4a16-913d-ef4fdf54c11c',
 					'null_switch' => 'NULL',
 					'unique_key' => false,
 					'key' => true,
@@ -10236,6 +10790,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'MEDIUMTEXT',
 					'default' => 'EMPTY',
+					'GUID' => '15e1f13d-25db-46a4-ae7c-fb616140338e',
 					'null_switch' => 'NOT NULL',
 					'unique_key' => false,
 					'key' => false,
@@ -10269,6 +10824,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'VARCHAR(36)',
 					'default' => '',
+					'GUID' => '3ac1327d-75d6-4a16-913d-ef4fdf54c11c',
 					'null_switch' => 'NULL',
 					'unique_key' => false,
 					'key' => true,
@@ -10293,6 +10849,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'MEDIUMTEXT',
 					'default' => 'EMPTY',
+					'GUID' => '434a8099-51f0-49d1-bbbb-ed7aa5145a3c',
 					'null_switch' => 'NOT NULL',
 					'unique_key' => false,
 					'key' => false,
@@ -10326,6 +10883,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'VARCHAR(36)',
 					'default' => '',
+					'GUID' => '3ac1327d-75d6-4a16-913d-ef4fdf54c11c',
 					'null_switch' => 'NULL',
 					'unique_key' => false,
 					'key' => true,
@@ -10350,6 +10908,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'MEDIUMTEXT',
 					'default' => 'EMPTY',
+					'GUID' => '4e87b302-e17f-468e-8934-e5aaf78d6765',
 					'null_switch' => 'NOT NULL',
 					'unique_key' => false,
 					'key' => false,
@@ -10383,6 +10942,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'VARCHAR(36)',
 					'default' => '',
+					'GUID' => '3ac1327d-75d6-4a16-913d-ef4fdf54c11c',
 					'null_switch' => 'NULL',
 					'unique_key' => false,
 					'key' => true,
@@ -10407,6 +10967,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'TEXT',
 					'default' => 'EMPTY',
+					'GUID' => '4b794f1a-1be4-4804-92e6-bda624f444b4',
 					'null_switch' => 'NOT NULL',
 					'unique_key' => false,
 					'key' => false,
@@ -10440,6 +11001,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'VARCHAR(36)',
 					'default' => '',
+					'GUID' => '591df1a2-b685-4378-845a-f8a1d1985548',
 					'null_switch' => 'NULL',
 					'unique_key' => false,
 					'key' => true,
@@ -10464,6 +11026,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'TEXT',
 					'default' => 'EMPTY',
+					'GUID' => '3bac32ec-8dcf-4257-b518-ecaa952140c2',
 					'null_switch' => 'NULL',
 					'unique_key' => false,
 					'key' => false,
@@ -10497,6 +11060,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'VARCHAR(36)',
 					'default' => '',
+					'GUID' => '591df1a2-b685-4378-845a-f8a1d1985548',
 					'null_switch' => 'NULL',
 					'unique_key' => false,
 					'key' => true,
@@ -10521,6 +11085,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'TEXT',
 					'default' => 'EMPTY',
+					'GUID' => '8e225dcd-4e2b-464b-a9f3-b7d39d67de84',
 					'null_switch' => 'NULL',
 					'unique_key' => false,
 					'key' => false,
@@ -10554,6 +11119,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'VARCHAR(36)',
 					'default' => '',
+					'GUID' => '591df1a2-b685-4378-845a-f8a1d1985548',
 					'null_switch' => 'NULL',
 					'unique_key' => false,
 					'key' => true,
@@ -10578,6 +11144,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'TEXT',
 					'default' => 'EMPTY',
+					'GUID' => 'b2423282-c8a8-400e-9ded-fe61cea433f4',
 					'null_switch' => 'NULL',
 					'unique_key' => false,
 					'key' => false,
@@ -10611,6 +11178,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'VARCHAR(36)',
 					'default' => '',
+					'GUID' => '591df1a2-b685-4378-845a-f8a1d1985548',
 					'null_switch' => 'NULL',
 					'unique_key' => false,
 					'key' => true,
@@ -10635,6 +11203,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'MEDIUMTEXT',
 					'default' => 'EMPTY',
+					'GUID' => '1b98fc0a-d58f-4c81-a53f-30106e0c30eb',
 					'null_switch' => 'NOT NULL',
 					'unique_key' => false,
 					'key' => false,
@@ -10668,6 +11237,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'VARCHAR(36)',
 					'default' => '',
+					'GUID' => '591df1a2-b685-4378-845a-f8a1d1985548',
 					'null_switch' => 'NULL',
 					'unique_key' => false,
 					'key' => true,
@@ -10692,6 +11262,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'TEXT',
 					'default' => 'EMPTY',
+					'GUID' => 'ce203691-6577-4c0d-90fb-539d07ea76c3',
 					'null_switch' => 'NOT NULL',
 					'unique_key' => false,
 					'key' => false,
@@ -10725,6 +11296,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'VARCHAR(36)',
 					'default' => '',
+					'GUID' => '591df1a2-b685-4378-845a-f8a1d1985548',
 					'null_switch' => 'NULL',
 					'unique_key' => false,
 					'key' => true,
@@ -10749,6 +11321,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'TEXT',
 					'default' => 'EMPTY',
+					'GUID' => '60d68340-14c1-45a9-8240-30f6bdf96345',
 					'null_switch' => 'NULL',
 					'unique_key' => false,
 					'key' => false,
@@ -10782,6 +11355,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'VARCHAR(36)',
 					'default' => '',
+					'GUID' => '591df1a2-b685-4378-845a-f8a1d1985548',
 					'null_switch' => 'NULL',
 					'unique_key' => false,
 					'key' => true,
@@ -10806,6 +11380,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'TINYINT(1)',
 					'default' => '0',
+					'GUID' => '4582a192-d46e-4dd9-9bbd-ee2e2ddd20e5',
 					'null_switch' => 'NOT NULL',
 					'unique_key' => false,
 					'key' => false,
@@ -10823,6 +11398,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'TINYINT(1)',
 					'default' => '0',
+					'GUID' => '2b31ca2e-11ff-4f57-8c90-2b9bed743202',
 					'null_switch' => 'NOT NULL',
 					'unique_key' => false,
 					'key' => false,
@@ -10840,6 +11416,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'TINYINT(1)',
 					'default' => '0',
+					'GUID' => '25fead1f-bb12-40e6-9e03-4e31b236f2e1',
 					'null_switch' => 'NOT NULL',
 					'unique_key' => false,
 					'key' => false,
@@ -10857,6 +11434,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'MEDIUMTEXT',
 					'default' => 'EMPTY',
+					'GUID' => '3ab69198-0827-452b-93a4-6c7bb02ae7ae',
 					'null_switch' => 'NULL',
 					'unique_key' => false,
 					'key' => false,
@@ -10874,6 +11452,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'MEDIUMTEXT',
 					'default' => 'EMPTY',
+					'GUID' => 'a411a365-69c8-4f70-a734-25956a9f3393',
 					'null_switch' => 'NULL',
 					'unique_key' => false,
 					'key' => false,
@@ -10891,6 +11470,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'TEXT',
 					'default' => 'EMPTY',
+					'GUID' => '2321b486-80c4-4e24-81c5-6ddd205592ac',
 					'null_switch' => 'NOT NULL',
 					'unique_key' => false,
 					'key' => false,
@@ -10908,6 +11488,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'MEDIUMTEXT',
 					'default' => 'EMPTY',
+					'GUID' => '65544263-3215-4574-a977-dbf8ac2ce72a',
 					'null_switch' => 'NULL',
 					'unique_key' => false,
 					'key' => false,
@@ -10941,6 +11522,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'VARCHAR(36)',
 					'default' => '',
+					'GUID' => '591df1a2-b685-4378-845a-f8a1d1985548',
 					'null_switch' => 'NULL',
 					'unique_key' => false,
 					'key' => true,
@@ -10965,6 +11547,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'TEXT',
 					'default' => 'EMPTY',
+					'GUID' => '851d8f15-3ce4-42a3-9041-08c943f61cab',
 					'null_switch' => 'NULL',
 					'unique_key' => false,
 					'key' => false,
@@ -10998,6 +11581,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'VARCHAR(36)',
 					'default' => '',
+					'GUID' => '591df1a2-b685-4378-845a-f8a1d1985548',
 					'null_switch' => 'NULL',
 					'unique_key' => false,
 					'key' => true,
@@ -11022,6 +11606,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'TEXT',
 					'default' => 'EMPTY',
+					'GUID' => 'fd0cceef-975e-4daa-a529-2c98446b9df3',
 					'null_switch' => 'NULL',
 					'unique_key' => false,
 					'key' => false,
@@ -11039,6 +11624,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'MEDIUMTEXT',
 					'default' => 'EMPTY',
+					'GUID' => 'e6c421c3-2f37-429a-a8d9-b552bed392a5',
 					'null_switch' => 'NULL',
 					'unique_key' => false,
 					'key' => false,
@@ -11072,6 +11658,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'VARCHAR(36)',
 					'default' => '',
+					'GUID' => '591df1a2-b685-4378-845a-f8a1d1985548',
 					'null_switch' => 'NULL',
 					'unique_key' => false,
 					'key' => true,
@@ -11096,6 +11683,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'TEXT',
 					'default' => 'EMPTY',
+					'GUID' => 'fe780ac8-ed30-481c-8700-84472caa0072',
 					'null_switch' => 'NOT NULL',
 					'unique_key' => false,
 					'key' => false,
@@ -11113,6 +11701,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'TEXT',
 					'default' => 'EMPTY',
+					'GUID' => 'e5f50226-6749-4bd3-9aa1-cf3db6ce448d',
 					'null_switch' => 'NOT NULL',
 					'unique_key' => false,
 					'key' => false,
@@ -11130,6 +11719,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'TEXT',
 					'default' => 'EMPTY',
+					'GUID' => '483f2c40-2348-4168-817b-471f5ba96984',
 					'null_switch' => 'NULL',
 					'unique_key' => false,
 					'key' => false,
@@ -11147,6 +11737,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'TEXT',
 					'default' => 'EMPTY',
+					'GUID' => '143f8b3d-5b58-4b26-aaad-a5f14a57865b',
 					'null_switch' => 'NULL',
 					'unique_key' => false,
 					'key' => false,
@@ -11180,6 +11771,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'VARCHAR(36)',
 					'default' => '',
+					'GUID' => '591df1a2-b685-4378-845a-f8a1d1985548',
 					'null_switch' => 'NULL',
 					'unique_key' => false,
 					'key' => true,
@@ -11204,6 +11796,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'TEXT',
 					'default' => 'EMPTY',
+					'GUID' => 'fb4e322b-46c0-47e5-b9eb-70c39456d80d',
 					'null_switch' => 'NULL',
 					'unique_key' => false,
 					'key' => false,
@@ -11237,6 +11830,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'VARCHAR(36)',
 					'default' => '',
+					'GUID' => '591df1a2-b685-4378-845a-f8a1d1985548',
 					'null_switch' => 'NULL',
 					'unique_key' => false,
 					'key' => true,
@@ -11261,6 +11855,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'TEXT',
 					'default' => 'EMPTY',
+					'GUID' => '9c787541-ed54-4516-bc21-9b6fe2e2e516',
 					'null_switch' => 'NOT NULL',
 					'unique_key' => false,
 					'key' => false,
@@ -11294,6 +11889,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'VARCHAR(36)',
 					'default' => '',
+					'GUID' => '591df1a2-b685-4378-845a-f8a1d1985548',
 					'null_switch' => 'NULL',
 					'unique_key' => false,
 					'key' => true,
@@ -11318,6 +11914,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'TEXT',
 					'default' => 'EMPTY',
+					'GUID' => '5985271b-0795-4204-8739-ffa3d898bae8',
 					'null_switch' => 'NOT NULL',
 					'unique_key' => false,
 					'key' => false,
@@ -11351,6 +11948,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'VARCHAR(255)',
 					'default' => '',
+					'GUID' => '5d3d34dd-4876-4c6a-86ab-b4e162f22c08',
 					'null_switch' => 'NULL',
 					'unique_key' => false,
 					'key' => true,
@@ -11368,6 +11966,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'VARCHAR(255)',
 					'default' => '',
+					'GUID' => '09b25ca3-6c9f-4b6d-ad80-e0989c221289',
 					'null_switch' => 'NULL',
 					'unique_key' => false,
 					'key' => false,
@@ -11385,6 +11984,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'VARCHAR(36)',
 					'default' => '',
+					'GUID' => '5aa57bbe-7b19-4db9-915c-561863458d2b',
 					'null_switch' => 'NULL',
 					'unique_key' => false,
 					'key' => true,
@@ -11418,6 +12018,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'VARCHAR(36)',
 					'default' => '',
+					'GUID' => 'c6dddec0-c373-4069-bdcc-66acd474b648',
 					'null_switch' => 'NULL',
 					'unique_key' => false,
 					'key' => true,
@@ -11442,6 +12043,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'TEXT',
 					'default' => 'EMPTY',
+					'GUID' => '851d8f15-3ce4-42a3-9041-08c943f61cab',
 					'null_switch' => 'NULL',
 					'unique_key' => false,
 					'key' => false,
@@ -11475,6 +12077,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'VARCHAR(36)',
 					'default' => '',
+					'GUID' => 'c6dddec0-c373-4069-bdcc-66acd474b648',
 					'null_switch' => 'NULL',
 					'unique_key' => false,
 					'key' => true,
@@ -11499,6 +12102,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'TEXT',
 					'default' => 'EMPTY',
+					'GUID' => 'fe780ac8-ed30-481c-8700-84472caa0072',
 					'null_switch' => 'NOT NULL',
 					'unique_key' => false,
 					'key' => false,
@@ -11516,6 +12120,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'TEXT',
 					'default' => 'EMPTY',
+					'GUID' => 'e5f50226-6749-4bd3-9aa1-cf3db6ce448d',
 					'null_switch' => 'NOT NULL',
 					'unique_key' => false,
 					'key' => false,
@@ -11533,6 +12138,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'TEXT',
 					'default' => 'EMPTY',
+					'GUID' => '483f2c40-2348-4168-817b-471f5ba96984',
 					'null_switch' => 'NULL',
 					'unique_key' => false,
 					'key' => false,
@@ -11550,6 +12156,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'TEXT',
 					'default' => 'EMPTY',
+					'GUID' => '143f8b3d-5b58-4b26-aaad-a5f14a57865b',
 					'null_switch' => 'NULL',
 					'unique_key' => false,
 					'key' => false,
@@ -11567,6 +12174,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'TEXT',
 					'default' => 'EMPTY',
+					'GUID' => 'c3474b9a-4677-4574-bda3-a4865569ac18',
 					'null_switch' => 'NOT NULL',
 					'unique_key' => false,
 					'key' => false,
@@ -11600,6 +12208,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'VARCHAR(255)',
 					'default' => '',
+					'GUID' => '5d3d34dd-4876-4c6a-86ab-b4e162f22c08',
 					'null_switch' => 'NULL',
 					'unique_key' => false,
 					'key' => true,
@@ -11617,6 +12226,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'VARCHAR(64)',
 					'default' => '',
+					'GUID' => '7e059ab7-d79b-4218-9488-6f38d85d17a0',
 					'null_switch' => 'NOT NULL',
 					'unique_key' => false,
 					'key' => false,
@@ -11634,6 +12244,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'VARCHAR(36)',
 					'default' => '',
+					'GUID' => '5aa57bbe-7b19-4db9-915c-561863458d2b',
 					'null_switch' => 'NULL',
 					'unique_key' => false,
 					'key' => true,
@@ -11651,6 +12262,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'TEXT',
 					'default' => 'EMPTY',
+					'GUID' => 'e4a3ccf7-e259-4b72-ad4c-216b15d6d4f7',
 					'null_switch' => 'NULL',
 					'unique_key' => false,
 					'key' => false,
@@ -11668,6 +12280,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'TEXT',
 					'default' => 'EMPTY',
+					'GUID' => '3d80f045-6262-43c8-9b43-658093f6a057',
 					'null_switch' => 'NULL',
 					'unique_key' => false,
 					'key' => false,
@@ -11701,6 +12314,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'VARCHAR(36)',
 					'default' => '',
+					'GUID' => '79251a06-b217-4b3a-8485-b7286cb15bf6',
 					'null_switch' => 'NULL',
 					'unique_key' => false,
 					'key' => true,
@@ -11725,6 +12339,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'MEDIUMTEXT',
 					'default' => 'EMPTY',
+					'GUID' => '7d49445c-4e95-4fd5-a2a4-a20bbcd4d812',
 					'null_switch' => 'NOT NULL',
 					'unique_key' => false,
 					'key' => false,
@@ -11758,6 +12373,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'VARCHAR(36)',
 					'default' => '',
+					'GUID' => '79251a06-b217-4b3a-8485-b7286cb15bf6',
 					'null_switch' => 'NULL',
 					'unique_key' => false,
 					'key' => true,
@@ -11782,6 +12398,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'TEXT',
 					'default' => 'EMPTY',
+					'GUID' => 'fe780ac8-ed30-481c-8700-84472caa0072',
 					'null_switch' => 'NOT NULL',
 					'unique_key' => false,
 					'key' => false,
@@ -11799,6 +12416,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'TEXT',
 					'default' => 'EMPTY',
+					'GUID' => 'e5f50226-6749-4bd3-9aa1-cf3db6ce448d',
 					'null_switch' => 'NOT NULL',
 					'unique_key' => false,
 					'key' => false,
@@ -11816,6 +12434,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'TEXT',
 					'default' => 'EMPTY',
+					'GUID' => '483f2c40-2348-4168-817b-471f5ba96984',
 					'null_switch' => 'NULL',
 					'unique_key' => false,
 					'key' => false,
@@ -11833,6 +12452,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'TEXT',
 					'default' => 'EMPTY',
+					'GUID' => '143f8b3d-5b58-4b26-aaad-a5f14a57865b',
 					'null_switch' => 'NULL',
 					'unique_key' => false,
 					'key' => false,
@@ -11850,6 +12470,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'TEXT',
 					'default' => 'EMPTY',
+					'GUID' => 'c3474b9a-4677-4574-bda3-a4865569ac18',
 					'null_switch' => 'NOT NULL',
 					'unique_key' => false,
 					'key' => false,
@@ -11883,6 +12504,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'VARCHAR(255)',
 					'default' => '',
+					'GUID' => '5d3d34dd-4876-4c6a-86ab-b4e162f22c08',
 					'null_switch' => 'NULL',
 					'unique_key' => false,
 					'key' => true,
@@ -11900,6 +12522,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'VARCHAR(36)',
 					'default' => '',
+					'GUID' => 'b1edf3cc-3473-41c7-9825-372333299846',
 					'null_switch' => 'NULL',
 					'unique_key' => false,
 					'key' => true,
@@ -11924,6 +12547,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'VARCHAR(36)',
 					'default' => '',
+					'GUID' => '5aa57bbe-7b19-4db9-915c-561863458d2b',
 					'null_switch' => 'NULL',
 					'unique_key' => false,
 					'key' => true,
@@ -11957,6 +12581,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'VARCHAR(36)',
 					'default' => '',
+					'GUID' => 'd5aeaa99-9fba-4b67-b850-68e19256520a',
 					'null_switch' => 'NULL',
 					'unique_key' => false,
 					'key' => true,
@@ -11981,6 +12606,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'MEDIUMTEXT',
 					'default' => 'EMPTY',
+					'GUID' => '7d49445c-4e95-4fd5-a2a4-a20bbcd4d812',
 					'null_switch' => 'NOT NULL',
 					'unique_key' => false,
 					'key' => false,
@@ -12014,6 +12640,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'VARCHAR(36)',
 					'default' => '',
+					'GUID' => 'd5aeaa99-9fba-4b67-b850-68e19256520a',
 					'null_switch' => 'NULL',
 					'unique_key' => false,
 					'key' => true,
@@ -12038,6 +12665,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'TEXT',
 					'default' => 'EMPTY',
+					'GUID' => 'fe780ac8-ed30-481c-8700-84472caa0072',
 					'null_switch' => 'NOT NULL',
 					'unique_key' => false,
 					'key' => false,
@@ -12055,6 +12683,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'TEXT',
 					'default' => 'EMPTY',
+					'GUID' => 'e5f50226-6749-4bd3-9aa1-cf3db6ce448d',
 					'null_switch' => 'NOT NULL',
 					'unique_key' => false,
 					'key' => false,
@@ -12072,6 +12701,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'TEXT',
 					'default' => 'EMPTY',
+					'GUID' => '483f2c40-2348-4168-817b-471f5ba96984',
 					'null_switch' => 'NULL',
 					'unique_key' => false,
 					'key' => false,
@@ -12089,6 +12719,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'TEXT',
 					'default' => 'EMPTY',
+					'GUID' => '143f8b3d-5b58-4b26-aaad-a5f14a57865b',
 					'null_switch' => 'NULL',
 					'unique_key' => false,
 					'key' => false,
@@ -12106,6 +12737,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'TEXT',
 					'default' => 'EMPTY',
+					'GUID' => 'c3474b9a-4677-4574-bda3-a4865569ac18',
 					'null_switch' => 'NOT NULL',
 					'unique_key' => false,
 					'key' => false,

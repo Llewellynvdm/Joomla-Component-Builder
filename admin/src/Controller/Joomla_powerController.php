@@ -369,7 +369,7 @@ class Joomla_powerController extends FormController
 	 */
 	public function batch($model = null)
 	{
-		Session::checkToken() or jexit(Text::_('JINVALID_TOKEN'));
+		Session::checkToken() or exit(Text::_('JINVALID_TOKEN'));
 
 		// Set the model
 		$model = $this->getModel('Joomla_power', '', []);

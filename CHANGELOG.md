@@ -1,4 +1,12 @@
-# v5.1.1-alpha1
+# v5.1.1-alpha2
+
+- Adds the ModalSelect fieldtype to Joomla Component Builder - J5
+- Adds the Data Import Function to the Demo Component.
+- Adds new country related tables and fields to the Demo Component.
+- Resolves the Database Updating issue in the compiler. #1212,#1209
+- Adds the Component Commands Plugin to the CLI for Import of spreadsheet data-sets.
+
+# v5.1.1-alpha
 
 - Move all banners to GitHub.
 - Adds library phpspreadsheet to JCB.

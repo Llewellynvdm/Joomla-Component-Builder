@@ -19,6 +19,7 @@ use VDM\Joomla\Componentbuilder\Compiler\Field\Groups;
 use VDM\Joomla\Componentbuilder\Compiler\Field\Name;
 use VDM\Joomla\Componentbuilder\Compiler\Field\TypeName;
 use VDM\Joomla\Componentbuilder\Compiler\Field\Attributes;
+use VDM\Joomla\Componentbuilder\Compiler\Field\ModalSelect;
 use VDM\Joomla\Componentbuilder\Compiler\Creator\CustomFieldTypeFile;
 use VDM\Joomla\Componentbuilder\Compiler\Utilities\Counter;
 use VDM\Joomla\Utilities\ArrayHelper;
@@ -95,6 +96,14 @@ final class FieldString implements Fieldtypeinterface
 	protected Attributes $attributes;
 
 	/**
+	 * The ModalSelect Class.
+	 *
+	 * @var   ModalSelect
+	 * @since 5.2.1
+	 */
+	protected ModalSelect $modalselect;
+
+	/**
 	 * The CustomFieldTypeFile Class.
 	 *
 	 * @var   CustomFieldTypeFile
@@ -120,6 +129,7 @@ final class FieldString implements Fieldtypeinterface
 	 * @param Name                  $name                  The Name Class.
 	 * @param TypeName              $typename              The TypeName Class.
 	 * @param Attributes            $attributes            The Attributes Class.
+	 * @param ModalSelect           $modalselect           The ModalSelect Class.
 	 * @param CustomFieldTypeFile   $customfieldtypefile   The CustomFieldTypeFile Class.
 	 * @param Counter               $counter               The Counter Class.
 	 *
@@ -127,7 +137,7 @@ final class FieldString implements Fieldtypeinterface
 	 */
 	public function __construct(Config $config, Language $language, Field $field,
 		Groups $groups, Name $name, TypeName $typename,
-		Attributes $attributes,
+		Attributes $attributes, ModalSelect $modalselect,
 		CustomFieldTypeFile $customfieldtypefile,
 		Counter $counter)
 	{
@@ -138,6 +148,7 @@ final class FieldString implements Fieldtypeinterface
 		$this->name = $name;
 		$this->typename = $typename;
 		$this->attributes = $attributes;
+		$this->modalselect = $modalselect;
 		$this->customfieldtypefile = $customfieldtypefile;
 		$this->counter = $counter;
 	}
@@ -591,6 +602,13 @@ final class FieldString implements Fieldtypeinterface
 							{
 								//reset options array
 								$r_optionArray = array();
+
+								// special treatment for Modal Select
+								if ($r_typeName === 'ModalSelect')
+								{
+									$r_fieldValues['custom'] = $this->modalselect->extract($r_fieldValues);
+								}
+
 								if ($this->groups->check(
 									$r_typeName, 'option'
 								))
@@ -740,7 +758,7 @@ final class FieldString implements Fieldtypeinterface
 							$fieldData['settings']
 						))
 						{
-							$r_name      = $this->name->get(
+							$r_name = $this->name->get(
 								$fieldData, $nameListCode, $_resolverKey
 							);
 							$r_typeName  = $this->typename->get($fieldData);
@@ -763,6 +781,13 @@ final class FieldString implements Fieldtypeinterface
 							{
 								//reset options array
 								$r_optionArray = array();
+
+								// special treatment for Modal Select
+								if ($r_typeName === 'ModalSelect')
+								{
+									$r_fieldValues['custom'] = $this->modalselect->extract($r_fieldValues);
+								}
+
 								if ($this->groups->check(
 									$r_typeName, 'option'
 								))

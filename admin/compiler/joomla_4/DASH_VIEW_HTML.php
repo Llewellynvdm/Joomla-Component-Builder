@@ -71,18 +71,18 @@ class HtmlView extends BaseHtmlView
 	protected function addToolbar(): void
 	{
 		$canDo = ###Component###Helper::getActions('###component###');
-		ToolbarHelper::title(Text::_('COM_###COMPONENT###_DASHBOARD'), 'grid-2');
+		Joomla___0c1a176a_304f_433a_8233_37d01ff87815___Power::title(Joomla___ba6326ef_cb79_4348_80f4_ab086082e3c5___Power::_('COM_###COMPONENT###_DASHBOARD'), 'grid-2');
 
 		// set help url for this view if found
 		$this->help_url = ###Component###Helper::getHelpUrl('###component###');
 		if (Super___1f28cb53_60d9_4db1_b517_3c7dc6b429ef___Power::check($this->help_url))
 		{
-			ToolbarHelper::help('COM_###COMPONENT###_HELP_MANAGER', false, $this->help_url);
+			Joomla___0c1a176a_304f_433a_8233_37d01ff87815___Power::help('COM_###COMPONENT###_HELP_MANAGER', false, $this->help_url);
 		}
 
 		if ($canDo->get('core.admin') || $canDo->get('core.options'))
 		{
-			ToolbarHelper::preferences('com_###component###');
+			Joomla___0c1a176a_304f_433a_8233_37d01ff87815___Power::preferences('com_###component###');
 		}
 	}
 
@@ -95,18 +95,18 @@ class HtmlView extends BaseHtmlView
 	protected function _prepareDocument(): void
 	{
 		// set page title
-		$this->getDocument()->setTitle(Text::_('COM_###COMPONENT###_DASHBOARD'));
+		$this->getDocument()->setTitle(Joomla___ba6326ef_cb79_4348_80f4_ab086082e3c5___Power::_('COM_###COMPONENT###_DASHBOARD'));
 		// add manifest to page JavaScript
 		$this->getDocument()->addScriptDeclaration("var manifest = JSON.parse(" . json_encode($this->manifest) . ");", "text/javascript");
 		// add styles
 		foreach ($this->styles as $style)
 		{
-			Html::_('stylesheet', $style, ['version' => 'auto']);
+			Joomla___34690c75_1090_47eb_8c06_7228dc7eedd6___Power::_('stylesheet', $style, ['version' => 'auto']);
 		}
 		// add scripts
 		foreach ($this->scripts as $script)
 		{
-			Html::_('script', $script, ['version' => 'auto']);
+			Joomla___34690c75_1090_47eb_8c06_7228dc7eedd6___Power::_('script', $script, ['version' => 'auto']);
 		}
 	}
 }

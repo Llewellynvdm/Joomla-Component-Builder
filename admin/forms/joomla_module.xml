@@ -735,16 +735,25 @@
 					max="100"
 					nested_depth="1">
 					<form hidden="true" name="list_fields_modal" repeat="true">
-						<!-- Field Field. Type: Fields. (custom) -->
+						<!-- Field Field. Type: Modalselect. (custom) -->
 						<field
-							type="fields"
+							type="ModalSelect"
 							name="field"
 							label="COM_COMPONENTBUILDER_JOOMLA_MODULE_FIELD_LABEL"
-							description="COM_COMPONENTBUILDER_JOOMLA_MODULE_FIELD_DESCRIPTION"
-							layout="joomla.form.field.list-fancy-select"
-							multiple="false"
+							sql_title_table="#__componentbuilder_field"
+							sql_title_column="name"
+							sql_title_key="guid"
+							urlSelect="index.php?option=com_componentbuilder&amp;view=fields&amp;layout=modal&amp;tmpl=component&amp;titleKey=guid"
+							titleSelect="COM_COMPONENTBUILDER_JOOMLA_MODULE_FIELD_TITLESELECT"
+							iconSelect="icon-lamp"
+							select="true"
+							new="false"
+							edit="false"
+							clear="true"
 							required="true"
-							button="false"
+							class="input-large"
+							description="COM_COMPONENTBUILDER_JOOMLA_MODULE_FIELD_DESCRIPTION"
+							hint="COM_COMPONENTBUILDER_JOOMLA_MODULE_FIELD_HINT"
 						/>
 						<!-- Custom_value Field. Type: Textarea. (joomla) -->
 						<field

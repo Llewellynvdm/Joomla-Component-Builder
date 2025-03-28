@@ -328,6 +328,12 @@
 					"newName": "default.php",
 					"type": "single"
 				},
+				"ADMIN_VIEW_MODAL.php": {
+					"path": "c0mp0n3nt/admin/tmpl/[[[name]]]",
+					"rename": "new",
+					"newName": "modal.php",
+					"type": "single"
+				},
 				"ADMIN_VIEW_MODEL.php": {
 					"path": "c0mp0n3nt/admin/src/Model",
 					"rename": "new",
@@ -384,6 +390,12 @@
 					"path": "c0mp0n3nt/admin/tmpl/[[[name]]]",
 					"rename": "new",
 					"newName": "default.php",
+					"type": "list"
+				},
+				"ADMIN_VIEWS_MODAL.php": {
+					"path": "c0mp0n3nt/admin/tmpl/[[[name]]]",
+					"rename": "new",
+					"newName": "modal.php",
 					"type": "list"
 				},
 				"ADMIN_VIEWS_EMPTYSTATE.php": {
@@ -463,6 +475,12 @@
 					"rename": "new",
 					"newName": "[[[Key]]]Field.php",
 					"type": "fieldcustom"
+				},
+				"FORM_MODAL_SELECT_FIELD.php": {
+					"path": "c0mp0n3nt/admin/src/Field",
+					"rename": "new",
+					"newName": "ModalSelectField.php",
+					"type": "fieldmodalselect_override"
 				},
 				"FORM_LIST_FIELD.php": {
 					"path": "c0mp0n3nt/admin/src/Field",
@@ -742,6 +760,12 @@
 					"rename": "new",
 					"newName": "[[[Key]]]Field.php",
 					"type": "fieldcustom"
+				},
+				"SITE_FORM_MODAL_SELECT_FIELD.php": {
+					"path": "c0mp0n3nt/site/src/Field",
+					"rename": "new",
+					"newName": "ModalSelectField.php",
+					"type": "fieldmodalselect_override"
 				},
 				"SITE_FORM_LIST_FIELD.php": {
 					"path": "c0mp0n3nt/site/src/Field",

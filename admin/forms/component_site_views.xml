@@ -134,16 +134,25 @@
 			default=""
 			icon="list">
 			<form hidden="true" name="list_addsite_views_modal" repeat="true">
-				<!-- Siteview Field. Type: Siteviews. (custom) -->
+				<!-- Siteview Field. Type: Modalselect. (custom) -->
 				<field
-					type="siteviews"
+					type="ModalSelect"
 					name="siteview"
 					label="COM_COMPONENTBUILDER_COMPONENT_SITE_VIEWS_SITEVIEW_LABEL"
-					description="COM_COMPONENTBUILDER_COMPONENT_SITE_VIEWS_SITEVIEW_DESCRIPTION"
-					layout="joomla.form.field.list-fancy-select"
-					multiple="false"
+					sql_title_table="#__componentbuilder_site_view"
+					sql_title_column="system_name"
+					sql_title_key="guid"
+					urlSelect="index.php?option=com_componentbuilder&amp;view=site_views&amp;layout=modal&amp;tmpl=component&amp;titleKey=guid"
+					titleSelect="COM_COMPONENTBUILDER_COMPONENT_SITE_VIEWS_SITEVIEW_TITLESELECT"
+					iconSelect="icon-palette"
+					select="true"
+					new="false"
+					edit="false"
+					clear="true"
 					required="true"
-					button="false"
+					class="input-large"
+					description="COM_COMPONENTBUILDER_COMPONENT_SITE_VIEWS_SITEVIEW_DESCRIPTION"
+					hint="COM_COMPONENTBUILDER_COMPONENT_SITE_VIEWS_SITEVIEW_HINT"
 				/>
 				<!-- Menu Field. Type: Checkbox. (joomla) -->
 				<field

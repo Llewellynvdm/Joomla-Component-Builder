@@ -24,6 +24,7 @@ use Joomla\CMS\Router\Route;
 use Joomla\CMS\Session\Session;
 use Joomla\CMS\Uri\Uri;
 use VDM\Component\Componentbuilder\Administrator\Helper\ComponentbuilderHelper;
+use VDM\Joomla\Utilities\GuidHelper;
 use VDM\Joomla\Componentbuilder\Power\Factory as PowerFactory;
 
 // No direct access to this file
@@ -79,6 +80,50 @@ class PowerController extends FormController
 	 */
 	protected int $refid;
 
+
+	/**
+	 * Method to edit an existing record.
+	 *
+	 * @param   string  $key     The name of the primary key of the URL variable.
+	 * @param   string  $urlVar  The name of the URL variable if different from the primary key
+	 *                           (sometimes required to avoid router collisions).
+	 *
+	 * @return  boolean  True if access level check and checkout passes, false otherwise.
+	 *
+	 * @since   1.6
+	 */
+	public function edit($key = null, $urlVar = null)
+	{
+		// for modal title key selection (unique key to do mapping)
+		$titleKey = $this->input->get('titleKey', 'id', 'word');
+		$guid = null;
+		$value = null;
+
+ 		// Determine the name of the primary key for the data.
+		if (empty($key))
+		{
+			$model = $this->getModel();
+			$table = $model->getTable();
+			$key = $table->getKeyName();
+		}
+
+		if ($titleKey === 'guid')
+		{
+			$guid = $this->input->get('guid', null, 'string');
+		}
+
+		if ($guid !== null && GuidHelper::valid($guid))
+		{
+			$value = GuidHelper::item($guid, 'power', 'a.' . $key, 'componentbuilder');
+		}
+
+		if ($value !== null)
+		{
+			$this->input->set($key, $value);
+		}
+
+		return parent::edit($key, $urlVar);
+	}
 
 	/**
 	 * Resets the specified power.
@@ -369,7 +414,7 @@ class PowerController extends FormController
 	 */
 	public function batch($model = null)
 	{
-		Session::checkToken() or jexit(Text::_('JINVALID_TOKEN'));
+		Session::checkToken() or exit(Text::_('JINVALID_TOKEN'));
 
 		// Set the model
 		$model = $this->getModel('Power', '', []);

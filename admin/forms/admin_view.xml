@@ -705,16 +705,25 @@
 			description="COM_COMPONENTBUILDER_ADMIN_VIEW_ADDLINKED_VIEWS_DESCRIPTION"
 			icon="list">
 			<form hidden="true" name="list_addlinked_views_modal" repeat="true">
-				<!-- Adminview Field. Type: Adminviews. (custom) -->
+				<!-- Adminview Field. Type: Modalselect. (custom) -->
 				<field
-					type="adminviews"
+					type="ModalSelect"
 					name="adminview"
 					label="COM_COMPONENTBUILDER_ADMIN_VIEW_ADMINVIEW_LABEL"
-					description="COM_COMPONENTBUILDER_ADMIN_VIEW_ADMINVIEW_DESCRIPTION"
-					layout="joomla.form.field.list-fancy-select"
-					multiple="false"
+					sql_title_table="#__componentbuilder_admin_view"
+					sql_title_column="system_name"
+					sql_title_key="guid"
+					urlSelect="index.php?option=com_componentbuilder&amp;view=admin_views&amp;layout=modal&amp;tmpl=component&amp;titleKey=guid"
+					titleSelect="COM_COMPONENTBUILDER_ADMIN_VIEW_ADMINVIEW_TITLESELECT"
+					iconSelect="icon-stack"
+					select="true"
+					new="false"
+					edit="false"
+					clear="true"
 					required="true"
-					button="false"
+					class="input-large"
+					description="COM_COMPONENTBUILDER_ADMIN_VIEW_ADMINVIEW_DESCRIPTION"
+					hint="COM_COMPONENTBUILDER_ADMIN_VIEW_ADMINVIEW_HINT"
 				/>
 				<!-- Tab Field. Type: Integer. (joomla) -->
 				<field

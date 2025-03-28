@@ -689,6 +689,8 @@ final class Builders
 			// to identify the field
 			$this->databasetables->set($nameSingleCode . '.' . $name . '.ID',
 				$field['settings']->id);
+			$this->databasetables->set($nameSingleCode . '.' . $name . '.GUID',
+				$field['settings']->guid);
 			$this->databasetables->set($nameSingleCode . '.' . $name . '.null_switch',
 				$field['settings']->null_switch);
 			// set index types
@@ -912,6 +914,7 @@ final class Builders
 			&& $typeName != 'repeatable'
 			&& $typeName != 'subform')
 		{
+			// do not add if extends is empty
 			$this->customfield->add($nameListCode, [
 				'type'   => $typeName,
 				'code'   => $name,

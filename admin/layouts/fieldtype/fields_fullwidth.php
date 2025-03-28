@@ -103,13 +103,29 @@ $can = ComponentbuilderHelper::getActions('field');
 	?>
 	<tr>
 		<td>
-			<?php if ($canDo->get('field.edit')): ?>
+			<?php if (!$displayData->isModal && $canDo->get('field.edit')): ?>
 				<a href="<?php echo $edit; ?>&id=<?php echo $item->id; ?><?php echo $ref; ?>"><?php echo $displayData->escape($item->name); ?></a>
 				<?php if ($item->checked_out): ?>
 					<?php echo Html::_('jgrid.checkedout', $i, $userChkOut->name, $item->checked_out_time, 'fields.', $canCheckin); ?>
 				<?php endif; ?>
 			<?php else: ?>
-				<?php echo $displayData->escape($item->name); ?>
+				<?php if (!$displayData->isModal): ?>
+					<?php echo $displayData->escape($item->name); ?>
+				<?php else: ?>
+					<?php
+						$link = "{$edit}&id={$item->id}";
+						$dataId = $item->{$displayData->getModalTitleKey()} ?? 0;
+						$itemHtml = '<a href="' . $displayData->escape($link, false) . '">' . $displayData->escape($item->name, false) . '</a>';
+						$attribs = 'data-content-select data-content-type="com_componentbuilder.field"'
+							. ' data-id="' . $dataId . '"'
+							. ' data-title="' . $displayData->escape($item->name, false) . '"'
+							. ' data-uri="' . $displayData->escape($link, false) . '"'
+							. ' data-html="' . $displayData->escape($itemHtml, false) . '"';
+					?>
+					<a class="select-link" href="javascript:void(0)" <?php echo $attribs; ?>>
+						<?php echo $displayData->escape($item->name); ?>
+					</a>
+				<?php endif; ?>
 			<?php endif; ?>
 		</td>
 		<td>
@@ -128,7 +144,7 @@ $can = ComponentbuilderHelper::getActions('field');
 			<?php echo Text::_($item->store); ?>
 		</td>
 		<td>
-			<?php if ($user->authorise('core.edit', 'com_componentbuilder.field.category.' . (int)$item->catid)): ?>
+			<?php if (!$displayData->isModal && $user->authorise('core.edit', 'com_componentbuilder.field.category.' . (int)$item->catid)): ?>
 				<a href="index.php?option=com_categories&task=category.edit&id=<?php echo (int)$item->catid; ?>&extension=com_componentbuilder.field"><?php echo $displayData->escape($item->category_title); ?></a>
 			<?php else: ?>
 				<?php echo $displayData->escape($item->category_title); ?>

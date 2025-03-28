@@ -445,6 +445,11 @@ class Infusion extends Interpretation
 						$this->setAddToolBar($view)
 					);
 
+					// ADDMODALTOOLBAR <<<DYNAMIC>>>
+					CFactory::_('Compiler.Builder.Content.Multi')->set($nameSingleCode . '|ADDMODALTOOLBAR',
+						$this->setAddModalToolBar($view)
+					);
+
 					// set the script for this view
 					$this->buildTheViewScript($view);
 
@@ -945,6 +950,14 @@ class Infusion extends Interpretation
 						)
 					);
 
+					// VIEWS_MODAL_BODY <<<DYNAMIC>>>
+					CFactory::_('Compiler.Builder.Content.Multi')->set($nameListCode . '|VIEWS_MODAL_BODY',
+						$this->setModalViewsBody(
+							$nameSingleCode,
+							$nameListCode
+						)
+					);
+
 					// LISTHEAD <<<DYNAMIC>>>
 					CFactory::_('Compiler.Builder.Content.Multi')->set($nameListCode . '|LISTHEAD',
 						$this->setListHead(
@@ -1043,6 +1056,13 @@ class Infusion extends Interpretation
 					CFactory::_('Compiler.Builder.Content.Multi')->set($nameListCode . '|ADMIN_VIEWS_HEADER',
 						CFactory::_('Header')->get(
 							'admin.views', $nameListCode
+						)
+					);
+
+					// ADMIN_VIEWS_MODAL_HEADER <<<DYNAMIC>>> add the header details for the views
+					CFactory::_('Compiler.Builder.Content.Multi')->set($nameListCode . '|ADMIN_VIEWS_MODAL_HEADER',
+						CFactory::_('Header')->get(
+							'admin.views.modal', $nameListCode
 						)
 					);
 

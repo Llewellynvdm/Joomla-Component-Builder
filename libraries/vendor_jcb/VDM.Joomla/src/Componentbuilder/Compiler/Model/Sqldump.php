@@ -199,82 +199,88 @@ class Sqldump
 				else
 				{
 					// see where
-					// var_dump($view);
-					// jexit();
+					// var_dump($view, $view_guid);
+					// exit;
 				}
 			}
 
 			// check if we should run query
 			if ($run_query)
 			{
-				// now get the data
-				$this->db->setQuery($query);
-				$this->db->execute();
-				if ($this->db->getNumRows())
-				{
-					// get the data
-					$data = $this->db->loadObjectList();
-
-					// start building the MySql dump
-					$dump = "--";
-					$dump .= PHP_EOL . "-- Dumping data for table `#__"
-						. Placefix::_("component") . "_" . $view
-						. "`";
-					$dump .= PHP_EOL . "--";
-					$dump .= PHP_EOL . PHP_EOL . "INSERT INTO `#__" . Placefix::_("component") . "_" . $view . "` (";
-					foreach ($data as $line)
+				try{
+					// now get the data
+					$this->db->setQuery($query);
+					$this->db->execute();
+					if ($this->db->getNumRows())
 					{
-						$comaSet = 0;
-						foreach ($line as $fieldName => $fieldValue)
+						// get the data
+						$data = $this->db->loadObjectList();
+
+						// start building the MySql dump
+						$dump = "--";
+						$dump .= PHP_EOL . "-- Dumping data for table `#__"
+							. Placefix::_("component") . "_" . $view
+							. "`";
+						$dump .= PHP_EOL . "--";
+						$dump .= PHP_EOL . PHP_EOL . "INSERT INTO `#__" . Placefix::_("component") . "_" . $view . "` (";
+						foreach ($data as $line)
 						{
-							if ($comaSet == 0)
+							$comaSet = 0;
+							foreach ($line as $fieldName => $fieldValue)
 							{
-								$dump .= $this->db->quoteName($fieldName);
+								if ($comaSet == 0)
+								{
+									$dump .= $this->db->quoteName($fieldName);
+								}
+								else
+								{
+									$dump .= ", " . $this->db->quoteName(
+											$fieldName
+										);
+								}
+								$comaSet++;
+							}
+							break;
+						}
+						$dump .= ") VALUES";
+						$coma = 0;
+						foreach ($data as $line)
+						{
+							if ($coma == 0)
+							{
+								$dump .= PHP_EOL . "(";
 							}
 							else
 							{
-								$dump .= ", " . $this->db->quoteName(
-										$fieldName
-									);
+								$dump .= "," . PHP_EOL . "(";
 							}
-							$comaSet++;
-						}
-						break;
-					}
-					$dump .= ") VALUES";
-					$coma = 0;
-					foreach ($data as $line)
-					{
-						if ($coma == 0)
-						{
-							$dump .= PHP_EOL . "(";
-						}
-						else
-						{
-							$dump .= "," . PHP_EOL . "(";
-						}
-						$comaSet = 0;
-						foreach ($line as $fieldName => $fieldValue)
-						{
-							if ($comaSet == 0)
+							$comaSet = 0;
+							foreach ($line as $fieldName => $fieldValue)
 							{
-								$dump .= $this->escape($fieldValue);
+								if ($comaSet == 0)
+								{
+									$dump .= $this->escape($fieldValue);
+								}
+								else
+								{
+									$dump .= ", " . $this->escape(
+											$fieldValue
+										);
+								}
+								$comaSet++;
 							}
-							else
-							{
-								$dump .= ", " . $this->escape(
-										$fieldValue
-									);
-							}
-							$comaSet++;
+							$dump .= ")";
+							$coma++;
 						}
-						$dump .= ")";
-						$coma++;
-					}
-					$dump .= ";";
+						$dump .= ";";
 
-					// return build dump query
-					return $dump;
+						// return build dump query
+						return $dump;
+					}
+				} catch (\Throwable $e) {
+					// see where
+					// var_dump($view, $view_guid);
+					// exit;
 				}
 			}
 		}

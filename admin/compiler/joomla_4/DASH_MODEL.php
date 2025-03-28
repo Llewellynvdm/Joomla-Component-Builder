@@ -51,7 +51,7 @@ class ###Component###Model extends ListModel
 	public function getIcons()
 	{
 		// load user for access menus
-		$user = Factory::getApplication()->getIdentity();
+		$user = Joomla___39403062_84fb_46e0_bac4_0023f766e827___Power::getApplication()->getIdentity();
 		// reset icon array
 		$icons  = [];
 		// view groups array

@@ -133,16 +133,25 @@
 			default=""
 			icon="list">
 			<form hidden="true" name="list_addcustom_admin_views_modal" repeat="true">
-				<!-- Customadminview Field. Type: Customadminviews. (custom) -->
+				<!-- Customadminview Field. Type: Modalselect. (custom) -->
 				<field
-					type="customadminviews"
+					type="ModalSelect"
 					name="customadminview"
 					label="COM_COMPONENTBUILDER_COMPONENT_CUSTOM_ADMIN_VIEWS_CUSTOMADMINVIEW_LABEL"
-					description="COM_COMPONENTBUILDER_COMPONENT_CUSTOM_ADMIN_VIEWS_CUSTOMADMINVIEW_DESCRIPTION"
-					layout="joomla.form.field.list-fancy-select"
-					multiple="false"
+					sql_title_table="#__componentbuilder_custom_admin_view"
+					sql_title_column="system_name"
+					sql_title_key="guid"
+					urlSelect="index.php?option=com_componentbuilder&amp;view=custom_admin_views&amp;layout=modal&amp;tmpl=component&amp;titleKey=guid"
+					titleSelect="COM_COMPONENTBUILDER_COMPONENT_CUSTOM_ADMIN_VIEWS_CUSTOMADMINVIEW_TITLESELECT"
+					iconSelect="icon-screen"
+					select="true"
+					new="false"
+					edit="false"
+					clear="true"
 					required="true"
-					button="false"
+					class="input-large"
+					description="COM_COMPONENTBUILDER_COMPONENT_CUSTOM_ADMIN_VIEWS_CUSTOMADMINVIEW_DESCRIPTION"
+					hint="COM_COMPONENTBUILDER_COMPONENT_CUSTOM_ADMIN_VIEWS_CUSTOMADMINVIEW_HINT"
 				/>
 				<!-- Icomoon Field. Type: List. (joomla) -->
 				<field
