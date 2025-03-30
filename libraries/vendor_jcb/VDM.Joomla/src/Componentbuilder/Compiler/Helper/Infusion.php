@@ -420,6 +420,15 @@ class Infusion extends Interpretation
 						'jcb_ce_onBeforeBuildAdminEditViewContent', [&$view, &$nameSingleCode, &$nameListCode]
 					);
 
+					// Here we set defaults
+					// The real values are set in ModalSelect(4fc020dc-3137-478d-8d42-0571a75b77b5)
+
+					// add the Title Key for the Modal
+					CFactory::_('Compiler.Builder.Content.Multi')->set($nameSingleCode . '|SQL_TITLE_KEY', 'id');
+
+					// add the Title Column for the Modal
+					CFactory::_('Compiler.Builder.Content.Multi')->set($nameSingleCode . '|SQL_TITLE_COLUMN', 'name');
+
 					// FIELDSETS <<<DYNAMIC>>>
 					CFactory::_('Compiler.Builder.Content.Multi')->set($nameSingleCode . '|FIELDSETS',
 						CFactory::_('Compiler.Creator.Fieldset')->get(

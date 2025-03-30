@@ -328,12 +328,6 @@
 					"newName": "default.php",
 					"type": "single"
 				},
-				"ADMIN_VIEW_MODAL.php": {
-					"path": "c0mp0n3nt/admin/tmpl/[[[name]]]",
-					"rename": "new",
-					"newName": "modal.php",
-					"type": "single"
-				},
 				"ADMIN_VIEW_MODEL.php": {
 					"path": "c0mp0n3nt/admin/src/Model",
 					"rename": "new",
@@ -390,12 +384,6 @@
 					"path": "c0mp0n3nt/admin/tmpl/[[[name]]]",
 					"rename": "new",
 					"newName": "default.php",
-					"type": "list"
-				},
-				"ADMIN_VIEWS_MODAL.php": {
-					"path": "c0mp0n3nt/admin/tmpl/[[[name]]]",
-					"rename": "new",
-					"newName": "modal.php",
 					"type": "list"
 				},
 				"ADMIN_VIEWS_EMPTYSTATE.php": {
@@ -481,6 +469,24 @@
 					"rename": "new",
 					"newName": "ModalSelectField.php",
 					"type": "fieldmodalselect_override"
+				},
+				"ADMIN_VIEWS_MODAL.php": {
+					"path": "c0mp0n3nt/admin/tmpl/[[[name]]]",
+					"rename": "new",
+					"newName": "modal.php",
+					"type": "list_modal"
+				},
+				"ADMIN_VIEW_MODAL.php": {
+					"path": "c0mp0n3nt/admin/tmpl/[[[name]]]",
+					"rename": "new",
+					"newName": "modal.php",
+					"type": "single_modal"
+				},
+				"ADMIN_VIEW_MODAL_RETURN.php": {
+					"path": "c0mp0n3nt/admin/tmpl/[[[name]]]",
+					"rename": "new",
+					"newName": "modalreturn.php",
+					"type": "single_modal"
 				},
 				"FORM_LIST_FIELD.php": {
 					"path": "c0mp0n3nt/admin/src/Field",
@@ -749,6 +755,18 @@
 					"rename": "new",
 					"newName": "HtmlView.php",
 					"type": "edit"
+				},
+				"SITE_ADMIN_VIEW_MODAL.php": {
+					"path": "c0mp0n3nt/site/tmpl/[[[name]]]",
+					"rename": "new",
+					"newName": "modal.php",
+					"type": "edit_modal"
+				},
+				"SITE_ADMIN_VIEW_MODAL_RETURN.php": {
+					"path": "c0mp0n3nt/site/tmpl/[[[name]]]",
+					"rename": "new",
+					"newName": "modalreturn.php",
+					"type": "edit_modal"
 				},
 				"view_site_edit.css": {
 					"path": "c0mp0n3nt/site/assets/css",

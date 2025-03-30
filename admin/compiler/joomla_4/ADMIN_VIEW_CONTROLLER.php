@@ -212,6 +212,15 @@ class ###View###Controller extends FormController
 					'index.php?option=' . $this->option . $redirect, false
 				)
 			);
+		}
+		// When editing in modal then redirect to modalreturn layout
+		elseif ($cancel && $this->input->get('layout') === 'modal')
+		{
+			$id = $this->input->get('id');
+			$return = 'index.php?option=' . $this->option . '&view=' . $this->view_item . $this->getRedirectToItemAppend($id)
+				. '&layout=modalreturn&from-task=cancel';
+
+			$this->setRedirect(Route::_($return, false));
 		}###JCONTROLLERFORM_AFTERCANCEL###
 		return $cancel;
 	}
@@ -294,6 +303,15 @@ class ###View###Controller extends FormController
 	 * @since   11.1
 	 */
 	protected function postSaveHook(BaseDatabaseModel $model, $validData = [])
-	{###POSTSAVEHOOK###
+	{
+		if ($this->input->get('layout') === 'modal' && $this->task === 'save')
+		{
+			// When editing in modal then redirect to modalreturn layout
+			$id = $model->getState('###view###.id', '');
+			$return = 'index.php?option=' . $this->option . '&view=' . $this->view_item . $this->getRedirectToItemAppend($id)
+				. '&layout=modalreturn&from-task=save';
+
+			$this->setRedirect(Route::_($return, false));
+		}###POSTSAVEHOOK###
 	}
 }

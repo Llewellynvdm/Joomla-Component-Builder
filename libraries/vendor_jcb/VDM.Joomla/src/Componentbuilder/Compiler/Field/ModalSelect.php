@@ -112,6 +112,7 @@ final class ModalSelect
 		}
 
 		$sql_title_key = $fieldAttributes['sql_title_key'] ?? 'id';
+		$sql_title_column = $fieldAttributes['sql_title_column'] ?? 'id';
 
 		// if one field is not id, we add an override to the ModalSelectField as a FIX
 		if (!$this->addedFix && $sql_title_key !== 'id')
@@ -130,6 +131,15 @@ final class ModalSelect
 			$this->addedFix = true;
 		}
 
+		// make sure we have the target view code name
+		$view ??= 'error';
+
+		// add the Title Key for the Modal
+		$this->contentmulti->set($view . '|SQL_TITLE_KEY', $sql_title_key);
+
+		// add the Title Column for the Modal
+		$this->contentmulti->set($view . '|SQL_TITLE_COLUMN', $sql_title_column);
+
 		return [
 			'modal_select' => true,
 			'urlSelect' => $fieldAttributes['urlSelect'] ?? '',
@@ -138,9 +148,9 @@ final class ModalSelect
 			'iconSelect' => $fieldAttributes['iconSelect'] ?? '',
 			'table' => $field_target_table,
 			'id' => $sql_title_key,
-			'text' => $fieldAttributes['sql_title_column'] ?? '',
+			'text' => $sql_title_column,
 			'component' => $component ?? 'error',
-			'view' => $view ?? 'error',
+			'view' => $view,
 			'views' => $views ?? 'error',
 			'button' => false,
 			'extends' => ''

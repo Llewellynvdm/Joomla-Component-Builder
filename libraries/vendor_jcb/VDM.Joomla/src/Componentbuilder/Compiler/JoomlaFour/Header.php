@@ -200,7 +200,7 @@ final class Header implements HeaderInterface
 		$headers = $this->getHeaders($context);
 
 		// add to all except the helper classes
-		if ('admin.helper' !== $context && 'site.helper' !== $context)
+		if ('admin.helper' !== $context && 'site.helper' !== $context && 'plugin.extension.header' !== $context && 'plugin.provider.header' !== $context)
 		{
 			$target = 'Administrator';
 			if ($this->config->get('build_target', 'admin') === 'site')
