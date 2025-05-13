@@ -16,9 +16,10 @@ use Joomla\CMS\Factory;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Filesystem\Folder;
 use Joomla\CMS\Application\CMSApplication;
-use VDM\Joomla\Gitea\Repository\Contents;
-use VDM\Joomla\Interfaces\Git\ApiInterface as Api;
+use VDM\Joomla\Interfaces\Remote\ConfigInterface as Config;
+use VDM\Joomla\Interfaces\Git\Repository\ContentsInterface as Contents;
 use VDM\Joomla\Componentbuilder\Network\Resolve;
+use VDM\Joomla\Interfaces\Git\ApiInterface as Api;
 use VDM\Joomla\Utilities\FileHelper;
 use VDM\Joomla\Utilities\JsonHelper;
 use VDM\Joomla\Interfaces\GrepInterface;
@@ -27,9 +28,9 @@ use VDM\Joomla\Interfaces\GrepInterface;
 /**
  * Global Resource Empowerment Platform
  * 
- *    The Grep feature will try to find your power in the repositories listed in the global
- *    Options of JCB in the super powers tab, and if it can't be found there will try the global core
- *    Super powers of JCB. All searches are performed according the [algorithm:cascading]
+ *    The Grep feature will try to find your power in the repositories
+ *    linked to this [area], and if it can't be found there will try the global core
+ *    Super Powers of JCB. All searches are performed according the [algorithm:cascading]
  *    See documentation for more details: https://git.vdm.dev/joomla/super-powers/wiki
  * 
  * @since 3.2.1
@@ -61,14 +62,6 @@ abstract class Grep implements GrepInterface
 	protected ?string $target = null;
 
 	/**
-	 * Order of global search
-	 *
-	 * @var    array
-	 * @since 3.2.1
-	 **/
-	protected array $order = ['local', 'remote'];
-
-	/**
 	 * The target branch field name ['read_branch', 'write_branch']
 	 *
 	 * @var    string
@@ -77,20 +70,20 @@ abstract class Grep implements GrepInterface
 	protected string $branch_field = 'read_branch';
 
 	/**
+	 * Order of global search
+	 *
+	 * @var    array
+	 * @since 3.2.1
+	 **/
+	protected array $order = ['local', 'remote'];
+
+	/**
 	 * The target default branch name
 	 *
 	 * @var    string|null
 	 * @since 3.2.2
 	 **/
 	protected ?string $branch_name = null;
-
-	/**
-	 * The index file path
-	 *
-	 * @var    string
-	 * @since 3.2.2
-	 */
-	protected string $index_path = 'index.json';
 
 	/**
 	 * The VDM global API base
@@ -117,6 +110,14 @@ abstract class Grep implements GrepInterface
 	protected Resolve $resolve;
 
 	/**
+	 * The ConfigInterface Class.
+	 *
+	 * @var   Config
+	 * @since 5.1.1
+	 */
+	protected Config $config;
+
+	/**
 	 * Joomla Application object
 	 *
 	 * @var    CMSApplication
@@ -127,24 +128,26 @@ abstract class Grep implements GrepInterface
 	/**
 	 * Constructor.
 	 *
-	 * @param Contents              $contents  The Gitea Repository Contents object.
-	 * @param Resolve               $resolve   The Resolve Class.
-	 * @param array                 $paths     The approved paths
-	 * @param string|null           $path      The local path
-	 * @param CMSApplication|null   $app       The CMS Application object.
+	 * @param Config                $config     The Config Class.
+	 * @param Contents              $contents   The Contents Class.
+	 * @param Resolve               $resolve    The Resolve Class.
+	 * @param array                 $paths      The approved paths
+	 * @param string|null           $path       The local path
+	 * @param CMSApplication|null   $app        The Application Class.
 	 *
-	 * @throws \Exception
-	 * @since 3.2.0
+	 * @since 3.2.1
 	 */
-	public function __construct(
-		Contents $contents, Resolve $resolve,
-		array $paths, ?string $path = null,
+	public function __construct(Config $config, Contents $contents,
+		Resolve $resolve, array $paths, ?string $path = null,
 		?CMSApplication $app = null)
 	{
+		$this->config = $config;
 		$this->contents = $contents;
 		$this->resolve = $resolve;
+
 		$this->paths = $paths;
 		$this->path = $path;
+
 		$this->app = $app ?: Factory::getApplication();
 
 		$this->initializeInstances();
@@ -173,6 +176,146 @@ abstract class Grep implements GrepInterface
 	}
 
 	/**
+	 * Get the path/repo object
+	 *
+	 * @param string   $guid  The target repository guid.
+	 *
+	 * @return object|null
+	 * @since  5.1.1
+	 */
+	public function getPath(string $guid): ?object
+	{
+		if (!is_array($this->paths) || $this->paths === [] || empty($guid))
+		{
+			return null;
+		}
+
+		foreach ($this->paths as $path)
+		{
+			if (!isset($path->guid) || $guid !== $path->guid)
+			{
+				continue;
+			}
+
+			return $path;
+		}
+
+		return null;
+	}
+
+	/**
+	 * Get all the available repos
+	 *
+	 * @return array|null
+	 * @since  5.1.1
+	 */
+	public function getPaths(): ?array
+	{
+		if (!is_array($this->paths) || $this->paths === [])
+		{
+			return null;
+		}
+
+		return $this->paths;
+	}
+
+	/**
+	 * Get all paths + indexes (the active set)
+	 *
+	 * @return array|null
+	 * @since  5.1.1
+	 */
+	public function getPathsIndexes(): ?array
+	{
+		if (!is_array($this->paths) || $this->paths === [])
+		{
+			return null;
+		}
+
+		$powers = [];
+		foreach ($this->paths as $path)
+		{
+			// Get remote index
+			$this->indexRemote($path);
+
+			if (isset($path->index) && is_object($path->index))
+			{
+				$powers[] = $path;
+			}
+		}
+
+		return $powers;
+	}
+
+	/**
+	 * Get the a path + indexes
+	 *
+	 * @param string $guid The unique identifier for the repo.
+	 *
+	 * @return object|null
+	 * @since  5.1.1
+	 */
+	public function getPathIndexes(string $guid): ?object
+	{
+		if (!is_array($this->paths) || $this->paths === [] || empty($guid))
+		{
+			return null;
+		}
+
+		foreach ($this->paths as $path)
+		{
+			if (!isset($path->guid) || $guid !== $path->guid)
+			{
+				continue;
+			}
+
+			// Get remote index
+			$this->indexRemote($path);
+
+			if (isset($path->index) && is_object($path->index))
+			{
+				return $path;
+			}
+		}
+
+		return null;
+	}
+
+	/**
+	 * Get the index of a repo
+	 *
+	 * @param string $guid The unique identifier for the repo.
+	 *
+	 * @return object|null
+	 * @since 3.2.2
+	 */
+	public function getRemoteIndex(string $guid): ?object
+	{
+		if (!is_array($this->paths) || $this->paths === [] || empty($guid))
+		{
+			return null;
+		}
+
+		foreach ($this->paths as $path)
+		{
+			if (!isset($path->guid) || $guid !== $path->guid)
+			{
+				continue;
+			}
+
+			// Get remote index
+			$this->indexRemote($path);
+
+			if (isset($path->index) && is_object($path->index))
+			{
+				return $path->index;
+			}
+		}
+
+		return null;
+	}
+
+	/**
 	 * Check if an item exists in any repo or in a specific repo.
 	 *
 	 * @param string $guid The unique identifier for the item.
@@ -192,34 +335,6 @@ abstract class Grep implements GrepInterface
 		}
 
 		return $this->itemExistsInAllRepos($guid, $order);
-	}
-
-	/**
-	 * Get all remote GUID's
-	 *
-	 * @return array|null
-	 * @since 3.2.0
-	 */
-	public function getRemoteGuid(): ?array
-	{
-		if (!is_array($this->paths) || $this->paths === [])
-		{
-			return null;
-		}
-
-		$powers = [];
-		foreach ($this->paths as $path)
-		{
-			// Get remote index
-			$this->indexRemote($path);
-
-			if (isset($path->index) && is_object($path->index))
-			{
-				$powers = array_merge($powers, array_keys((array) $path->index));
-			}
-		}
-
-		return empty($powers) ? null : array_unique($powers);
 	}
 
 	/**
@@ -258,41 +373,7 @@ abstract class Grep implements GrepInterface
 	 */
 	public function setIndexPath(string $indexPath): void
 	{
-		$this->index_path = $indexPath;
-	}
-
-	/**
-	 * Get the index of a repo
-	 *
-	 * @param string $guid The unique identifier for the repo.
-	 *
-	 * @return object|null
-	 * @since 3.2.2
-	 */
-	public function getRemoteIndex(string $guid): ?object
-	{
-		if (!is_array($this->paths) || $this->paths === [] || empty($guid))
-		{
-			return null;
-		}
-
-		foreach ($this->paths as $path)
-		{
-			if (!isset($path->guid) || $guid !== $path->guid)
-			{
-				continue;
-			}
-
-			// Get remote index
-			$this->indexRemote($path);
-
-			if (isset($path->index) && is_object($path->index))
-			{
-				return $path->index;
-			}
-		}
-
-		return null;
+		$this->config->setIndexPath($indexPath);
 	}
 
 	/**
@@ -506,7 +587,29 @@ abstract class Grep implements GrepInterface
 	 */
 	protected function getIndexPath(): string
 	{
-		return $this->index_path;
+		return $this->config->getIndexPath();
+	}
+
+	/**
+	 * Get the settings path
+	 *
+	 * @return string
+	 * @since 3.2.2
+	 */
+	protected function getSettingsPath(): string
+	{
+		return $this->config->getSettingsPath();
+	}
+
+	/**
+	 * Get GUID field
+	 *
+	 * @return string
+	 * @since  5.1.1
+	 */
+	protected function getGuidField(): string
+	{
+		return $this->config->getGuidField();
 	}
 
 	/**

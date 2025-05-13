@@ -252,8 +252,8 @@
 				"newName": "HeaderCheck.php",
 				"type": "file"
 			},
-			"import.gif": {
-				"naam": "import.gif",
+			"ajax.gif": {
+				"naam": "ajax.gif",
 				"path": "c0mp0n3nt/admin/assets/images",
 				"rename": false,
 				"type": "file"

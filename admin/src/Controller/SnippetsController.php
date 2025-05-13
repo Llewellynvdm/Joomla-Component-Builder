@@ -17,7 +17,6 @@ use Joomla\Utilities\ArrayHelper;
 use Joomla\CMS\Router\Route;
 use Joomla\CMS\Session\Session;
 use VDM\Component\Componentbuilder\Administrator\Helper\ComponentbuilderHelper;
-use VDM\Joomla\Utilities\ArrayHelper as UtilitiesArrayHelper;
 
 // No direct access to this file
 \defined('_JEXEC') or die;
@@ -53,76 +52,84 @@ class SnippetsController extends AdminController
 		return parent::getModel($name, $prefix, $config);
 	}
 
-	public function getSnippets()
+
+	/**
+	 * Redirect the request to the Initialization selection page.
+	 *
+	 * @return bool True on successful initialization, false on failure.
+	 */
+	public function initPowers()
 	{
 		// Check for request forgeries
 		Session::checkToken() or die(Text::_('JINVALID_TOKEN'));
-		// redirect to the import snippets custom admin view
-		$this->setRedirect(Route::_('index.php?option=com_componentbuilder&view=get_snippets', false));
-		return;
+
+		// set default in development message
+		$message = '<h1>' . Text::_('COM_COMPONENTBUILDER_STILL_IN_DEVELOPMENT') . '</h1>';
+		$message .= '<p>' . Text::_('COM_COMPONENTBUILDER_ONCE_COMPLETED_THIS_FEATURE_WILL_ALLOW_YOU_TO_PULL_BOTH_DEMO_AND_USERCREATED_SNIPPETS_INTO_THIS_JCB_INSTANCE') . '</p>';
+
+		$redirect_url = Route::_('index.php?option=com_componentbuilder&view=snippets', false);
+		$this->setRedirect($redirect_url, $message, 'success');
+
+		return true;
 	}
 
-	public function shareSnippets()
+	/**
+	 * Resets the selected Snippets.
+	 *
+	 * This function performs several checks and operations:
+	 * 1. It verifies the authenticity of the request to prevent request forgery.
+	 * 2. It retrieves the IDs of the selected powers from the user input.
+	 * 3. It sanitizes the input by converting the IDs to integers.
+	 * 4. It checks whether any powers have been selected.
+	 * 5. It checks whether the current user has the necessary permissions to reset the selected Snippets.
+	 * 6. If the user is authorized and powers are selected, it attempts to reset the selected Snippets.
+	 * 7. Depending on the result of the reset operation, it sets the appropriate success or error message.
+	 * 8. It redirects the user to a specified URL with the result message and status.
+	 *
+	 * @return bool True on successful reset, false on failure.
+	 */
+	public function resetPowers()
 	{
 		// Check for request forgeries
 		Session::checkToken() or die(Text::_('JINVALID_TOKEN'));
-		// Get the model
-		$model = $this->getModel('snippets');
-		// check if import is allowed for this user.
-		$model->user = Factory::getUser();
-		if ($model->user->authorise('snippet.import', 'com_componentbuilder') && $model->user->authorise('core.export', 'com_componentbuilder'))
-		{			
-			// Get the input
-			$input = Factory::getApplication()->input;
-			$pks = $input->post->get('cid', array(), 'array');
-			// Sanitize the input
-			ArrayHelper::toInteger($pks);
-			// check if there is any selections
-			if (!UtilitiesArrayHelper::check($pks))
-			{
-				// Redirect to the list screen with error.
-				$message = Text::_('COM_COMPONENTBUILDER_NO_SNIPPETS_WERE_SELECTED_PLEASE_MAKE_A_SELECTION_AND_TRY_AGAIN');
-				$this->setRedirect(Route::_('index.php?option=com_componentbuilder&view=snippets', false), $message, 'error');
-				return;
-			}
-			// set auto loader
-			ComponentbuilderHelper::autoLoader('smart');
-			// get the data to export
-			if ($model->shareSnippets($pks))
-			{
-				// Message of successful build
-				if (count($pks) > 1)
-				{
-					$message = '<h1>' . Text::_('COM_COMPONENTBUILDER_THE_SNIPPETS_WERE_SUCCESSFULLY_EXPORTED') . '</h1>';
-					$message .= '<p>' . Text::sprintf('COM_COMPONENTBUILDER_TO_SHARE_THESE_SNIPPETS_WITH_THE_REST_OF_THE_JCB_COMMUNITY');
-				}
-				else
-				{
-					$message = '<h1>' . Text::_('COM_COMPONENTBUILDER_THE_SNIPPET_WAS_SUCCESSFULLY_EXPORTED') . '</h1>';
-					$message .= '<p>' . Text::sprintf('COM_COMPONENTBUILDER_TO_SHARE_THIS_SNIPPET_WITH_THE_REST_OF_THE_JCB_COMMUNITY');
-				}
-				$message .= Text::sprintf('COM_COMPONENTBUILDER_YOU_WILL_NEED_TO_KNOW_HOW_S_WORKS_BASIC_YOU_WILL_ALSO_NEED_A_S_ACCOUNT_AND_KNOW_HOW_TO_MAKE_A_PULL_REQUEST_ON_GITHUB', 
-					'<a href="https://try.github.io" target="_blank">git</a>',
-					'<a href="https://github.com/join" target="_blank">github.com</a>') . '</p>';
 
-				$message .= '<h2>' . Text::_('COM_COMPONENTBUILDER_NEED_HELP') . '</h2>';
-				$message .= '<ul>';
-				$message .= '<li>'.Text::sprintf('COM_COMPONENTBUILDER_GENERAL_OVERVIEW_OF_HOW_THINGS_WORK_BSB', '<a href="https://www.youtube.com/watch?v=qr4I1jeCp7I&list=PLQRGFI8XZ_wtGvPQZWBfDzzlERLQgpMRE" target="_blank">https://youtu.be/qr4I1jeCp7I</a>').'</li>';
-				$message .= '<li>'.Text::sprintf('COM_COMPONENTBUILDER_BASIC_TUTORIAL_ON_GIT_BSB', '<a href="https://www.udemy.com/git-quick-start/" target="_blank">https://www.udemy.com/git-quick-start/</a>').'</li>';
-				$message .= '<li>'.Text::sprintf('COM_COMPONENTBUILDER_GET_AN_ACCOUNT_WITH_GITHUB_BSB', '<a href="https://github.com/join" target="_blank">https://github.com/join</a>').'</li>';
-				$message .= '<li>'.Text::sprintf('COM_COMPONENTBUILDER_TUTORIAL_ON_FORKING_JCB_SNIPPETS_BSB', '<a href="https://www.youtube.com/watch?v=0hgHeQVTLOk&list=PLQRGFI8XZ_wtGvPQZWBfDzzlERLQgpMRE" target="_blank">https://youtu.be/0hgHeQVTLOk</a>').'</li>';
-				$message .= '<li>'.Text::sprintf('COM_COMPONENTBUILDER_TUTORIAL_ON_MAKING_A_PULL_REQUEST_BSB', '<a href="https://www.youtube.com/watch?v=vQ-yxVtc-Co&list=PLQRGFI8XZ_wtGvPQZWBfDzzlERLQgpMRE" target="_blank">https://youtu.be/vQ-yxVtc-Co</a>').'</li>';
-				$message .= '<li>'.Text::sprintf('COM_COMPONENTBUILDER_REPORT_AN_ISSUE_BSB', '<a href="https://github.com/vdm-io/Joomla-Component-Builder-Snippets/issues" target="_blank">https://github.com/vdm-io/Joomla-Component-Builder-Snippets/issues</a>').'</li>';
-				$message .= '</ul>';
-				$message .= '<h2>' . Text::_('COM_COMPONENTBUILDER_ZIPPED_FILE_LOCATION') . '</h2>';
-				$message .= '<p>' . Text::sprintf('COM_COMPONENTBUILDER_PATH_CODESCODE', $model->zipPath). '</p>';
-				$this->setRedirect(Route::_('index.php?option=com_componentbuilder&view=snippets', false), $message);
-				return;
-			}
-		}
-		// Redirect to the list screen with error.
-		$message = Text::_('COM_COMPONENTBUILDER_YOU_DO_NOT_HAVE_PERMISSION_TO_SHARE_THE_SNIPPETS_PLEASE_CONTACT_YOUR_SYSTEM_ADMINISTRATOR_FOR_MORE_HELP');
-		$this->setRedirect(Route::_('index.php?option=com_componentbuilder&view=snippets', false), $message, 'error');
-		return;
-	}  
+		// set default in development message
+		$message = '<h1>' . Text::_('COM_COMPONENTBUILDER_STILL_IN_DEVELOPMENT') . '</h1>';
+		$message .= '<p>' . Text::_('COM_COMPONENTBUILDER_ONCE_COMPLETED_THIS_FEATURE_WILL_ALLOW_YOU_TO_RESET_BOTH_DEMO_AND_USERCREATED_SNIPPETS_WITHIN_THIS_JCB_INSTANCE') . '</p>';
+
+		$redirect_url = Route::_('index.php?option=com_componentbuilder&view=snippets', false);
+		$this->setRedirect($redirect_url, $message, 'success');
+
+		return true;
+	}
+
+	/**
+	 * Pushes the selected Snippets.
+	 *
+	 * This function performs several checks and operations:
+	 * 1. It verifies the authenticity of the request to prevent request forgery.
+	 * 2. It retrieves the IDs of the selected powers from the user input.
+	 * 3. It sanitizes the input by converting the IDs to integers.
+	 * 4. It checks whether any powers have been selected.
+	 * 5. It checks whether the current user has the necessary permissions to push the selected Snippets.
+	 * 6. If the user is authorized and powers are selected, it attempts to push the selected Snippets.
+	 * 7. Depending on the result of the push operation, it sets the appropriate success or error message.
+	 * 8. It redirects the user to a specified URL with the result message and status.
+	 *
+	 * @return bool True on successful push, false on failure.
+	 */
+	public function pushPowers()
+	{
+		// Check for request forgeries
+		Session::checkToken() or die(Text::_('JINVALID_TOKEN'));
+
+		// set default in development message
+		$message = '<h1>' . Text::_('COM_COMPONENTBUILDER_STILL_IN_DEVELOPMENT') . '</h1>';
+		$message .= '<p>' . Text::_('COM_COMPONENTBUILDER_ONCE_COMPLETED_THIS_FEATURE_WILL_ALLOW_YOU_TO_PUSH_USERCREATED_SNIPPETS_FROM_THIS_JCB_INSTANCE_TO_YOUR_CONFIGURED_REPOSITORIES') . '</p>';
+
+		$redirect_url = Route::_('index.php?option=com_componentbuilder&view=snippets', false);
+		$this->setRedirect($redirect_url, $message, 'success');
+
+		return true;
+	}
 }

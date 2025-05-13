@@ -292,7 +292,7 @@ class HtmlView extends BaseHtmlView
 				if ($this->canDo->get('fieldtype.push'))
 				{
 					// add Push button.
-					ToolbarHelper::custom('fieldtype.pushPowers', 'joomla custom-button-pushpowers', '', 'COM_COMPONENTBUILDER_PUSH', false);
+					ToolbarHelper::custom('fieldtype.pushPowers', 'share custom-button-pushpowers', '', 'COM_COMPONENTBUILDER_PUSH', false);
 				}
 				ToolbarHelper::cancel('fieldtype.cancel', 'JTOOLBAR_CLOSE');
 			}
@@ -375,7 +375,7 @@ class HtmlView extends BaseHtmlView
 				if ($this->canDo->get('fieldtype.push'))
 				{
 					// add Push button.
-					ToolbarHelper::custom('fieldtype.pushPowers', 'joomla custom-button-pushpowers', '', 'COM_COMPONENTBUILDER_PUSH', false);
+					ToolbarHelper::custom('fieldtype.pushPowers', 'share custom-button-pushpowers', '', 'COM_COMPONENTBUILDER_PUSH', false);
 				}
 				ToolbarHelper::cancel('fieldtype.cancel', 'JTOOLBAR_CLOSE');
 			}

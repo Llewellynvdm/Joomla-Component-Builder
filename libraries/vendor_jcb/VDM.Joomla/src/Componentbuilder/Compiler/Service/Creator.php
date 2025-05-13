@@ -776,7 +776,8 @@ class Creator implements ServiceProviderInterface
 			$container->get('Field.ModalSelect'),
 			$container->get('Utilities.Xml'),
 			$container->get('Compiler.Creator.Custom.Field.Type.File'),
-			$container->get('Utilities.Counter')
+			$container->get('Utilities.Counter'),
+			$container->get('Compiler.Builder.Component.Fields')
 		);
 	}
 
@@ -800,7 +801,8 @@ class Creator implements ServiceProviderInterface
 			$container->get('Field.Attributes'),
 			$container->get('Field.ModalSelect'),
 			$container->get('Compiler.Creator.Custom.Field.Type.File'),
-			$container->get('Utilities.Counter')
+			$container->get('Utilities.Counter'),
+			$container->get('Compiler.Builder.Component.Fields')
 		);
 	}
 

@@ -12,6 +12,7 @@
 namespace VDM\Joomla\Componentbuilder\Fieldtype\Remote;
 
 
+use Joomla\CMS\Language\Text;
 use VDM\Joomla\Interfaces\Remote\SetInterface;
 use VDM\Joomla\Abstraction\Remote\Set as ExtendingSet;
 
@@ -24,67 +25,6 @@ use VDM\Joomla\Abstraction\Remote\Set as ExtendingSet;
 final class Set extends ExtendingSet implements SetInterface
 {
 	/**
-	 * Table Name
-	 *
-	 * @var    string
-	 * @since 5.0.3
-	 */
-	protected string $table = 'fieldtype';
-
-	/**
-	 * Area Name
-	 *
-	 * @var    string
-	 * @since 5.0.3
-	 */
-	protected string $area = 'Joomla Field Type';
-
-	/**
-	 * Prefix Key
-	 *
-	 * @var    string
-	 * @since 5.0.3
-	 */
-	protected string $prefix_key = '';
-
-	/**
-	 * The item map
-	 *
-	 * @var    array
-	 * @since 5.0.3
-	 */
-	protected array $map = [
-		'name' => 'name',
-		'short_description' => 'short_description',
-		'description' => 'description',
-		'properties' => 'properties',
-		'has_defaults' => 'has_defaults',
-		'datatype' => 'datatype',
-		'datalenght' => 'datalenght',
-		'datalenght_other' => 'datalenght_other',
-		'datadefault' => 'datadefault',
-		'datadefault_other' => 'datadefault_other',
-		'indexes' => 'indexes',
-		'null_switch' => 'null_switch',
-		'store' => 'store',
-		'guid' => 'guid'
-	];
-
-	/**
-	 * The index map
-	 *
-	 * @var    array
-	 * @since 5.0.3
-	 */
-	protected array $index_map = [
-		'name' => 'index_map_IndexName',
-		'desc' => 'index_map_ShortDescription',
-		'settings' => 'index_map_IndexSettingsPath',
-		'path' => 'index_map_IndexPath',
-		'guid' => 'index_map_IndexGUID'
-	];
-
-	/**
 	 * update an existing item (if changed)
 	 *
 	 * @param object $item
@@ -96,25 +36,36 @@ final class Set extends ExtendingSet implements SetInterface
 	 */
 	protected function updateItem(object $item, object $existing, object $repo): bool
 	{
-		// make sure there was a change
 		$sha = $existing->params->source[$repo->guid . '-settings'] ?? null;
 		$existing = $this->mapItem($existing);
+		$area = $this->getArea();
+		$item_name = $this->index_map_IndexName($item);
+		$repo_name = $this->getRepoName($repo);
+
 		if ($sha === null || $this->areObjectsEqual($item, $existing))
 		{
+			$this->messages->add('warning', Text::sprintf('COM_COMPONENTBUILDER_S_ITEM_S_DETAILS_IN_REPOS_DID_NOT_CHANGE_SO_NO_UPDATE_WAS_MADE', $area, $item_name, $repo_name));
 			return false;
 		}
 
-		$this->git->update(
+		$result = $this->git->update(
 			$repo->organisation, // The owner name.
 			$repo->repository, // The repository name.
-			'src/' . $item->guid . '/' . $this->getSettingsPath(), // The file path.
+			$this->index_map_IndexSettingsPath($item), // The file path.
 			json_encode($item, JSON_PRETTY_PRINT), // The file content.
 			'Update ' . $item->name, // The commit message.
 			$sha, // The blob SHA of the old file.
 			$repo->write_branch // The branch name.
 		);
 
-		return true;
+		$success = is_object($result);
+
+		if (!$success)
+		{
+			$this->messages->add('warning', Text::sprintf('COM_COMPONENTBUILDER_S_ITEM_S_DETAILS_IN_REPOS_FAILED_TO_UPDATE', $area, $item_name, $repo_name));
+		}
+
+		return $success;
 	}
 
 	/**
@@ -123,19 +74,21 @@ final class Set extends ExtendingSet implements SetInterface
 	 * @param object  $item
 	 * @param object  $repo
 	 *
-	 * @return void
+	 * @return bool
 	 * @since  5.0.3
 	 */
-	protected function createItem(object $item, object $repo): void
+	protected function createItem(object $item, object $repo): bool
 	{
-		$this->git->create(
+		$result = $this->git->create(
 			$repo->organisation, // The owner name.
 			$repo->repository, // The repository name.
-			'src/' . $item->guid . '/' . $this->getSettingsPath(), // The file path.
+			$this->index_map_IndexSettingsPath($item), // The file path.
 			json_encode($item, JSON_PRETTY_PRINT), // The file content.
 			'Create ' . $item->name, // The commit message.
 			$repo->write_branch // The branch name.
 		);
+
+		return is_object($result);
 	}
 
 	/**
@@ -160,7 +113,7 @@ final class Set extends ExtendingSet implements SetInterface
 		$this->git->update(
 			$repo->organisation, // The owner name.
 			$repo->repository, // The repository name.
-			'src/' . $item->guid . '/README.md', // The file path.
+			$this->index_map_IndexPath($item) . '/README.md', // The file path.
 			$this->itemReadme->get($item), // The file content.
 			'Update ' . $item->name . ' readme file', // The commit message.
 			$sha, // The blob SHA of the old file.
@@ -182,12 +135,14 @@ final class Set extends ExtendingSet implements SetInterface
 		$this->git->create(
 			$repo->organisation, // The owner name.
 			$repo->repository, // The repository name.
-			'src/' . $item->guid . '/README.md', // The file path.
+			$this->index_map_IndexPath($item) . '/README.md', // The file path.
 			$this->itemReadme->get($item), // The file content.
 			'Create ' . $item->name . ' readme file', // The commit message.
 			$repo->write_branch // The branch name.
 		);
 	}
+
+	//// index_map_ (area) /////////////////////////////////////////////
 
 	/**
 	 * Get the item name for the index values
@@ -195,7 +150,7 @@ final class Set extends ExtendingSet implements SetInterface
 	 * @param object $item
 	 *
 	 * @return string|null
-	 * @since  5.0.3
+	 * @since 3.2.2
 	 */
 	protected function index_map_IndexName(object $item): ?string
 	{
@@ -212,7 +167,7 @@ final class Set extends ExtendingSet implements SetInterface
 	 */
 	protected function index_map_ShortDescription(object $item): ?string
 	{
-		return $item->short_description ?? null;
+		return $item->short_description ?? $item->description ?? null;
 	}
 }
 

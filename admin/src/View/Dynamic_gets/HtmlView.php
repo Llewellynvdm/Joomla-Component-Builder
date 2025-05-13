@@ -218,6 +218,21 @@ class HtmlView extends BaseHtmlView
 				ToolbarHelper::trash('dynamic_gets.trash');
 			}
 		}
+		if ($this->user->authorise('dynamic_get.init', 'com_componentbuilder'))
+		{
+			// add Init button.
+			ToolbarHelper::custom('dynamic_gets.initPowers', 'health custom-button-initpowers', '', 'COM_COMPONENTBUILDER_INIT', false);
+		}
+		if ($this->user->authorise('dynamic_get.reset', 'com_componentbuilder'))
+		{
+			// add Reset button.
+			ToolbarHelper::custom('dynamic_gets.resetPowers', 'joomla custom-button-resetpowers', '', 'COM_COMPONENTBUILDER_RESET', false);
+		}
+		if ($this->user->authorise('dynamic_get.push', 'com_componentbuilder'))
+		{
+			// add Push button.
+			ToolbarHelper::custom('dynamic_gets.pushPowers', 'share custom-button-pushpowers', '', 'COM_COMPONENTBUILDER_PUSH', false);
+		}
 
 		// set help url for this view if found
 		$this->help_url = ComponentbuilderHelper::getHelpUrl('dynamic_gets');

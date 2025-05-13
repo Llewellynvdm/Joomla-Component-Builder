@@ -29,6 +29,7 @@ use Joomla\Utilities\ArrayHelper;
 use Joomla\Input\Input;
 use VDM\Component\Componentbuilder\Administrator\Helper\ComponentbuilderHelper;
 use Joomla\CMS\Helper\TagsHelper;
+use VDM\Joomla\Utilities\Component\Helper;
 use VDM\Joomla\Utilities\GuidHelper;
 use VDM\Joomla\Utilities\StringHelper as UtilitiesStringHelper;
 use VDM\Joomla\Utilities\ArrayHelper as UtilitiesArrayHelper;
@@ -293,13 +294,21 @@ class SnippetModel extends AdminModel
 				}
 			}
 		}
+		// Only load if new item
+		if (0 == $id)
+		{
+			$form->setValue('contributor_company', null, Helper::getParams('com_componentbuilder')->get('export_company', 'Vast Development Method'));
+			$form->setValue('contributor_name', null, Helper::getParams('com_componentbuilder')->get('export_owner', 'Llewellyn van der Merwe'));
+			$form->setValue('contributor_email', null, Helper::getParams('com_componentbuilder')->get('export_email', 'joomla@vdm.io'));
+			$form->setValue('contributor_website', null, Helper::getParams('com_componentbuilder')->get('export_website', 'https://www.vdm.io/'));
+		}
 
 		// Only load the GUID if new item (or empty)
 		if (0 == $id || !($val = $form->getValue('guid')))
 		{
 			$form->setValue('guid', null, GuidHelper::get());
 		}
- 
+
 		return $form;
 	}
 
@@ -905,23 +914,6 @@ class SnippetModel extends AdminModel
 			$data['metadata'] = (string) $metadata;
 		}
 
-		// set the contributor details if not set
-		if (strlen($data['contributor_company']) < 1 || strlen($data['contributor_name']) < 1 || strlen($data['contributor_email']) < 3 || strlen($data['contributor_website']) < 3)
-		{
-			// get the library name
-			$library = ($name = GetHelper::var('library', $item['library'], 'id', 'name')) ? $name:'Common';
-			// get the library name
-			$type = ($name = GetHelper::var('snippet_type', $item['type'], 'id', 'name')) ? $name:'No Library';
-			// build the filename
-			$filename = UtilitiesStringHelper::safe($library . ' - (' . $type . ') ' . $item['name'], 'filename', '', false). '.json';
-			// now get the contributor details (slow)
-			$contributor = ComponentbuilderHelper::getContributorDetails($filename);
-			// now update the local snippet contributor details
-			$data['contributor_company'] = $contributor['contributor_company'];
-			$data['contributor_name'] = $contributor['contributor_name'];
-			$data['contributor_email'] = $contributor['contributor_email'];
-			$data['contributor_website'] = $contributor['contributor_website'];
-		}
 
 		// Set the GUID if empty or not valid
 		if (empty($data['guid']) && $data['id'] > 0)

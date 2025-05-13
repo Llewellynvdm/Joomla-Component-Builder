@@ -22,23 +22,15 @@ use VDM\Joomla\Abstraction\Grep as ExtendingGrep;
 /**
  * Global Resource Empowerment Platform
  * 
- *    The Grep feature will try to find your power in the repositories listed in the global
- *    Options of JCB in the super powers tab, and if it can't be found there will try the global core
- *    Super powers of JCB. All searches are performed according the the [algorithm:cascading]
+ *    The Grep feature will try to find your power in the repositories
+ *    linked to this [area], and if it can't be found there will try the global core
+ *    Super Powers of JCB. All searches are performed according the [algorithm:cascading]
  *    See documentation for more details: https://git.vdm.dev/joomla/super-powers/wiki
  * 
  * @since 3.2.0
  */
 final class Grep extends ExtendingGrep implements GrepInterface
 {
-	/**
-	 * The index file path
-	 *
-	 * @var    string
-	 * @since 3.2.2
-	 */
-	protected string $index_path = 'super-powers.json';
-
 	/**
 	 * Search for a local item
 	 *
@@ -88,7 +80,7 @@ final class Grep extends ExtendingGrep implements GrepInterface
 	 */
 	protected function getLocal(object $path, string $guid): ?object
 	{
-		if (empty($path->local->{$guid}->settings) || empty($path->local->{$guid}->code))
+		if (empty($path->local->{$guid}->settings) || empty($path->local->{$guid}->power))
 		{
 			return null;
 		}
@@ -122,10 +114,12 @@ final class Grep extends ExtendingGrep implements GrepInterface
 	protected function getRemote(object $path, string $guid): ?object
 	{
 		$power = null;
-		if (empty($path->index->{$guid}->settings) || empty($path->index->{$guid}->code))
+		if (empty($path->index->{$guid}->settings) || empty($path->index->{$guid}->power))
 		{
 			return $power;
 		}
+
+		$guid_field = $this->getGuidField();
 
 		// get the branch name
 		$branch = $this->getBranchName($path);
@@ -135,7 +129,7 @@ final class Grep extends ExtendingGrep implements GrepInterface
 
 		// get the settings
 		if (($power = $this->loadRemoteFile($path->organisation, $path->repository, $path->index->{$guid}->settings, $branch)) !== null &&
-			isset($power->guid))
+			isset($power->{$guid_field}))
 		{
 			// get the code
 			if (($code = $this->loadRemoteFile($path->organisation, $path->repository, $path->index->{$guid}->power, $branch)) !== null)

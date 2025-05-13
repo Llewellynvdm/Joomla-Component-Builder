@@ -332,15 +332,30 @@
 			hint="COM_COMPONENTBUILDER_DYNAMIC_GET_DB_SELECTION_HINT"
 			required="true"
 		/>
-		<!-- View_table_main Field. Type: Adminviews. (custom) -->
+		<!-- View_table_main Field. Type: Modalselect. (custom) -->
 		<field
-			type="adminviews"
+			type="ModalSelect"
 			name="view_table_main"
 			label="COM_COMPONENTBUILDER_DYNAMIC_GET_VIEW_TABLE_MAIN_LABEL"
-			description="COM_COMPONENTBUILDER_DYNAMIC_GET_VIEW_TABLE_MAIN_DESCRIPTION"
-			layout="joomla.form.field.list-fancy-select"
-			multiple="false"
+			sql_title_table="#__componentbuilder_admin_view"
+			sql_title_column="system_name"
+			data-key-name="guid"
+			sql_title_key="guid"
+			urlSelect="index.php?option=com_componentbuilder&amp;view=admin_views&amp;layout=modal&amp;tmpl=component&amp;titleKey=guid"
+			urlNew="index.php?option=com_componentbuilder&amp;task=admin_view.add&amp;layout=modal&amp;tmpl=component"
+			urlEdit="index.php?option=com_componentbuilder&amp;task=admin_view.edit&amp;guid={id}&amp;layout=modal&amp;tmpl=component&amp;titleKey=guid"
+			titleSelect="COM_COMPONENTBUILDER_DYNAMIC_GET_VIEW_TABLE_MAIN_TITLESELECT"
+			titleNew="COM_COMPONENTBUILDER_DYNAMIC_GET_VIEW_TABLE_MAIN_TITLENEW"
+			titleEdit="COM_COMPONENTBUILDER_DYNAMIC_GET_VIEW_TABLE_MAIN_TITLEEDIT"
+			iconSelect="icon-stack"
+			select="true"
+			new="true"
+			edit="true"
+			clear="true"
 			required="true"
+			class="input-large"
+			description="COM_COMPONENTBUILDER_DYNAMIC_GET_VIEW_TABLE_MAIN_DESCRIPTION"
+			hint="COM_COMPONENTBUILDER_DYNAMIC_GET_VIEW_TABLE_MAIN_HINT"
 		/>
 		<!-- Add_php_getlistquery Field. Type: Radio. (joomla) -->
 		<field
@@ -1235,15 +1250,28 @@
 			description="COM_COMPONENTBUILDER_DYNAMIC_GET_JOIN_VIEW_TABLE_DESCRIPTION"
 			icon="list">
 			<form hidden="true" name="list_join_view_table_modal" repeat="true">
-				<!-- View_table Field. Type: Adminviews. (custom) -->
+				<!-- View_table Field. Type: Modalselect. (custom) -->
 				<field
-					type="adminviews"
+					type="ModalSelect"
 					name="view_table"
 					label="COM_COMPONENTBUILDER_DYNAMIC_GET_VIEW_TABLE_LABEL"
-					description="COM_COMPONENTBUILDER_DYNAMIC_GET_VIEW_TABLE_DESCRIPTION"
-					multiple="false"
+					sql_title_table="#__componentbuilder_admin_view"
+					sql_title_column="system_name"
+					data-key-name="guid"
+					sql_title_key="guid"
+					urlSelect="index.php?option=com_componentbuilder&amp;view=admin_views&amp;layout=modal&amp;tmpl=component&amp;titleKey=guid"
+					urlEdit="index.php?option=com_componentbuilder&amp;task=admin_view.edit&amp;guid={id}&amp;layout=modal&amp;tmpl=component&amp;titleKey=guid"
+					titleSelect="COM_COMPONENTBUILDER_DYNAMIC_GET_VIEW_TABLE_TITLESELECT"
+					titleEdit="COM_COMPONENTBUILDER_DYNAMIC_GET_VIEW_TABLE_TITLEEDIT"
+					iconSelect="icon-stack"
+					select="true"
+					new="false"
+					edit="true"
+					clear="true"
 					required="true"
-					button="false"
+					class="input-large"
+					description="COM_COMPONENTBUILDER_DYNAMIC_GET_VIEW_TABLE_DESCRIPTION"
+					hint="COM_COMPONENTBUILDER_DYNAMIC_GET_VIEW_TABLE_HINT"
 				/>
 				<!-- Row_type Field. Type: List. (joomla) -->
 				<field

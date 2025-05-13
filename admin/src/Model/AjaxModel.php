@@ -28,7 +28,6 @@ use Joomla\CMS\Uri\Uri;
 use Joomla\Registry\Registry;
 use VDM\Component\Componentbuilder\Administrator\Helper\ComponentbuilderHelper;
 use VDM\Joomla\Gitea\Factory as GiteaFactory;
-use VDM\Joomla\Componentbuilder\Package\Factory as PackageFactory;
 use VDM\Joomla\Utilities\FileHelper;
 use VDM\Joomla\Utilities\JsonHelper;
 use VDM\Joomla\Utilities\StringHelper;
@@ -41,6 +40,12 @@ use VDM\Joomla\Utilities\Base64Helper;
 use VDM\Joomla\Componentbuilder\Table\Search;
 use VDM\Joomla\Componentbuilder\Compiler\Utilities\FieldHelper;
 use VDM\Joomla\Utilities\FormHelper;
+use VDM\Joomla\Componentbuilder\Package\Factory as PackageFactory;
+use VDM\Joomla\Componentbuilder\Fieldtype\Factory as FieldtypeFactory;
+use VDM\Joomla\Componentbuilder\JoomlaPower\Factory as JoomlaPowerFactory;
+use VDM\Joomla\Componentbuilder\Power\Factory as PowerFactory;
+use VDM\Joomla\Componentbuilder\Snippet\Factory as SnippetFactory;
+use VDM\Joomla\Interfaces\Remote\GetInterface;
 use Joomla\CMS\Form\FormHelper as FormFormHelper;
 
 // No direct access to this file
@@ -87,95 +92,6 @@ class AjaxModel extends ListModel
 	}
 
 	// Used in joomla_component
-	/**
-	 * Will be removed since we are going the AI route... instead.
-	 */
-	public function getCrowdinDetails($identifier, $key)
-	{
-		// set the url
-		$url = "https://api.crowdin.com/api/project/$identifier/info?key=$key&json";
-		// get the details
-		if (($details = FileHelper::getContent($url, false)) !== false && JsonHelper::check($details))
-		{
-			$details = json_decode($details, true);
-			// check if there is an error
-			if (isset($details['error']))
-			{
-				return ['error' => '<div class="alert alert-error">' . $details['error']['message'] . '<br /><br /><small>Identifier: ' . $identifier . '</small></div>'];
-			}
-			// build the details html
-			if (isset($details['details']))
-			{
-				$html = '<div class="alert alert-success" id="crowdin_message">';
-				$html .= '<h1>' . Text::_('COM_COMPONENTBUILDER_COMPONENT_SUCCESSFULLY_LINKED') . '</h1>';
-				$html .= '<h3>' . $details['details']['name'] . '</h3>';
-				if (StringHelper::check($details['details']['description']))
-				{
-					$html .= '<p>';
-					$html .= $details['details']['description'];
-					$html .= '</p>';
-				}
-				$html .= '<ul>';
-				$html .= '<li>Number of participants: <b>';
-				$html .= $details['details']['participants_count'];
-				$html .= '</b></li>';
-				$html .= '<li>Total strings count: <b>';
-				$html .= $details['details']['total_strings_count'];
-				$html .= '</b></li>';
-				$html .= '<li>Total words count: <b>';
-				$html .= $details['details']['total_words_count'];
-				$html .= '</b></li>';
-				$html .= '<li>Created: <b>';
-				$html .= ComponentbuilderHelper::fancyDate($details['details']['created']);
-				$html .= '</b></li>';
-				$html .= '<li>Last activity: <b>';
-				$html .= ComponentbuilderHelper::fancyDate($details['details']['last_activity']);
-				$html .= '</b></li>';
-				$html .= '</ul>';
-				$html .= '</div>';
-				return ['html' => $html];
-			}
-		}
-		return false;
-	}
-
-	/**
-	 *  Will be removed since we are moving to the new SuperPowers distribution system.
-	 */
-	public function getJCBpackageInfo($package)
-	{
-		// convert URL
-		$url = base64_decode($package);
-		$url = str_replace('.zip', '.info', $url);
-
-		// check if url exist
-		if ($info = FileHelper::getContent($url, false))
-		{
-			$_info = PackageFactory::_('Crypt')->decrypt($info, 'local.legacy');
-
-			// check if we had success
-			if (!JsonHelper::check($_info))
-			{
-				$_info = PackageFactory::_('Crypt')->decrypt($info, 'local.fof');
-			}
-
-			// check if we have json
-			if (JsonHelper::check($_info))
-			{
-				$info = json_decode($_info, true);
-
-				return [
-					'owner' => PackageFactory::_('Display.Details')->owner($info, true),
-					'packages' => PackageFactory::_('Display.Details')->components($info)
-				];
-			}
-		}
-
-		return [
-			'error' => Text::_('COM_COMPONENTBUILDER_JCB_PACKAGE_INFO_PATH_DOES_NOT_WORK_WE_ADVICE_YOU_BNOT_TO_CONTINUEB_WITH_THE_IMPORT_OF_THE_SELECTED_PACKAGE')
-		];
-	}
-
 	/**
 	 * Retrieves the component details as an HTML display and metadata.
 	 *
@@ -4321,269 +4237,189 @@ class AjaxModel extends ListModel
 
 	// Used in snippet
 
+	/**
+	 * Retrieves published snippet GUIDs for valid libraries.
+	 *
+	 * @param   mixed  $libraries  JSON string or array of library GUIDs.
+	 *
+	 * @return  array|false  List of snippet IDs or false on failure.
+	 * @since   5.1.1
+	 */
 	public function getSnippets($libraries)
 	{
+		// Decode JSON if required
 		if (JsonHelper::check($libraries))
 		{
 			$libraries = json_decode($libraries, true);
 		}
-		// check if we have an array
-		if (UtilitiesArrayHelper::check($libraries))
-		{
-			// insure we only have int values
-			if ($libraries = $this->checkLibraries($libraries))
-			{
-				// Get a db connection.
-				$db = Factory::getDbo();
-				// Create a new query object.
-				$query = $db->getQuery(true);
-				$query->select($db->quoteName( array('a.id') ));
-				$query->from($db->quoteName('#__componentbuilder_snippet', 'a'));
-				$query->where($db->quoteName('a.published') . ' = 1');
-				// check for country and region
-				$query->where($db->quoteName('a.library') . ' IN ('. implode(',',$libraries) .')');
-				$db->setQuery($query);
-				$db->execute();
-				if ($db->getNumRows())
-				{
-					return $db->loadColumn();
-				}
-			}
-		}
-		return false;
-	}
 
-	protected function checkLibraries($libraries)
-	{
-		$bucket = array();
-		$libraries = array_map( function($id) use (&$bucket) { 
-			// now get bundled libraries
-			$type = GetHelper::var('library', (int) $id, 'id', 'type');
-			if (2 == $type && $bundled = GetHelper::var('library', (int) $id, 'id', 'libraries'))
-			{
-				// make sure we have an array if it was json
-				if (JsonHelper::check($bundled))
-				{
-					$bundled = json_decode($bundled, true);
-				}
-				// load in the values if we have an array
-				if (UtilitiesArrayHelper::check($bundled))
-				{
-					foreach ($bundled as $lib)
-					{
-						$bucket[$lib] = $lib;
-					}
-				}
-				elseif (is_numeric($bundled))
-				{
-					$bucket[(int) $bundled] = (int) $bundled;
-				}
-			}
-			else
-			{
-				return (int) $id;
-			}
-		}, $libraries);
-		// check if we have any bundled libraries
-		if (UtilitiesArrayHelper::check($bucket))
-		{
-			foreach ($bucket as $lib)
-			{
-				$libraries[] = (int) $lib;
-			}
-		}
-		// check that we have libraries
-		if (UtilitiesArrayHelper::check($libraries))
-		{
-			$libraries = array_values(array_unique(array_filter($libraries, function($id){return is_int($id);})));
-			// check if we have any libraries remaining
-			if (UtilitiesArrayHelper::check($libraries))
-			{
-				return $libraries;
-			}
-		}
-		return false;
-	}
-	public function getSnippetDetails($key)
-	{
-		if (GuidHelper::valid($key))
-		{
-			$target = 'guid';
-		}
-		elseif (is_numeric($key))
-		{
-			$target = 'id';
-		}
-		else
+		// Ensure we have a valid array of libraries
+		if (!UtilitiesArrayHelper::check($libraries))
 		{
 			return false;
 		}
 
-		// Get a db connection.
+		// Validate and expand libraries
+		$validatedLibraries = $this->expandAndValidateLibraries($libraries);
+
+		if (!$validatedLibraries)
+		{
+			return false;
+		}
+
 		$db = Factory::getDbo();
-		 
-		// Create a new query object.
-		$query = $db->getQuery(true);
-		$query->select($db->quoteName(array('a.name', 'a.heading', 'a.usage', 'a.description', 'b.name', 'a.snippet', 'a.url', 'c.name'), array('name', 'heading', 'usage', 'description', 'type', 'snippet', 'url', 'library')));
-		$query->from($db->quoteName('#__componentbuilder_snippet', 'a'));
-		// From the componentbuilder_snippet_type table.
-		$query->join('LEFT', $db->quoteName('#__componentbuilder_snippet_type', 'b') . ' ON (' . $db->quoteName('a.type') . ' = ' . $db->quoteName('b.id') . ')');
-		// From the componentbuilder_library table.
-		$query->join('LEFT', $db->quoteName('#__componentbuilder_library', 'c') . ' ON (' . $db->quoteName('a.library') . ' = ' . $db->quoteName('c.id') . ')');
-		$query->where($db->quoteName('a.published') . ' >= 1');
-		$query->where($db->quoteName('a.' . $target) . ' = ' . $db->quote($key));
-		 
-		// Reset the query using our newly populated query object.
+		$query = $db->getQuery(true)
+			->select($db->quoteName('a.id'))
+			->from($db->quoteName('#__componentbuilder_snippet', 'a'))
+			->where($db->quoteName('a.published') . ' = 1')
+			->where($db->quoteName('a.library') . ' IN ("' . implode('","', $validatedLibraries) . '")');
+
 		$db->setQuery($query);
 		$db->execute();
-		if ($db->getNumRows())
+
+		return $db->getNumRows() ? $db->loadColumn() : false;
+	}
+
+	/**
+	 * Validates and expands library GUIDs to ensure only integers and valid references remain.
+	 *
+	 * @param   array  $libraries  The original list of library GUIDs.
+	 *
+	 * @return  array|false  Sanitized and validated list of libraries, or false.
+	 * @since   5.2.1
+	 */
+	protected function expandAndValidateLibraries(array $libraries)
+	{
+		$expanded = [];
+
+		foreach ($libraries as $guid)
+		{
+			$guid = (string) $guid;
+			$type = GetHelper::var('library', $guid, 'guid', 'type');
+
+			if ((int) $type === 2)
+			{
+				$bundled = GetHelper::var('library', $guid, 'guid', 'libraries');
+
+				if (JsonHelper::check($bundled))
+				{
+					$bundled = json_decode($bundled, true);
+				}
+
+				if (UtilitiesArrayHelper::check($bundled))
+				{
+					foreach ($bundled as $lib)
+					{
+						$expanded[$lib] = $lib;
+					}
+				}
+				elseif (is_numeric($bundled))
+				{
+					$expanded[$bundled] = bundled;
+				}
+			}
+			else
+			{
+				$expanded[$guid] = $guid;
+			}
+		}
+
+		// Remove invalid entries and duplicates
+		$valid = array_filter(array_unique($expanded), function ($guid) {
+			return GuidHelper::valid($guid);
+		});
+
+		return UtilitiesArrayHelper::check($valid) ? array_values($valid) : false;
+	}
+
+	/**
+	 * Retrieves snippet details by GUID or ID.
+	 *
+	 * @param   string|int  $key  The snippet GUID (string) or ID (int).
+	 *
+	 * @return  object|false  The snippet data object or false on failure.
+	 * @since   5.1.1
+	 */
+	public function getSnippetDetails($key)
+	{
+		$target = $this->resolveSnippetKeyField($key);
+
+		if ($target === false)
+		{
+			return false;
+		}
+
+		$db = Factory::getDbo();
+		$query = $db->getQuery(true);
+
+		$query
+			->select($db->quoteName(
+				[
+					'a.name',
+					'a.heading',
+					'a.usage',
+					'a.description',
+					'b.name',
+					'a.snippet',
+					'a.url',
+					'c.name'
+				],
+				[
+					'name',
+					'heading',
+					'usage',
+					'description',
+					'type',
+					'snippet',
+					'url',
+					'library'
+				]
+			))
+			->from($db->quoteName('#__componentbuilder_snippet', 'a'))
+			->join('LEFT', $db->quoteName('#__componentbuilder_snippet_type', 'b') . ' ON ' . $db->quoteName('a.type') . ' = ' . $db->quoteName('b.guid'))
+			->join('LEFT', $db->quoteName('#__componentbuilder_library', 'c') . ' ON ' . $db->quoteName('a.library') . ' = ' . $db->quoteName('c.guid'))
+			->where($db->quoteName('a.published') . ' >= 1')
+			->where($db->quoteName("a.$target") . ' = ' . $db->quote($key));
+
+		$db->setQuery($query);
+		$db->execute();
+
+		if ($db->getNumRows() > 0)
 		{
 			$snippet = $db->loadObject();
-			$snippet->snippet = base64_decode($snippet->snippet);
-			// return found snippet settings
+
+			if (isset($snippet->snippet))
+			{
+				$snippet->snippet = base64_decode($snippet->snippet);
+			}
+
 			return $snippet;
 		}
+
 		return false;
 	}
 
-	public function setSnippetGithub($path, $status)
+	/**
+	 * Resolves whether the given key is a GUID or numeric ID and returns the appropriate field.
+	 *
+	 * @param   mixed  $key  The value used to identify the snippet.
+	 *
+	 * @return  string|false  'guid', 'id', or false if invalid.
+	 * @since   5.2.1
+	 */
+	protected function resolveSnippetKeyField($key)
 	{
-		// get user
-		$user = Factory::getUser();
-		$access = $user->authorise('snippet.access', 'com_componentbuilder');
-		if ($access)
+		if (GuidHelper::valid($key))
 		{
-			// secure path
-			$path = StringHelper::safe(str_replace('.json','',$path), 'filename', '', false).'.json';
-			// base path
-			$base_path = basename($path);
-			// set url
-			$url = ComponentbuilderHelper::$snippetPath.rawurlencode($base_path);
-			// get the snippets
-			if (($snippet = ComponentbuilderHelper::getGithubRepoData('lib_snippet_' . $base_path, $url, null, 'array')) !== false)
-			{
-				return $this->saveSnippet($snippet, $status, $user);
-			}
-			// see if we have any errors from github
-			if (UtilitiesArrayHelper::check(ComponentbuilderHelper::$githubRepoDataErrors))
-			{
-				return array('message' => Text::sprintf('COM_COMPONENTBUILDER_ERROR_BR_S', implode('<br />', ComponentbuilderHelper::$githubRepoDataErrors)), 'status' => 'danger');
-			}
-			return array('message' => Text::_('COM_COMPONENTBUILDER_ERROR_THE_PATH_HAS_A_MISMATCH_AND_COULD_THEREFORE_NOT_RETRIEVE_THE_SNIPPET_FROM_GITHUB'), 'status' => 'danger');
+			return 'guid';
 		}
-		return array('message' => Text::_('COM_COMPONENTBUILDER_ERROR_YOU_DO_NOT_HAVE_ACCESS_TO_THE_SNIPPETS'), 'status' => 'danger');
-	}
 
-	protected function saveSnippet($item, $status, $user)
-	{
-		// set some defaults
-		$todayDate = Factory::getDate()->toSql();
-		// get the type id
-		$item['type'] = ($id = GetHelper::var('snippet_type', $item['type'], 'name', 'id')) ? $id : $this->createNew($item['type'], 'snippet_type', $user, $todayDate);
-		// get the library id
-		$item['library'] = ($id = GetHelper::var('library', $item['library'], 'name', 'id')) ? $id : $this->createNew($item['library'], 'library', $user, $todayDate);
-		// remove type if zero
-		if ($item['type'] == 0)
+		if (is_numeric($key))
 		{
-			unset($item['type']);
+			return 'id';
 		}
-		// remove library if zero
-		if ($item['library'] == 0)
-		{
-			unset($item['library']);
-		}
-		// get the snippet ID
-		$item['id'] = $this->getSnippetId($item);
-		if ($item['id'] == 0)
-		{
-			$canCreate = $user->authorise('snippet.create', 'com_componentbuilder');
-			if ('new' === $status && !$canCreate)
-			{
-				return array('message' => Text::_('COM_COMPONENTBUILDER_ERROR_YOU_DO_NOT_HAVE_PERMISSION_TO_CREATE_THE_SNIPPET'), 'status' => 'danger');
-			}
-		}
-		// get the snippet model
-		$model = ComponentbuilderHelper::getModel('snippet', JPATH_COMPONENT_ADMINISTRATOR);
-		// save the snippet
-		if ($model->save($item))
-		{
-			if ($item['id'] == 0)
-			{
-				// get the saved item
-				$updatedItem = $model->getItem();
-				$item['id']= $updatedItem->get('id');
-			}
-			// we have to force modified date since the model does not allow you
-			if ($this->forchDateFix($item))
-			{
-				return array('message' => Text::_('COM_COMPONENTBUILDER_SUCCESS_THE_SNIPPET_WAS_SAVED'), 'status' => 'success');
-			}
-			// return error
-			return array('message' => Text::_('COM_COMPONENTBUILDER_SUCCESS_THE_SNIPPET_WAS_SAVED_BUT_THE_MODIFIED_DATE_COULD_NOT_BE_ADJUSTED_BR_BR_BTHIS_MEANS_THE_SNIPPETS_WILL_CONTINUE_TO_APPEAR_OUT_OF_DATEB'), 'status' => 'warning');
-		}
-		// return error
-		return array('message' => Text::_('COM_COMPONENTBUILDER_ERROR_THE_SNIPPET_IS_FAULTY_AND_COULD_NOT_BE_SAVED'), 'status' => 'danger');
-	}
 
-	protected function forchDateFix($item)
-	{
-		$object = new \stdClass();
-		$object->id = (int) $item['id'];
-		$object->created = $item['created'];
-		$object->modified = $item['modified'];
-		// force update
-		return Factory::getDbo()->updateObject('#__componentbuilder_snippet', $object, 'id');
-	}
-
-	protected function getSnippetId($item)
-	{
-		// Get a db connection.
-		$db = Factory::getDbo();
-		 
-		// Create a new query object.
-		$query = $db->getQuery(true);
-		$query->select($db->quoteName(array('a.id')));
-		$query->from($db->quoteName('#__componentbuilder_snippet', 'a'));
-		$query->where($db->quoteName('a.name') . ' = ' . (string) $db->quote($item['name']));
-		if (is_numeric($item['type']))
-		{
-			$query->where($db->quoteName('a.type') . ' = ' . (int) $item['type']);
-		}
-		if (is_numeric($item['library']))
-		{
-			$query->where($db->quoteName('a.library') . ' = ' . (int) $item['library']);
-		}
-		// Reset the query using our newly populated query object.
-		$db->setQuery($query);
-		$db->execute();
-		if ($db->getNumRows())
-		{
-			return $db->loadResult();
-		}
-		return 0;
-	}
-
-	protected function createNew($name, $type, $user, $todayDate)
-	{
-		// verify that we can continue
-		if (ComponentbuilderHelper::getActions($type)->get('core.create'))
-		{
-			// get the snippet model
-			$model = ComponentbuilderHelper::getModel($type, JPATH_COMPONENT_ADMINISTRATOR);
-			// build array to save
-			$item['id'] = 0;
-			$item['name'] = $name;
-			$item['published'] = 1;
-			$item['version'] = 1;
-			$item['created'] = $todayDate;
-			$item['created_by'] = $user->id;
-			// save the new
-			$model->save($item);
-			// get the saved item
-			$item = $model->getItem();
-			return $item->get('id');
-		}
-		return 0;
+		return false;
 	}
 
 	// Used in validation_rule
@@ -5434,4 +5270,150 @@ class AjaxModel extends ListModel
 		return ['error' => Text::_('COM_COMPONENTBUILDER_THERE_HAS_BEEN_AN_ERROR_PLEASE_TRY_AGAIN')];
 	}
 
+
+	// Used in initialization_selection
+	/**
+	 * Method to get the target power
+	 *
+	 * @return  string|null
+	 *
+	 * @since   5.2.1
+	 */
+	protected function getTargetAreaPower($power): ?string
+	{
+		return $this->powers[$power] ?? null;
+	}
+
+	/**
+	 * Method to get the power get class
+	 *
+	 * @param   string  $repo  The repo to list index
+	 * @param   string  $area  The target area
+	 *
+	 * @return  array
+	 * @since   5.2.1
+	 */
+	public function getRepoIndex(string $repo, string $area): array
+	{
+		if (!GuidHelper::valid($repo))
+		{
+			return ['success' => false, 'message' => Text::_('COM_COMPONENTBUILDER_INVALID_REPO_SELECTED')];
+		}
+
+		if (($Power = $this->getTargetAreaPower($area)) === null)
+		{
+			return ['success' => false, 'message' => Text::_('COM_COMPONENTBUILDER_INVALID_AREA_SELECTED')];
+		}
+
+		try
+		{
+			$class = $this->getPowerClass($Power, "{$area}.Remote.Get");
+			if ($class !== null)
+			{
+				$result = $class->list($repo);
+			}
+		}
+		catch (\Exception $e)
+		{
+			return ['success' => false, 'message' => $e->getMessage()];
+		}
+
+		if ($result !== null)
+		{
+			return ['success' => true, 'index' => $result];
+		}
+
+		return ['success' => false, 'message' => Text::_('COM_COMPONENTBUILDER_THE_REPO_INDEX_FAILED_TO_LOAD_PLEASE_TRY_AGAIN')];
+	}
+
+	/**
+	 * Method to initialize the selected powers
+	 *
+	 * @param   string  $repo      The repo to list index
+	 * @param   string  $area      The target area
+	 * @param   array   $selected  The selected powers
+	 *
+	 * @return  array
+	 * @since   5.2.1
+	 */
+	public function initSelectedPowers(string $repo, string $area, array $selected): array
+	{
+		if (!GuidHelper::valid($repo))
+		{
+			return ['success' => false, 'message' => Text::_('COM_COMPONENTBUILDER_INVALID_REPO_SELECTED')];
+		}
+
+		if (($Power = $this->getTargetAreaPower($area)) === null)
+		{
+			return ['success' => false, 'message' => Text::_('COM_COMPONENTBUILDER_INVALID_AREA_SELECTED')];
+		}
+
+		$result = [];
+		try
+		{
+			$class = $this->getPowerClass($Power, "{$area}.Remote.Get");
+			if ($class !== null)
+			{
+				$repo_path = $class->path($repo);
+				$result = $class->init($selected, $repo_path);
+			}
+		}
+		catch (\Exception $e)
+		{
+			return ['success' => false, 'message' => $e->getMessage()];
+		}
+
+		if ($result !== [])
+		{
+			return ['success' => true, 'result_log' => $result];
+		}
+
+		return ['success' => false, 'message' => Text::_('COM_COMPONENTBUILDER_THE_REPO_INDEX_FAILED_TO_LOAD_PLEASE_TRY_AGAIN')];
+	}
+
+	/**
+	 * The powers that we can initialize
+	 *
+	 * @var    array
+	 * @since  5.2.1
+	 */
+	protected array $powers = [
+		'AdminView' => 'PackageFactory',
+		'Component' => 'PackageFactory',
+		'CustomAdminView' => 'PackageFactory',
+		'CustomCode' => 'PackageFactory',
+		'DynamicGet' => 'PackageFactory',
+		'Field' => 'PackageFactory',
+		'Joomla.Fieldtype' => 'FieldtypeFactory',
+		'Joomla.Power' => 'JoomlaPowerFactory',
+		'Layout' => 'PackageFactory',
+		'Library' => 'PackageFactory',
+		'Module' => 'PackageFactory',
+		'Power' => 'PowerFactory',
+		'Plugin' => 'PackageFactory',
+		'SiteView' => 'PackageFactory',
+		'Snippet' => 'SnippetFactory',
+		'Template' => 'PackageFactory'
+	];
+
+	/**
+	 * Method to get the power get class
+	 *
+	 * @param   string  $factoryName  The factory name
+	 * @param   string  $getClass          The remote power class name
+	 *
+	 * @return  GetInterface|null
+	 * @since   5.2.1
+	 */
+	protected function getPowerClass(string $factoryName, string $getClass): ?GetInterface
+	{
+		return match ($factoryName) {
+			'PowerFactory' => PowerFactory::_($getClass),
+			'JoomlaPowerFactory' => JoomlaPowerFactory::_($getClass),
+			'FieldtypeFactory' => FieldtypeFactory::_($getClass),
+			'SnippetFactory' => SnippetFactory::_($getClass),
+			'PackageFactory' => PackageFactory::_($getClass),
+			default => null,
+		};
+	}
 }

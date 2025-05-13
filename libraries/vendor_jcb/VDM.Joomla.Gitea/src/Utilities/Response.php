@@ -109,35 +109,47 @@ final class Response
 	}
 
 	/**
-	 * Get the error message from the return object
+	 * Extract an error message from a response object.
 	 *
-	 * @param   JoomlaResponse  $response   The response.
+	 * @param   JoomlaResponse  $response  The response object.
 	 *
-	 * @return  string
+	 * @return  string  The extracted error message, or an empty string.
 	 * @since   3.2.0
-	 **/
+	 */
 	protected function error($response): string
 	{
-		// do we have a json string
-		if (isset($response->body) && JsonHelper::check($response->body))
+		// JSON decode helpers
+		$decodeJson = static fn($value) => JsonHelper::check($value) ? json_decode($value, true) : null;
+		$decodeJsonObject = static fn($value) => JsonHelper::check($value) ? json_decode($value) : null;
+
+		// Try decoding from body
+		if (!empty($response->body))
 		{
-			$error = json_decode($response->body);
-		}
-		else
-		{
-			return '';
+			$errorData = $decodeJsonObject($response->body);
+
+			if (is_object($errorData))
+			{
+				return $errorData->error ?? $errorData->message ?? '';
+			}
 		}
 
-		// check
-		if (isset($error->error))
+		// Try decoding from errors
+		if (!empty($response->errors))
 		{
-			return $error->error;
-		}
-		elseif (isset($error->message))
-		{
-			return $error->message;
+			$errorArray = $decodeJson($response->errors);
+
+			if (is_array($errorArray))
+			{
+				if (!empty($response->message) && StringHelper::check($response->message))
+				{
+					array_unshift($errorArray, $response->message);
+				}
+
+				return implode("\n", $errorArray);
+			}
 		}
 
+		// Fallback
 		return '';
 	}
 }

@@ -17,7 +17,7 @@ defined('_JEXEC') or die;
 /** @var \VDM\Component\Componentbuilder\Administrator\View\Library\HtmlView $this */
 
 $icon = 'icon-check';
-$title_key = $this->item->id ?? '';
+$title_key = $this->item->guid ?? '';
 $title_column = $this->item->name ?? '';
 $data = [
 	'contentType' => 'com_componentbuilder.library',

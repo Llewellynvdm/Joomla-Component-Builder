@@ -356,7 +356,7 @@ class Compiler extends Infusion
 							. StringHelper::safe($string, 'U');
 						$this->app->enqueueMessage(
 							Text::sprintf(
-								'The <b>Joomla.JText._(&apos;%s&apos;)</b> language constant for <b>%s</b> does not have a corresponding <code>Text::script(&apos;%s&apos;)</code> decalaration, please add it.',
+								'The <b>Joomla.Text._(&apos;%s&apos;)</b> language constant for <b>%s</b> does not have a corresponding <code>Text::script(&apos;%s&apos;)</code> decalaration, please add it.',
 								$constant, $string, $string
 							), 'Warning'
 						);

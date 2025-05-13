@@ -208,11 +208,6 @@ class HtmlView extends BaseHtmlView
 					ToolbarHelper::checkin('snippets.checkin');
 				}
 			}
-			if ($this->user->authorise('snippet.share_snippets', 'com_componentbuilder'))
-			{
-				// add Share Snippets button.
-				ToolbarHelper::custom('snippets.shareSnippets', 'share custom-button-sharesnippets', '', 'COM_COMPONENTBUILDER_SHARE_SNIPPETS', 'true');
-			}
 
 			if ($this->state->get('filter.published') == -2 && ($this->canState && $this->canDelete))
 			{
@@ -223,10 +218,20 @@ class HtmlView extends BaseHtmlView
 				ToolbarHelper::trash('snippets.trash');
 			}
 		}
-		if ($this->user->authorise('snippet.get_snippets', 'com_componentbuilder'))
+		if ($this->user->authorise('snippet.init', 'com_componentbuilder'))
 		{
-			// add Get Snippets button.
-			ToolbarHelper::custom('snippets.getSnippets', 'search custom-button-getsnippets', '', 'COM_COMPONENTBUILDER_GET_SNIPPETS', false);
+			// add Init button.
+			ToolbarHelper::custom('snippets.initPowers', 'health custom-button-initpowers', '', 'COM_COMPONENTBUILDER_INIT', false);
+		}
+		if ($this->user->authorise('snippet.reset', 'com_componentbuilder'))
+		{
+			// add Reset button.
+			ToolbarHelper::custom('snippets.resetPowers', 'joomla custom-button-resetpowers', '', 'COM_COMPONENTBUILDER_RESET', false);
+		}
+		if ($this->user->authorise('snippet.push', 'com_componentbuilder'))
+		{
+			// add Push button.
+			ToolbarHelper::custom('snippets.pushPowers', 'share custom-button-pushpowers', '', 'COM_COMPONENTBUILDER_PUSH', false);
 		}
 
 		// set help url for this view if found

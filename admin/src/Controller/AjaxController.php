@@ -54,7 +54,6 @@ class AjaxController extends BaseController
 		$this->registerTask('getWiki', 'ajax');
 		$this->registerTask('getVersion', 'ajax');
 		$this->registerTask('getJCBpackageInfo', 'ajax');
-		$this->registerTask('getCrowdinDetails', 'ajax');
 		$this->registerTask('getModuleCode', 'ajax');
 		$this->registerTask('getClassCode', 'ajax');
 		$this->registerTask('getClassCodeIds', 'ajax');
@@ -79,7 +78,6 @@ class AjaxController extends BaseController
 		$this->registerTask('placedin', 'ajax');
 		$this->registerTask('checkPlaceholderName', 'ajax');
 		$this->registerTask('snippetDetails', 'ajax');
-		$this->registerTask('setSnippetGithub', 'ajax');
 		$this->registerTask('getSnippets', 'ajax');
 		$this->registerTask('getExistingValidationRuleCode', 'ajax');
 		$this->registerTask('getValidationRulesTable', 'ajax');
@@ -92,6 +90,8 @@ class AjaxController extends BaseController
 		$this->registerTask('getSearchValue', 'ajax');
 		$this->registerTask('getReplaceValue', 'ajax');
 		$this->registerTask('setValue', 'ajax');
+		$this->registerTask('getRepoIndex', 'ajax');
+		$this->registerTask('initSelectedPowers', 'ajax');
 	}
 
     /**
@@ -324,56 +324,6 @@ class AjaxController extends BaseController
 							if ($ajaxModule)
 							{
 								$result = $ajaxModule->getJCBpackageInfo($packageValue);
-							}
-							else
-							{
-								$result = ['error' => 'There was an error! [149]'];
-							}
-						}
-						else
-						{
-							$result = ['error' => 'There was an error! [149]'];
-						}
-						if($callback)
-						{
-							echo $callback . "(".json_encode($result).");";
-						}
-						elseif($returnRaw)
-						{
-							echo json_encode($result);
-						}
-						else
-						{
-							echo "(".json_encode($result).");";
-						}
-					}
-					catch(\Exception $e)
-					{
-						if($callback)
-						{
-							echo $callback."(".json_encode($e).");";
-						}
-						elseif($returnRaw)
-						{
-							echo json_encode($e);
-						}
-						else
-						{
-							echo "(".json_encode($e).");";
-						}
-					}
-				break;
-				case 'getCrowdinDetails':
-					try
-					{
-						$identifierValue = $jinput->get('identifier', NULL, 'CMD');
-						$keyValue = $jinput->get('key', NULL, 'ALNUM');
-						if($identifierValue && $user->id != 0 && $keyValue)
-						{
-							$ajaxModule = $this->getModel('ajax', 'Administrator');
-							if ($ajaxModule)
-							{
-								$result = $ajaxModule->getCrowdinDetails($identifierValue, $keyValue);
 							}
 							else
 							{
@@ -1606,56 +1556,6 @@ class AjaxController extends BaseController
 						}
 					}
 				break;
-				case 'setSnippetGithub':
-					try
-					{
-						$pathValue = $jinput->get('path', NULL, 'STRING');
-						$statusValue = $jinput->get('status', NULL, 'WORD');
-						if($pathValue && $user->id != 0 && $statusValue)
-						{
-							$ajaxModule = $this->getModel('ajax', 'Administrator');
-							if ($ajaxModule)
-							{
-								$result = $ajaxModule->setSnippetGithub($pathValue, $statusValue);
-							}
-							else
-							{
-								$result = ['error' => 'There was an error! [149]'];
-							}
-						}
-						else
-						{
-							$result = ['error' => 'There was an error! [149]'];
-						}
-						if($callback)
-						{
-							echo $callback . "(".json_encode($result).");";
-						}
-						elseif($returnRaw)
-						{
-							echo json_encode($result);
-						}
-						else
-						{
-							echo "(".json_encode($result).");";
-						}
-					}
-					catch(\Exception $e)
-					{
-						if($callback)
-						{
-							echo $callback."(".json_encode($e).");";
-						}
-						elseif($returnRaw)
-						{
-							echo json_encode($e);
-						}
-						else
-						{
-							echo "(".json_encode($e).");";
-						}
-					}
-				break;
 				case 'getSnippets':
 					try
 					{
@@ -2240,6 +2140,107 @@ class AjaxController extends BaseController
 							if ($ajaxModule)
 							{
 								$result = $ajaxModule->setValue($valueValue, $row_idValue, $field_nameValue, $table_nameValue);
+							}
+							else
+							{
+								$result = ['error' => 'There was an error! [149]'];
+							}
+						}
+						else
+						{
+							$result = ['error' => 'There was an error! [149]'];
+						}
+						if($callback)
+						{
+							echo $callback . "(".json_encode($result).");";
+						}
+						elseif($returnRaw)
+						{
+							echo json_encode($result);
+						}
+						else
+						{
+							echo "(".json_encode($result).");";
+						}
+					}
+					catch(\Exception $e)
+					{
+						if($callback)
+						{
+							echo $callback."(".json_encode($e).");";
+						}
+						elseif($returnRaw)
+						{
+							echo json_encode($e);
+						}
+						else
+						{
+							echo "(".json_encode($e).");";
+						}
+					}
+				break;
+				case 'getRepoIndex':
+					try
+					{
+						$repoValue = $jinput->get('repo', NULL, 'STRING');
+						$areaValue = $jinput->get('area', NULL, 'STRING');
+						if($repoValue && $user->id != 0 && $areaValue)
+						{
+							$ajaxModule = $this->getModel('ajax', 'Administrator');
+							if ($ajaxModule)
+							{
+								$result = $ajaxModule->getRepoIndex($repoValue, $areaValue);
+							}
+							else
+							{
+								$result = ['error' => 'There was an error! [149]'];
+							}
+						}
+						else
+						{
+							$result = ['error' => 'There was an error! [149]'];
+						}
+						if($callback)
+						{
+							echo $callback . "(".json_encode($result).");";
+						}
+						elseif($returnRaw)
+						{
+							echo json_encode($result);
+						}
+						else
+						{
+							echo "(".json_encode($result).");";
+						}
+					}
+					catch(\Exception $e)
+					{
+						if($callback)
+						{
+							echo $callback."(".json_encode($e).");";
+						}
+						elseif($returnRaw)
+						{
+							echo json_encode($e);
+						}
+						else
+						{
+							echo "(".json_encode($e).");";
+						}
+					}
+				break;
+				case 'initSelectedPowers':
+					try
+					{
+						$repoValue = $jinput->get('repo', NULL, 'STRING');
+						$areaValue = $jinput->get('area', NULL, 'STRING');
+						$selectedValue = $jinput->get('selected', NULL, 'ARRAY');
+						if($repoValue && $user->id != 0 && $areaValue && $selectedValue)
+						{
+							$ajaxModule = $this->getModel('ajax', 'Administrator');
+							if ($ajaxModule)
+							{
+								$result = $ajaxModule->initSelectedPowers($repoValue, $areaValue, $selectedValue);
 							}
 							else
 							{

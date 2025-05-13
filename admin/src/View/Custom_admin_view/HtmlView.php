@@ -281,6 +281,16 @@ class HtmlView extends BaseHtmlView
 				{
 					ToolbarHelper::custom('custom_admin_view.save2copy', 'save-copy.png', 'save-copy_f2.png', 'JTOOLBAR_SAVE_AS_COPY', false);
 				}
+				if ($this->canDo->get('custom_admin_view.reset'))
+				{
+					// add Reset button.
+					ToolbarHelper::custom('custom_admin_view.resetPowers', 'joomla custom-button-resetpowers', '', 'COM_COMPONENTBUILDER_RESET', false);
+				}
+				if ($this->canDo->get('custom_admin_view.push'))
+				{
+					// add Push button.
+					ToolbarHelper::custom('custom_admin_view.pushPowers', 'share custom-button-pushpowers', '', 'COM_COMPONENTBUILDER_PUSH', false);
+				}
 				ToolbarHelper::cancel('custom_admin_view.cancel', 'JTOOLBAR_CLOSE');
 			}
 		}
@@ -353,6 +363,16 @@ class HtmlView extends BaseHtmlView
 					// We can save the new record
 					ToolbarHelper::apply('custom_admin_view.apply', 'JTOOLBAR_APPLY');
 					ToolbarHelper::save('custom_admin_view.save', 'JTOOLBAR_SAVE');
+				}
+				if ($this->canDo->get('custom_admin_view.reset'))
+				{
+					// add Reset button.
+					ToolbarHelper::custom('custom_admin_view.resetPowers', 'joomla custom-button-resetpowers', '', 'COM_COMPONENTBUILDER_RESET', false);
+				}
+				if ($this->canDo->get('custom_admin_view.push'))
+				{
+					// add Push button.
+					ToolbarHelper::custom('custom_admin_view.pushPowers', 'share custom-button-pushpowers', '', 'COM_COMPONENTBUILDER_PUSH', false);
 				}
 				ToolbarHelper::cancel('custom_admin_view.cancel', 'JTOOLBAR_CLOSE');
 			}

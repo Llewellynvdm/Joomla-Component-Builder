@@ -231,7 +231,7 @@ class HtmlView extends BaseHtmlView
 		if ($this->user->authorise('fieldtype.push', 'com_componentbuilder'))
 		{
 			// add Push button.
-			ToolbarHelper::custom('fieldtypes.pushPowers', 'joomla custom-button-pushpowers', '', 'COM_COMPONENTBUILDER_PUSH', false);
+			ToolbarHelper::custom('fieldtypes.pushPowers', 'share custom-button-pushpowers', '', 'COM_COMPONENTBUILDER_PUSH', false);
 		}
 
 		// set help url for this view if found

@@ -454,6 +454,7 @@ class Get
 	public $langStringTargets
 		= array(
 			'Joomla' . '.JText._(',
+			'Joomla' . '.Text._(',
 			'JText:' . ':script(',
 			'Text:' . ':_(',        // namespace and J version will be found
 			'Text:' . ':sprintf(',  // namespace and J version will be found

@@ -1401,6 +1401,306 @@ function isSet(val)
 }
 
 
+/* ======================================================================== *\
+   ComponentBuilder – Sub‑form helpers
+   Fully production‑ready, ESLint‑clean, duplicate‑ID safe
+\* ======================================================================== */
+(function () {
+	'use strict';
+
+	/* --------------------------------------------------------------------- *
+	 |  Configuration helpers                                                |
+	 * --------------------------------------------------------------------- */
+
+	/**
+	 * Return the Joomla‑router URL for the given AJAX task.
+	 * Falls back to a raw path if JRouter() is not defined.
+	 *
+	 * @param  {string} task e.g. "ajax.viewTableColumns"
+	 * @return {string}
+	 */
+	function route(task) {
+		const url = `index.php?option=com_componentbuilder&task=${task}&format=json&raw=true`;
+		return typeof window.JRouter === 'function' ? window.JRouter(url) : url;
+	}
+
+	/**
+	 * CSRF token (expects a global `token` variable).
+	 */
+	const csrf = window.token ?? Joomla.getOptions('csrf.token');
+
+	/* --------------------------------------------------------------------- *
+	 |  Generic server fetcher                                               |
+	 * --------------------------------------------------------------------- */
+
+	/**
+	 * Fetch column data for either a *view* or a *db* table.
+	 *
+	 * @param {"view"|"db"} type
+	 * @param {string} idOrName   View → GUID, DB → table name
+	 * @param {string} asKey      Alias key (usually "a")
+	 * @param {number} rowType    1‑based row‑type index
+	 * @return {Promise<any>}     JSON payload (resolved) or thrown Error
+	 */
+	function fetchColumns(type, idOrName, asKey, rowType) {
+		if (!csrf || !idOrName || !asKey) {
+			return Promise.reject(
+				new Error('[fetchColumns] Missing CSRF token, alias or identifier')
+			);
+		}
+
+		const task      = type === 'view' ? 'ajax.viewTableColumns' : 'ajax.dbTableColumns';
+		const paramName = type === 'view' ? 'id' : 'name';
+		const url       = `${route(task)}&${csrf}=1&as=${asKey}&type=${rowType}&${paramName}=${encodeURIComponent(idOrName)}`;
+
+		return fetch(url, { method: 'GET' })
+			.then(r => r.json());
+	}
+
+	/* --------------------------------------------------------------------- *
+	 |  UI utilities                                                         |
+	 * --------------------------------------------------------------------- */
+
+	/**
+	 * Safely fetch the radio value for “select all / custom”.
+	 * @return {number} 1 → select all, 0 → custom
+	 */
+	function currentSelectAll() {
+		const radio = /** @type {HTMLInputElement|null} */ (
+			document.querySelector('#jform_select_all input[type="radio"]:checked')
+		);
+		return radio ? Number(radio.value) : 0;
+	}
+
+	/**
+	 * Update the selection `<textarea>` (main or sub‑row) with new data.
+	 *
+	 * @param {string|false} data
+	 * @param {"view"|"db"}  type
+	 * @param {string|number} key      Field index inside the row
+	 * @param {boolean}      main      TRUE → main selection textarea
+	 * @param {number|string} table_   Join‑table index (sub‑rows)
+	 * @param {number|string} nr_      Clone suffix (sub‑rows)
+	 */
+	function loadSelectionData(data, type, key, main, table_, nr_) {
+		let selector;
+		if (main) {
+			selector = `textarea#jform_${key}_selection`;
+		} else {
+			selector = `textarea#jform_join_${type}_table${table_}_join_${type}_table${key}${nr_}_selection`;
+		}
+
+		const textarea = /** @type {HTMLTextAreaElement|null} */ (document.querySelector(selector));
+		if (!textarea) {
+			console.warn('[loadSelectionData] Textarea not found:', selector);
+			return;
+		}
+		textarea.value = data || '';
+	}
+
+	/* --------------------------------------------------------------------- *
+	 |  Public helpers (exposed via window.*)                                |
+	 * --------------------------------------------------------------------- */
+
+	/**
+	 * Handle the “Select all / Custom select” radio buttons.
+	 *
+	 * @param {number} selectAll 1 → select all, 0 → custom
+	 */
+	function setSelectAll(selectAll) {
+		const mainSource = Number(document.getElementById('jform_main_source')?.value ?? 0);
+		const key        = mainSource === 1 ? 'view' : mainSource === 2 ? 'db' : null;
+		if (!key) return;
+
+		const textarea  = document.getElementById(`jform_${key}_selection`);
+		if (!textarea) return;
+
+		if (selectAll === 1) {
+			textarea.value    = 'a.*';
+			textarea.readOnly = true;
+		} else {
+			textarea.readOnly = false;
+
+			/* Trigger a fresh column fetch so the user sees all fields. */
+			if (key === 'view') {
+				const guid = /** @type {HTMLInputElement} */ (
+					document.getElementById('jform_view_table_main_id')
+				)?.value;
+				if (guid) {
+					getViewTableColumns(guid, 'a', key, 3, true, '', '');
+				}
+			} else {
+				const name = /** @type {HTMLSelectElement} */ (
+					document.getElementById('jform_db_table_main')
+				)?.value;
+				if (name) {
+					getDbTableColumns(name, 'a', key, 3, true, '', '');
+				}
+			}
+		}
+	}
+
+	/**
+	 * Wrapper around `fetchColumns("view", …)` that keeps the original
+	 * call‑signature (`id, asKey, key, rowType, main, table_, nr_`).
+	 */
+	function getViewTableColumns(id, asKey, key, rowType, main, table_, nr_) {
+		if (main && currentSelectAll() === 1) {
+			setSelectAll(1);
+			return;
+		}
+		fetchColumns('view', id, asKey, rowType)
+			.then(res => {
+				if (res?.error) {
+					console.error(res.error);
+					loadSelectionData(false, 'view', key, main, table_, nr_);
+				} else {
+					loadSelectionData(res, 'view', key, main, table_, nr_);
+				}
+			})
+			.catch(err => {
+				console.error(err);
+				loadSelectionData(false, 'view', key, main, table_, nr_);
+			});
+	}
+
+	/**
+	 * Wrapper around `fetchColumns("db", …)` that keeps the original
+	 * call‑signature (`name, asKey, key, rowType, main, table_, nr_`).
+	 */
+	function getDbTableColumns(name, asKey, key, rowType, main, table_, nr_) {
+		if (main && currentSelectAll() === 1) {
+			setSelectAll(1);
+			return;
+		}
+		fetchColumns('db', name, asKey, rowType)
+			.then(res => {
+				if (res?.error) {
+					console.error(res.error);
+					loadSelectionData(false, 'db', key, main, table_, nr_);
+				} else {
+					loadSelectionData(res, 'db', key, main, table_, nr_);
+				}
+			})
+			.catch(err => {
+				console.error(err);
+				loadSelectionData(false, 'db', key, main, table_, nr_);
+			});
+	}
+
+	/* --------------------------------------------------------------------- *
+	 |  updateSubItems – duplicate‑ID safe handler                           |
+	 * --------------------------------------------------------------------- */
+
+	/**
+	 * Attach duplicate‑ID‑safe, delegated change handling to a sub‑form row.
+	 *
+	 * @param {string} fieldName "view" | "db"
+	 * @param {number} fieldNr   Row‑field index
+	 * @param {number} table_    Join‑table index
+	 * @param {number} nr_       Clone suffix
+	 */
+	function updateSubItems(fieldName, fieldNr, table_, nr_) {
+
+		/* Build selectors (works for hidden input, text input, select). */
+		const base = `jform_join_${fieldName}_table${table_}_join_${fieldName}_table${fieldNr}${nr_}`;
+		const sel  = {
+			tableId : `#${base}_${fieldName}_table_id`, // hidden <input>
+			table   : `#${base}_${fieldName}_table`,    // <select> OR dup. inputs
+			alias   : `#${base}_as`,
+			rowType : `#${base}_row_type`,
+		};
+
+		const adminForm = document.getElementById('adminForm');
+		if (!adminForm) {
+			console.error('[updateSubItems] #adminForm not found.');
+			return;
+		}
+
+		/* Guard: avoid rebinding the same row. */
+		if (adminForm.dataset[`boundFor${base}`]) return;
+		adminForm.dataset[`boundFor${base}`] = 'true';
+
+		const tableSelectors = fieldName === 'view'
+			? [sel.tableId, sel.table]
+			: [sel.table];
+
+		const delegateSelectors = [
+			...tableSelectors, sel.alias, sel.rowType,
+		].join(', ');
+
+		adminForm.addEventListener('change', handleChange);
+
+		/* --- Delegated change handler ----------------------------------- */
+		function handleChange(e) {
+			if (!e.target.matches(delegateSelectors)) return;
+			e.preventDefault();
+
+			const tableEl   = pickElement(tableSelectors);
+			const aliasEl   = pickElement(sel.alias);
+			const rowTypeEl = pickElement(sel.rowType);
+
+			if (!tableEl || !aliasEl || !rowTypeEl) return;
+
+			const tableVal   = getElementValue(tableEl);
+			const aliasVal   = getElementValue(aliasEl);
+			const rowTypeVal = getElementValue(rowTypeEl);
+
+			if (fieldName === 'view') {
+				getViewTableColumns(
+					tableVal, aliasVal, fieldNr, rowTypeVal, false, table_, nr_
+				);
+			} else {
+				getDbTableColumns(
+					tableVal, aliasVal, fieldNr, rowTypeVal, false, table_, nr_
+				);
+			}
+		}
+
+		/* --- Helper: choose the correct node among duplicated IDs -------- */
+		function pickElement(selectors) {
+			const nodes = [...[].concat(selectors).flatMap(
+				sel => [...document.querySelectorAll(sel)]
+			)];
+			if (!nodes.length) return null;
+			if (nodes.length === 1) return nodes[0];
+
+			/* 1️⃣ Prefer hidden input with GUID length 38. */
+			for (const n of nodes) {
+				if (isHidden(n) && getElementValue(n).length === 38) return n;
+			}
+			/* 2️⃣ Any hidden input with non‑empty value. */
+			for (const n of nodes) {
+				if (isHidden(n) && getElementValue(n)) return n;
+			}
+			/* 3️⃣ Fallback: newest element (last in DOM order). */
+			return nodes[nodes.length - 1];
+		}
+
+		function isHidden(el) {
+			return el.tagName === 'INPUT' && el.type === 'hidden';
+		}
+
+		function getElementValue(el) {
+			if (isHidden(el)) return el.value;
+			if (el.tagName === 'SELECT') {
+				const s = /** @type {HTMLSelectElement} */ (el);
+				return s.selectedIndex >= 0 ? s.options[s.selectedIndex].value : '';
+			}
+			return '';
+		}
+	}
+
+	/* --------------------------------------------------------------------- *
+	 |  Expose public helpers                                                |
+	 * --------------------------------------------------------------------- */
+	window.setSelectAll          = setSelectAll;
+	window.getViewTableColumns   = getViewTableColumns;
+	window.getDbTableColumns     = getDbTableColumns;
+	window.loadSelectionData     = loadSelectionData;
+	window.updateSubItems        = updateSubItems;
+})();
+
 document.addEventListener('DOMContentLoaded', function() {
 	// get the linked details
 	getLinked();
@@ -1409,175 +1709,6 @@ document.addEventListener('DOMContentLoaded', function() {
 	// check and load all the custom code edit buttons
 	getEditCustomCodeButtons();
 });
-
-function setSelectAll(select_all) {
-	// get source type
-	let main_source = document.getElementById("jform_main_source").value;
-	let key;
-	if (main_source == 1) {
-		key = 'view';
-	} else if (main_source == 2) {
-		key = 'db';
-	} else {
-		return true;
-	}
-	// only continue if set
-	if (select_all == 1) {
-		// set default notice
-		document.getElementById("jform_" + key + "_selection").value = 'a.*';
-		// set the selection text area to read only
-		document.getElementById("jform_" + key + "_selection").readOnly = true;
-	} else {
-		// remove the read only from selection text area
-		document.getElementById("jform_" + key + "_selection").readOnly = false;
-		// get selected options
-		let value_main = document.getElementById("jform_" + key + "_table_main").selectedOptions[0].value;
-		// make sure that all fields are set as selected
-		if (key === 'view') {
-			getViewTableColumns(value_main, 'a', key, 3, true, '', '');
-		} else {
-			getDbTableColumns(value_main, 'a', key, 3, true, '', '');
-		}
-	}
-}
-
-function getViewTableColumns_server(viewId, asKey, rowType) {
-	let getUrl = JRouter("index.php?option=com_componentbuilder&task=ajax.viewTableColumns&format=json&raw=true");
-	let request = '';
-	if (token.length > 0 && viewId > 0 && asKey.length > 0) {
-		request = token + '=1&as=' + asKey + '&type=' + rowType + '&id=' + viewId;
-	}
-	return fetch(getUrl + '&' + request, { method: 'GET' }).then(function(response) {
-		return response.json();
-	});
-}
-
-function getViewTableColumns(id, asKey, key, rowType, main, table_, nr_) {
-	// check if this is the main view
-	if (main) {
-		let select_all = document.querySelector("#jform_select_all input[type='radio']:checked").value;
-		// do not continue if set
-		if (select_all == 1) {
-			setSelectAll(select_all);
-			return true;
-		}
-	}
-	getViewTableColumns_server(id, asKey, rowType).then(function(result) {
-		if (result.error) {
-			console.error(result.error);
-		} else if (result) {
-			loadSelectionData(result, 'view', key, main, table_, nr_);
-		} else {
-			loadSelectionData(false, 'view', key, main, table_, nr_);
-		}
-	});
-}
-
-function getDbTableColumns_server(name, asKey, rowType) {
-	let getUrl = JRouter("index.php?option=com_componentbuilder&task=ajax.dbTableColumns&format=json&raw=true");
-	let request = '';
-	if (token.length > 0 && name.length > 0 && asKey.length > 0) {
-		request = token + '=1&as=' + asKey + '&type=' + rowType + '&name=' + name;
-	}
-	return fetch(getUrl + '&' + request, { method: 'GET' }).then(function(response) {
-		return response.json();
-	});
-}
-
-function getDbTableColumns(name, asKey, key, rowType, main, table_, nr_) {
-	// check if this is the main view
-	if (main) {
-		let select_all = document.querySelector("#jform_select_all input[type='radio']:checked").value;
-		// do not continue if set
-		if (select_all === 1) {
-			setSelectAll(select_all);
-			return true;
-		}
-	}
-	getDbTableColumns_server(name, asKey, rowType).then(function(result) {
-		if (result.error) {
-			console.error(result.error);
-		} else if (result) {
-			loadSelectionData(result, 'db', key, main, table_, nr_);
-		} else {
-			loadSelectionData(false, 'db', key, main, table_, nr_);
-		}
-	});
-}
-
-function loadSelectionData(result, type, key, main, table_, nr_) {
-	var textArea;
-	if (main) {
-		textArea = document.querySelector('textarea#jform_' + key + '_selection');
-	} else {
-		textArea = document.querySelector('textarea#jform_join_' + type + '_table' + table_ + '_join_' + type + '_table' + key + nr_ + '_selection');
-	}
-	// update the text area
-	if (result) {
-		textArea.value = result;
-	} else {
-		textArea.value = '';
-	}
-}
-
-function updateSubItems(fieldName, fieldNr, table_, nr_) {
-	let selector = '#jform_join_' + fieldName + '_table' + table_ + '_join_' + fieldName + '_table' + fieldNr + nr_ + '_' + fieldName + '_table';
-	if (document.querySelector(selector)) {
-		document.getElementById('adminForm').addEventListener('change', function(e) {
-			if (e.target.matches(selector)) {
-				e.preventDefault();
-				// get options
-				let selectElement = document.querySelector(selector);
-				let value1 = selectElement.options[selectElement.selectedIndex].value;
-				let asSelectElement = document.querySelector('#jform_join_' + fieldName + '_table' + table_ + '_join_' + fieldName + '_table' + fieldNr + nr_ + '_as');
-				let as_value2 = asSelectElement.options[asSelectElement.selectedIndex].value;
-				let rowTypeElement = document.querySelector('#jform_join_' + fieldName + '_table' + table_ + '_join_' + fieldName + '_table' + fieldNr + nr_ + '_row_type');
-				let row_value1 = rowTypeElement.options[rowTypeElement.selectedIndex].value;
-				if (fieldName === 'view') {
-					getViewTableColumns(value1, as_value2, fieldNr, row_value1, false, table_, nr_);
-				} else {
-					getDbTableColumns(value1, as_value2, fieldNr, row_value1, false, table_, nr_);
-				}
-			}
-		});
-
-		document.getElementById('adminForm').addEventListener('change', function(e) {
-			if (e.target.matches('#jform_join_' + fieldName + '_table' + table_ + '_join_' + fieldName + '_table' + fieldNr + nr_ + '_as')) {
-				e.preventDefault();
-				// get options
-				let selectElement = document.querySelector(selector);
-				let value1 = selectElement.options[selectElement.selectedIndex].value;
-				let asSelectElement = document.querySelector('#jform_join_' + fieldName + '_table' + table_ + '_join_' + fieldName + '_table' + fieldNr + nr_ + '_as');
-				let as_value2 = asSelectElement.options[asSelectElement.selectedIndex].value;
-				let rowTypeElement = document.querySelector('#jform_join_' + fieldName + '_table' + table_ + '_join_' + fieldName + '_table' + fieldNr + nr_ + '_row_type');
-				let row_value1 = rowTypeElement.options[rowTypeElement.selectedIndex].value;
-				if (fieldName === 'view') {
-					getViewTableColumns(value1, as_value2, fieldNr, row_value1, false, table_, nr_);
-				} else {
-					getDbTableColumns(value1, as_value2, fieldNr, row_value1, false, table_, nr_);
-				}
-			}
-		});
-
-		document.getElementById('adminForm').addEventListener('change', function(e) {
-			if (e.target.matches('#jform_join_' + fieldName + '_table' + table_ + '_join_' + fieldName + '_table' + fieldNr + nr_ + '_row_type')) {
-				e.preventDefault();
-				// get options
-				let selectElement = document.querySelector(selector);
-				let value1 = selectElement.options[selectElement.selectedIndex].value;
-				let asSelectElement = document.querySelector('#jform_join_' + fieldName + '_table' + table_ + '_join_' + fieldName + '_table' + fieldNr + nr_ + '_as');
-				let as_value2 = asSelectElement.options[asSelectElement.selectedIndex].value;
-				let rowTypeElement = document.querySelector('#jform_join_' + fieldName + '_table' + table_ + '_join_' + fieldName + '_table' + fieldNr + nr_ + '_row_type');
-				let row_value1 = rowTypeElement.options[rowTypeElement.selectedIndex].value;
-				if (fieldName === 'view') {
-					getViewTableColumns(value1, as_value2, fieldNr, row_value1, false, table_, nr_);
-				} else {
-					getDbTableColumns(value1, as_value2, fieldNr, row_value1, false, table_, nr_);
-				}
-			}
-		});
-	}
-}
 
 function getDynamicScripts(id) {
 	if (id == 1) {

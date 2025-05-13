@@ -223,6 +223,21 @@ class HtmlView extends BaseHtmlView
 			// add Clear tmp button.
 			ToolbarHelper::custom('joomla_components.clearTmp', 'purge custom-button-cleartmp', '', 'COM_COMPONENTBUILDER_CLEAR_TMP', false);
 		}
+		if ($this->user->authorise('joomla_component.init', 'com_componentbuilder'))
+		{
+			// add Init button.
+			ToolbarHelper::custom('joomla_components.initPowers', 'health custom-button-initpowers', '', 'COM_COMPONENTBUILDER_INIT', false);
+		}
+		if ($this->user->authorise('joomla_component.reset', 'com_componentbuilder'))
+		{
+			// add Reset button.
+			ToolbarHelper::custom('joomla_components.resetPowers', 'joomla custom-button-resetpowers', '', 'COM_COMPONENTBUILDER_RESET', false);
+		}
+		if ($this->user->authorise('joomla_component.push', 'com_componentbuilder'))
+		{
+			// add Push button.
+			ToolbarHelper::custom('joomla_components.pushPowers', 'share custom-button-pushpowers', '', 'COM_COMPONENTBUILDER_PUSH', false);
+		}
 
 		// set help url for this view if found
 		$this->help_url = ComponentbuilderHelper::getHelpUrl('joomla_components');

@@ -20,9 +20,9 @@ use VDM\Joomla\Abstraction\Grep as ExtendingGrep;
 /**
  * Global Resource Empowerment Platform
  * 
- *    The Grep feature will try to find your joomla power in the repositories listed in the global
- *    Options of JCB in the super powers tab, and if it can't be found there will try the global core
- *    Super powers of JCB. All searches are performed according the [algorithm:cascading]
+ *    The Grep feature will try to find your power in the repositories
+ *    linked to this [area], and if it can't be found there will try the global core
+ *    Super Powers of JCB. All searches are performed according the [algorithm:cascading]
  *    See documentation for more details: https://git.vdm.dev/joomla/super-powers/wiki
  * 
  * @since 5.0.3
@@ -84,19 +84,25 @@ final class Grep extends ExtendingGrep implements GrepInterface
 		// get the branch name
 		$branch = $this->getBranchName($path);
 
+		// get the guid_field key
+		$guid_field = $this->getGuidField();
+
+		// get the settings path
+		$settings_path = $this->getSettingsPath();
+
 		// load the base and token if set
 		$this->loadApi($this->contents, $path->base ?? null, $path->token ?? null);
 
 		// get the settings
-		if (($power = $this->loadRemoteFile($path->organisation, $path->repository, $path->index->{$guid}->path . '/item.json', $branch)) !== null &&
-			isset($power->guid))
+		if (($power = $this->loadRemoteFile($path->organisation, $path->repository, $path->index->{$guid}->path . '/' . $settings_path, $branch)) !== null &&
+			isset($power->{$guid_field}))
 		{
 			// set the git details in params
 			$path_guid = $path->guid ?? null;
 			if ($path_guid !== null)
 			{
 				// get the Settings meta
-				if (($meta = $this->contents->metadata($path->organisation, $path->repository, $path->index->{$guid}->path . '/item.json', $branch)) !== null &&
+				if (($meta = $this->contents->metadata($path->organisation, $path->repository, $path->index->{$guid}->path . '/' . $settings_path, $branch)) !== null &&
 					isset($meta->sha))
 				{
 					if (isset($power->params) && is_object($power->params) &&

@@ -1,6 +1,8 @@
-# v5.1.1-alpha4
+# v5.1.1-alpha5
 
-- Add all needed Powers to the release package, to speed-up the build of the demo component.
+- Refactor initialization flow to accommodate future scalability and integration with all designated areas.
+- Refactor the Creator Builders class.
+- Refactor the FieldString and FieldXML classes.
 
 # v5.1.1-alpha
 
@@ -15,6 +17,7 @@
 - Resolves the Database Updating issue in the compiler. #1212,#1209
 - Adds the Component Commands Plugin to the CLI for Import of spreadsheet data-sets.
 - Add edit and create options to the ModalSelect Field (in Joomla 5)
+- Add all needed Powers to the release package, to speed-up the build of the demo component.
 
 # v5.1.0
 

@@ -129,16 +129,30 @@
 			message="COM_COMPONENTBUILDER_SNIPPET_URL_MESSAGE"
 			hint="COM_COMPONENTBUILDER_SNIPPET_URL_HINT"
 		/>
-		<!-- Type Field. Type: Snippettype. (custom) -->
+		<!-- Type Field. Type: Modalselect. (custom) -->
 		<field
-			type="snippettype"
+			type="ModalSelect"
 			name="type"
 			label="COM_COMPONENTBUILDER_SNIPPET_TYPE_LABEL"
-			description="COM_COMPONENTBUILDER_SNIPPET_TYPE_DESCRIPTION"
-			class="list_class"
-			layout="joomla.form.field.list-fancy-select"
-			multiple="false"
+			sql_title_table="#__componentbuilder_snippet_type"
+			sql_title_column="name"
+			data-key-name="guid"
+			sql_title_key="guid"
+			urlSelect="index.php?option=com_componentbuilder&amp;view=snippet_types&amp;layout=modal&amp;tmpl=component&amp;titleKey=guid"
+			urlNew="index.php?option=com_componentbuilder&amp;task=snippet_type.add&amp;layout=modal&amp;tmpl=component"
+			urlEdit="index.php?option=com_componentbuilder&amp;task=snippet_type.edit&amp;guid={id}&amp;layout=modal&amp;tmpl=component&amp;titleKey=guid"
+			titleSelect="COM_COMPONENTBUILDER_SNIPPET_TYPE_TITLESELECT"
+			titleNew="COM_COMPONENTBUILDER_SNIPPET_TYPE_TITLENEW"
+			titleEdit="COM_COMPONENTBUILDER_SNIPPET_TYPE_TITLEEDIT"
+			iconSelect="icon-copy"
+			select="true"
+			new="true"
+			edit="true"
+			clear="true"
 			required="true"
+			class="input-large"
+			description="COM_COMPONENTBUILDER_SNIPPET_TYPE_DESCRIPTION"
+			hint="COM_COMPONENTBUILDER_SNIPPET_TYPE_HINT"
 		/>
 		<!-- Heading Field. Type: Text. (joomla) -->
 		<field
@@ -154,18 +168,30 @@
 			message="COM_COMPONENTBUILDER_SNIPPET_HEADING_MESSAGE"
 			hint="COM_COMPONENTBUILDER_SNIPPET_HEADING_HINT"
 		/>
-		<!-- Library Field. Type: Library. (custom) -->
+		<!-- Library Field. Type: Modalselect. (custom) -->
 		<field
-			type="library"
+			type="ModalSelect"
 			name="library"
 			label="COM_COMPONENTBUILDER_SNIPPET_LIBRARY_LABEL"
-			description="COM_COMPONENTBUILDER_SNIPPET_LIBRARY_DESCRIPTION"
-			class="list_class"
-			layout="joomla.form.field.list-fancy-select"
-			multiple="false"
-			default="0"
+			sql_title_table="#__componentbuilder_library"
+			sql_title_column="name"
+			data-key-name="guid"
+			sql_title_key="guid"
+			urlSelect="index.php?option=com_componentbuilder&amp;view=libraries&amp;layout=modal&amp;tmpl=component&amp;titleKey=guid"
+			urlNew="index.php?option=com_componentbuilder&amp;task=library.add&amp;layout=modal&amp;tmpl=component"
+			urlEdit="index.php?option=com_componentbuilder&amp;task=library.edit&amp;guid={id}&amp;layout=modal&amp;tmpl=component&amp;titleKey=guid"
+			titleSelect="COM_COMPONENTBUILDER_SNIPPET_LIBRARY_TITLESELECT"
+			titleNew="COM_COMPONENTBUILDER_SNIPPET_LIBRARY_TITLENEW"
+			titleEdit="COM_COMPONENTBUILDER_SNIPPET_LIBRARY_TITLEEDIT"
+			iconSelect="icon-copy"
+			select="true"
+			new="true"
+			edit="true"
+			clear="true"
 			required="true"
-			button="true"
+			class="input-large"
+			description="COM_COMPONENTBUILDER_SNIPPET_LIBRARY_DESCRIPTION"
+			hint="COM_COMPONENTBUILDER_SNIPPET_LIBRARY_HINT"
 		/>
 		<!-- Guid Field. Type: Text. (joomla) -->
 		<field

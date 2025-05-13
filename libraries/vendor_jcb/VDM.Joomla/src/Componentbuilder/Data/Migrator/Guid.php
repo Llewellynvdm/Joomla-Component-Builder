@@ -36,7 +36,7 @@ final class Guid
 			'linkedTable' => 'fieldtype',
 			'linkedColumn' => 'id',
 			'array' => false,
-			'valueType' => 1,
+			'valueType' => 5,
 		],
 		[
 			'table' => 'dynamic_get',
@@ -456,6 +456,14 @@ final class Guid
 			'valueType' => 1,
 		],
 		[
+			'table' => 'joomla_component',
+			'column' => 'dashboard',
+			'linkedTables' => ['A' => 'admin_view', 'C' => 'custom_admin_view'],
+			'linkedColumn' => 'id',
+			'array' => false,
+			'valueType' => 4
+		],
+		[
 			'table' => 'joomla_module',
 			'column' => 'libraries',
 			'linkedTable' => 'library',
@@ -704,7 +712,7 @@ final class Guid
 		// try to load the update the tables with the schema class
 		try
 		{
-			$messages = $this->migrator->process($this->config);
+			$messages = $this->migrator->process($this->config, $this);
 		}
 		catch (\Exception $e)
 		{

@@ -21,7 +21,7 @@ use VDM\Joomla\Abstraction\BaseTable;
  * 
  * @since 3.2.0
  */
-final class Table extends BaseTable implements TableInterface
+class Table extends BaseTable implements TableInterface
 {
 	/**
 	 * All areas/views/tables with their field details
@@ -1033,9 +1033,9 @@ final class Table extends BaseTable implements TableInterface
 					'type' => 'VARCHAR(64)',
 					'default' => '',
 					'GUID' => 'b12fadb6-2825-465e-a1e7-1dde507ffde5',
-					'null_switch' => 'NOT NULL',
+					'null_switch' => 'NULL',
 					'unique_key' => false,
-					'key' => false,
+					'key' => true,
 				],
 				'link' => [
 					'type' => 1,
@@ -1243,6 +1243,38 @@ final class Table extends BaseTable implements TableInterface
 					'key' => false,
 				],
 				'link' => NULL,
+				'fields' => [
+					'name' => [
+						'name' => 'name',
+						'type' => 'text',
+						'link' => NULL,
+					],
+					'title' => [
+						'name' => 'title',
+						'type' => 'text',
+						'link' => NULL,
+					],
+					'email' => [
+						'name' => 'email',
+						'type' => 'text',
+						'link' => NULL,
+					],
+					'website' => [
+						'name' => 'website',
+						'type' => 'url',
+						'link' => NULL,
+					],
+					'use' => [
+						'name' => 'use',
+						'type' => 'list',
+						'link' => NULL,
+					],
+					'show' => [
+						'name' => 'show',
+						'type' => 'list',
+						'link' => NULL,
+					],
+				],
 			],
 			'add_sql_uninstall' => [
 				'name' => 'add_sql_uninstall',
@@ -2403,6 +2435,86 @@ final class Table extends BaseTable implements TableInterface
 					'key' => false,
 				],
 				'link' => NULL,
+				'fields' => [
+					'module' => [
+						'name' => 'module',
+						'type' => 'checkbox',
+						'link' => NULL,
+					],
+					'file' => [
+						'name' => 'file',
+						'type' => 'text',
+						'link' => NULL,
+					],
+					'fields_name' => [
+						'name' => 'fields_name',
+						'type' => 'text',
+						'link' => NULL,
+					],
+					'fieldset' => [
+						'name' => 'fieldset',
+						'type' => 'text',
+						'link' => NULL,
+					],
+					'label' => [
+						'name' => 'label',
+						'type' => 'text',
+						'link' => NULL,
+					],
+					'fields_rules_paths' => [
+						'name' => 'fields_rules_paths',
+						'type' => 'list',
+						'link' => NULL,
+					],
+					'addrulepath' => [
+						'name' => 'addrulepath',
+						'type' => 'subform',
+						'link' => NULL,
+						'fields' => [
+							'path' => [
+								'name' => 'path',
+								'type' => 'text',
+								'link' => NULL,
+							],
+						],
+					],
+					'addfieldpath' => [
+						'name' => 'addfieldpath',
+						'type' => 'subform',
+						'link' => NULL,
+						'fields' => [
+							'path' => [
+								'name' => 'path',
+								'type' => 'text',
+								'link' => NULL,
+							],
+						],
+					],
+					'fields' => [
+						'name' => 'fields',
+						'type' => 'subform',
+						'link' => NULL,
+						'fields' => [
+							'field' => [
+								'name' => 'field',
+								'type' => 'ModalSelect',
+								'link' => [
+									'type' => 1,
+									'table' => '#__componentbuilder_field',
+									'component' => 'com_componentbuilder',
+									'entity' => 'field',
+									'value' => 'name',
+									'key' => 'guid',
+								],
+							],
+							'custom_value' => [
+								'name' => 'custom_value',
+								'type' => 'textarea',
+								'link' => NULL,
+							],
+						],
+					],
+				],
 			],
 			'readme' => [
 				'name' => 'readme',
@@ -2800,6 +2912,20 @@ final class Table extends BaseTable implements TableInterface
 					'key' => false,
 				],
 				'link' => NULL,
+				'fields' => [
+					'method' => [
+						'name' => 'method',
+						'type' => 'pluginsclassmethods',
+						'link' => [
+							'type' => 1,
+							'table' => '#__componentbuilder_class_method',
+							'component' => 'com_componentbuilder',
+							'entity' => 'class_method',
+							'value' => 'name',
+							'key' => 'guid',
+						],
+					],
+				],
 			],
 			'property_selection' => [
 				'name' => 'property_selection',
@@ -2818,6 +2944,20 @@ final class Table extends BaseTable implements TableInterface
 					'key' => false,
 				],
 				'link' => NULL,
+				'fields' => [
+					'property' => [
+						'name' => 'property',
+						'type' => 'pluginsclassproperties',
+						'link' => [
+							'type' => 1,
+							'table' => '#__componentbuilder_class_property',
+							'component' => 'com_componentbuilder',
+							'entity' => 'class_property',
+							'value' => 'name',
+							'key' => 'guid',
+						],
+					],
+				],
 			],
 			'add_head' => [
 				'name' => 'add_head',
@@ -3041,6 +3181,86 @@ final class Table extends BaseTable implements TableInterface
 					'key' => false,
 				],
 				'link' => NULL,
+				'fields' => [
+					'plugin' => [
+						'name' => 'plugin',
+						'type' => 'checkbox',
+						'link' => NULL,
+					],
+					'file' => [
+						'name' => 'file',
+						'type' => 'text',
+						'link' => NULL,
+					],
+					'fields_name' => [
+						'name' => 'fields_name',
+						'type' => 'text',
+						'link' => NULL,
+					],
+					'fieldset' => [
+						'name' => 'fieldset',
+						'type' => 'text',
+						'link' => NULL,
+					],
+					'label' => [
+						'name' => 'label',
+						'type' => 'text',
+						'link' => NULL,
+					],
+					'fields_rules_paths' => [
+						'name' => 'fields_rules_paths',
+						'type' => 'list',
+						'link' => NULL,
+					],
+					'addrulepath' => [
+						'name' => 'addrulepath',
+						'type' => 'subform',
+						'link' => NULL,
+						'fields' => [
+							'path' => [
+								'name' => 'path',
+								'type' => 'text',
+								'link' => NULL,
+							],
+						],
+					],
+					'addfieldpath' => [
+						'name' => 'addfieldpath',
+						'type' => 'subform',
+						'link' => NULL,
+						'fields' => [
+							'path' => [
+								'name' => 'path',
+								'type' => 'text',
+								'link' => NULL,
+							],
+						],
+					],
+					'fields' => [
+						'name' => 'fields',
+						'type' => 'subform',
+						'link' => NULL,
+						'fields' => [
+							'field' => [
+								'name' => 'field',
+								'type' => 'ModalSelect',
+								'link' => [
+									'type' => 1,
+									'table' => '#__componentbuilder_field',
+									'component' => 'com_componentbuilder',
+									'entity' => 'field',
+									'value' => 'name',
+									'key' => 'guid',
+								],
+							],
+							'custom_value' => [
+								'name' => 'custom_value',
+								'type' => 'textarea',
+								'link' => NULL,
+							],
+						],
+					],
+				],
 			],
 			'php_method_uninstall' => [
 				'name' => 'php_method_uninstall',
@@ -3364,24 +3584,6 @@ final class Table extends BaseTable implements TableInterface
 				],
 				'link' => NULL,
 			],
-			'settings' => [
-				'name' => 'settings',
-				'label' => 'COM_COMPONENTBUILDER_JOOMLA_POWER_SETTINGS_LABEL',
-				'type' => 'subform',
-				'title' => false,
-				'list' => 'joomla_powers',
-				'store' => 'json',
-				'tab_name' => 'Joomla Power',
-				'db' => [
-					'type' => 'TEXT',
-					'default' => 'EMPTY',
-					'GUID' => 'a1033166-8112-45f9-8af8-c15a53d30c04',
-					'null_switch' => 'NOT NULL',
-					'unique_key' => false,
-					'key' => false,
-				],
-				'link' => NULL,
-			],
 			'guid' => [
 				'name' => 'guid',
 				'label' => 'COM_COMPONENTBUILDER_JOOMLA_POWER_GUID_LABEL',
@@ -3417,6 +3619,36 @@ final class Table extends BaseTable implements TableInterface
 					'key' => false,
 				],
 				'link' => NULL,
+			],
+			'settings' => [
+				'name' => 'settings',
+				'label' => 'COM_COMPONENTBUILDER_JOOMLA_POWER_SETTINGS_LABEL',
+				'type' => 'subform',
+				'title' => false,
+				'list' => 'joomla_powers',
+				'store' => 'json',
+				'tab_name' => 'Joomla Power',
+				'db' => [
+					'type' => 'TEXT',
+					'default' => 'EMPTY',
+					'GUID' => 'a1033166-8112-45f9-8af8-c15a53d30c04',
+					'null_switch' => 'NOT NULL',
+					'unique_key' => false,
+					'key' => false,
+				],
+				'link' => NULL,
+				'fields' => [
+					'namespace' => [
+						'name' => 'namespace',
+						'type' => 'text',
+						'link' => NULL,
+					],
+					'joomla_version' => [
+						'name' => 'joomla_version',
+						'type' => 'list',
+						'link' => NULL,
+					],
+				],
 			],
 			'access' => [
 				'name' => 'access',
@@ -3523,6 +3755,20 @@ final class Table extends BaseTable implements TableInterface
 					'key' => false,
 				],
 				'link' => NULL,
+				'fields' => [
+					'load' => [
+						'name' => 'load',
+						'type' => 'ModalSelect',
+						'link' => [
+							'type' => 1,
+							'table' => '#__componentbuilder_power',
+							'component' => 'com_componentbuilder',
+							'entity' => 'power',
+							'value' => 'system_name',
+							'key' => 'guid',
+						],
+					],
+				],
 			],
 			'description' => [
 				'name' => 'description',
@@ -3559,6 +3805,25 @@ final class Table extends BaseTable implements TableInterface
 					'key' => false,
 				],
 				'link' => NULL,
+				'fields' => [
+					'access_point' => [
+						'name' => 'access_point',
+						'type' => 'text',
+						'link' => NULL,
+					],
+					'namespace' => [
+						'name' => 'namespace',
+						'type' => 'subform',
+						'link' => NULL,
+						'fields' => [
+							'use' => [
+								'name' => 'use',
+								'type' => 'text',
+								'link' => NULL,
+							],
+						],
+					],
+				],
 			],
 			'licensing_template' => [
 				'name' => 'licensing_template',
@@ -3735,6 +4000,20 @@ final class Table extends BaseTable implements TableInterface
 					'key' => false,
 				],
 				'link' => NULL,
+				'fields' => [
+					'property' => [
+						'name' => 'property',
+						'type' => 'powersclassproperties',
+						'link' => [
+							'type' => 1,
+							'table' => '#__componentbuilder_class_property',
+							'component' => 'com_componentbuilder',
+							'entity' => 'class_property',
+							'value' => 'name',
+							'key' => 'guid',
+						],
+					],
+				],
 			],
 			'extendsinterfaces' => [
 				'name' => 'extendsinterfaces',
@@ -3778,6 +4057,20 @@ final class Table extends BaseTable implements TableInterface
 					'key' => false,
 				],
 				'link' => NULL,
+				'fields' => [
+					'method' => [
+						'name' => 'method',
+						'type' => 'powersclassmethods',
+						'link' => [
+							'type' => 1,
+							'table' => '#__componentbuilder_class_method',
+							'component' => 'com_componentbuilder',
+							'entity' => 'class_method',
+							'value' => 'name',
+							'key' => 'guid',
+						],
+					],
+				],
 			],
 			'approved_paths' => [
 				'name' => 'approved_paths',
@@ -3839,6 +4132,25 @@ final class Table extends BaseTable implements TableInterface
 					'key' => false,
 				],
 				'link' => NULL,
+				'fields' => [
+					'use' => [
+						'name' => 'use',
+						'type' => 'ModalSelect',
+						'link' => [
+							'type' => 1,
+							'table' => '#__componentbuilder_power',
+							'component' => 'com_componentbuilder',
+							'entity' => 'power',
+							'value' => 'system_name',
+							'key' => 'guid',
+						],
+					],
+					'as' => [
+						'name' => 'as',
+						'type' => 'text',
+						'link' => NULL,
+					],
+				],
 			],
 			'add_licensing_template' => [
 				'name' => 'add_licensing_template',
@@ -4341,6 +4653,18 @@ final class Table extends BaseTable implements TableInterface
 					'key' => false,
 				],
 				'link' => NULL,
+				'fields' => [
+					'action' => [
+						'name' => 'action',
+						'type' => 'list',
+						'link' => NULL,
+					],
+					'implementation' => [
+						'name' => 'implementation',
+						'type' => 'list',
+						'link' => NULL,
+					],
+				],
 			],
 			'php_getitems_after_all' => [
 				'name' => 'php_getitems_after_all',
@@ -4395,6 +4719,13 @@ final class Table extends BaseTable implements TableInterface
 					'key' => false,
 				],
 				'link' => NULL,
+				'fields' => [
+					'name' => [
+						'name' => 'name',
+						'type' => 'text',
+						'link' => NULL,
+					],
+				],
 			],
 			'php_save' => [
 				'name' => 'php_save',
@@ -4467,6 +4798,40 @@ final class Table extends BaseTable implements TableInterface
 					'key' => false,
 				],
 				'link' => NULL,
+				'fields' => [
+					'adminview' => [
+						'name' => 'adminview',
+						'type' => 'ModalSelect',
+						'link' => [
+							'type' => 1,
+							'table' => '#__componentbuilder_admin_view',
+							'component' => 'com_componentbuilder',
+							'entity' => 'admin_view',
+							'value' => 'system_name',
+							'key' => 'guid',
+						],
+					],
+					'tab' => [
+						'name' => 'tab',
+						'type' => 'integer',
+						'link' => NULL,
+					],
+					'key' => [
+						'name' => 'key',
+						'type' => 'text',
+						'link' => NULL,
+					],
+					'parentkey' => [
+						'name' => 'parentkey',
+						'type' => 'text',
+						'link' => NULL,
+					],
+					'addnew' => [
+						'name' => 'addnew',
+						'type' => 'list',
+						'link' => NULL,
+					],
+				],
 			],
 			'php_batchcopy' => [
 				'name' => 'php_batchcopy',
@@ -5194,6 +5559,33 @@ final class Table extends BaseTable implements TableInterface
 					'key' => false,
 				],
 				'link' => NULL,
+				'fields' => [
+					'icomoon' => [
+						'name' => 'icomoon',
+						'type' => 'list',
+						'link' => NULL,
+					],
+					'name' => [
+						'name' => 'name',
+						'type' => 'text',
+						'link' => NULL,
+					],
+					'method' => [
+						'name' => 'method',
+						'type' => 'text',
+						'link' => NULL,
+					],
+					'target' => [
+						'name' => 'target',
+						'type' => 'list',
+						'link' => NULL,
+					],
+					'type' => [
+						'name' => 'type',
+						'type' => 'list',
+						'link' => NULL,
+					],
+				],
 			],
 			'add_php_after_delete' => [
 				'name' => 'add_php_after_delete',
@@ -5392,6 +5784,25 @@ final class Table extends BaseTable implements TableInterface
 					'key' => false,
 				],
 				'link' => NULL,
+				'fields' => [
+					'table' => [
+						'name' => 'table',
+						'type' => 'dbtables',
+						'link' => [
+							'type' => 2,
+							'table' => '',
+							'component' => '',
+							'entity' => '',
+							'value' => '',
+							'key' => '',
+						],
+					],
+					'sourcemap' => [
+						'name' => 'sourcemap',
+						'type' => 'textarea',
+						'link' => NULL,
+					],
+				],
 			],
 			'php_ajaxmethod' => [
 				'name' => 'php_ajaxmethod',
@@ -5446,6 +5857,43 @@ final class Table extends BaseTable implements TableInterface
 					'key' => false,
 				],
 				'link' => NULL,
+				'fields' => [
+					'value_name' => [
+						'name' => 'value_name',
+						'type' => 'text',
+						'link' => NULL,
+					],
+					'task_name' => [
+						'name' => 'task_name',
+						'type' => 'text',
+						'link' => NULL,
+					],
+					'input_default' => [
+						'name' => 'input_default',
+						'type' => 'text',
+						'link' => NULL,
+					],
+					'input_filter' => [
+						'name' => 'input_filter',
+						'type' => 'list',
+						'link' => NULL,
+					],
+					'method_name' => [
+						'name' => 'method_name',
+						'type' => 'text',
+						'link' => NULL,
+					],
+					'allow_zero' => [
+						'name' => 'allow_zero',
+						'type' => 'checkbox',
+						'link' => NULL,
+					],
+					'user_check' => [
+						'name' => 'user_check',
+						'type' => 'checkbox',
+						'link' => NULL,
+					],
+				],
 			],
 			'access' => [
 				'name' => 'access',
@@ -5958,6 +6406,43 @@ final class Table extends BaseTable implements TableInterface
 					'key' => false,
 				],
 				'link' => NULL,
+				'fields' => [
+					'value_name' => [
+						'name' => 'value_name',
+						'type' => 'text',
+						'link' => NULL,
+					],
+					'task_name' => [
+						'name' => 'task_name',
+						'type' => 'text',
+						'link' => NULL,
+					],
+					'input_default' => [
+						'name' => 'input_default',
+						'type' => 'text',
+						'link' => NULL,
+					],
+					'input_filter' => [
+						'name' => 'input_filter',
+						'type' => 'list',
+						'link' => NULL,
+					],
+					'method_name' => [
+						'name' => 'method_name',
+						'type' => 'text',
+						'link' => NULL,
+					],
+					'allow_zero' => [
+						'name' => 'allow_zero',
+						'type' => 'checkbox',
+						'link' => NULL,
+					],
+					'user_check' => [
+						'name' => 'user_check',
+						'type' => 'checkbox',
+						'link' => NULL,
+					],
+				],
 			],
 			'dynamic_get' => [
 				'name' => 'dynamic_get',
@@ -6073,6 +6558,33 @@ final class Table extends BaseTable implements TableInterface
 					'key' => false,
 				],
 				'link' => NULL,
+				'fields' => [
+					'icomoon' => [
+						'name' => 'icomoon',
+						'type' => 'list',
+						'link' => NULL,
+					],
+					'name' => [
+						'name' => 'name',
+						'type' => 'text',
+						'link' => NULL,
+					],
+					'method' => [
+						'name' => 'method',
+						'type' => 'text',
+						'link' => NULL,
+					],
+					'target' => [
+						'name' => 'target',
+						'type' => 'list',
+						'link' => NULL,
+					],
+					'type' => [
+						'name' => 'type',
+						'type' => 'list',
+						'link' => NULL,
+					],
+				],
 			],
 			'php_jview' => [
 				'name' => 'php_jview',
@@ -6664,6 +7176,43 @@ final class Table extends BaseTable implements TableInterface
 					'key' => false,
 				],
 				'link' => NULL,
+				'fields' => [
+					'value_name' => [
+						'name' => 'value_name',
+						'type' => 'text',
+						'link' => NULL,
+					],
+					'task_name' => [
+						'name' => 'task_name',
+						'type' => 'text',
+						'link' => NULL,
+					],
+					'input_default' => [
+						'name' => 'input_default',
+						'type' => 'text',
+						'link' => NULL,
+					],
+					'input_filter' => [
+						'name' => 'input_filter',
+						'type' => 'list',
+						'link' => NULL,
+					],
+					'method_name' => [
+						'name' => 'method_name',
+						'type' => 'text',
+						'link' => NULL,
+					],
+					'allow_zero' => [
+						'name' => 'allow_zero',
+						'type' => 'checkbox',
+						'link' => NULL,
+					],
+					'user_check' => [
+						'name' => 'user_check',
+						'type' => 'checkbox',
+						'link' => NULL,
+					],
+				],
 			],
 			'add_custom_button' => [
 				'name' => 'add_custom_button',
@@ -6772,6 +7321,33 @@ final class Table extends BaseTable implements TableInterface
 					'key' => false,
 				],
 				'link' => NULL,
+				'fields' => [
+					'icomoon' => [
+						'name' => 'icomoon',
+						'type' => 'list',
+						'link' => NULL,
+					],
+					'name' => [
+						'name' => 'name',
+						'type' => 'text',
+						'link' => NULL,
+					],
+					'method' => [
+						'name' => 'method',
+						'type' => 'text',
+						'link' => NULL,
+					],
+					'target' => [
+						'name' => 'target',
+						'type' => 'list',
+						'link' => NULL,
+					],
+					'type' => [
+						'name' => 'type',
+						'type' => 'list',
+						'link' => NULL,
+					],
+				],
 			],
 			'php_jview' => [
 				'name' => 'php_jview',
@@ -7575,7 +8151,7 @@ final class Table extends BaseTable implements TableInterface
 			'view_table_main' => [
 				'name' => 'view_table_main',
 				'label' => 'COM_COMPONENTBUILDER_DYNAMIC_GET_VIEW_TABLE_MAIN_LABEL',
-				'type' => 'adminviews',
+				'type' => 'ModalSelect',
 				'title' => false,
 				'list' => 'dynamic_gets',
 				'store' => NULL,
@@ -7583,8 +8159,8 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'VARCHAR(36)',
 					'default' => '',
-					'GUID' => 'f398a2ca-122e-47ad-8e4e-3ee2ac30bf26',
-					'null_switch' => 'NOT NULL',
+					'GUID' => '1744d5fa-f0fd-4857-ab41-4e855fe7dc60',
+					'null_switch' => 'NULL',
 					'unique_key' => false,
 					'key' => false,
 				],
@@ -7632,6 +8208,55 @@ final class Table extends BaseTable implements TableInterface
 					'key' => false,
 				],
 				'link' => NULL,
+				'fields' => [
+					'db_table' => [
+						'name' => 'db_table',
+						'type' => 'dbtables',
+						'link' => [
+							'type' => 2,
+							'table' => '',
+							'component' => '',
+							'entity' => '',
+							'value' => '',
+							'key' => '',
+						],
+					],
+					'row_type' => [
+						'name' => 'row_type',
+						'type' => 'list',
+						'link' => NULL,
+					],
+					'as' => [
+						'name' => 'as',
+						'type' => 'list',
+						'link' => NULL,
+					],
+					'type' => [
+						'name' => 'type',
+						'type' => 'list',
+						'link' => NULL,
+					],
+					'on_field' => [
+						'name' => 'on_field',
+						'type' => 'text',
+						'link' => NULL,
+					],
+					'operator' => [
+						'name' => 'operator',
+						'type' => 'list',
+						'link' => NULL,
+					],
+					'join_field' => [
+						'name' => 'join_field',
+						'type' => 'text',
+						'link' => NULL,
+					],
+					'selection' => [
+						'name' => 'selection',
+						'type' => 'textarea',
+						'link' => NULL,
+					],
+				],
 			],
 			'select_all' => [
 				'name' => 'select_all',
@@ -7776,6 +8401,33 @@ final class Table extends BaseTable implements TableInterface
 					'key' => false,
 				],
 				'link' => NULL,
+				'fields' => [
+					'filter_type' => [
+						'name' => 'filter_type',
+						'type' => 'list',
+						'link' => NULL,
+					],
+					'state_key' => [
+						'name' => 'state_key',
+						'type' => 'text',
+						'link' => NULL,
+					],
+					'operator' => [
+						'name' => 'operator',
+						'type' => 'list',
+						'link' => NULL,
+					],
+					'table_key' => [
+						'name' => 'table_key',
+						'type' => 'text',
+						'link' => NULL,
+					],
+					'empty' => [
+						'name' => 'empty',
+						'type' => 'checkbox',
+						'link' => NULL,
+					],
+				],
 			],
 			'php_after_getitems' => [
 				'name' => 'php_after_getitems',
@@ -7812,6 +8464,23 @@ final class Table extends BaseTable implements TableInterface
 					'key' => false,
 				],
 				'link' => NULL,
+				'fields' => [
+					'table_key' => [
+						'name' => 'table_key',
+						'type' => 'text',
+						'link' => NULL,
+					],
+					'operator' => [
+						'name' => 'operator',
+						'type' => 'list',
+						'link' => NULL,
+					],
+					'value_key' => [
+						'name' => 'value_key',
+						'type' => 'text',
+						'link' => NULL,
+					],
+				],
 			],
 			'order' => [
 				'name' => 'order',
@@ -7830,6 +8499,18 @@ final class Table extends BaseTable implements TableInterface
 					'key' => false,
 				],
 				'link' => NULL,
+				'fields' => [
+					'table_key' => [
+						'name' => 'table_key',
+						'type' => 'text',
+						'link' => NULL,
+					],
+					'direction' => [
+						'name' => 'direction',
+						'type' => 'list',
+						'link' => NULL,
+					],
+				],
 			],
 			'addcalculation' => [
 				'name' => 'addcalculation',
@@ -7866,6 +8547,13 @@ final class Table extends BaseTable implements TableInterface
 					'key' => false,
 				],
 				'link' => NULL,
+				'fields' => [
+					'table_key' => [
+						'name' => 'table_key',
+						'type' => 'text',
+						'link' => NULL,
+					],
+				],
 			],
 			'global' => [
 				'name' => 'global',
@@ -7884,6 +8572,28 @@ final class Table extends BaseTable implements TableInterface
 					'key' => false,
 				],
 				'link' => NULL,
+				'fields' => [
+					'name' => [
+						'name' => 'name',
+						'type' => 'text',
+						'link' => NULL,
+					],
+					'key' => [
+						'name' => 'key',
+						'type' => 'text',
+						'link' => NULL,
+					],
+					'as' => [
+						'name' => 'as',
+						'type' => 'list',
+						'link' => NULL,
+					],
+					'type' => [
+						'name' => 'type',
+						'type' => 'radio',
+						'link' => NULL,
+					],
+				],
 			],
 			'guid' => [
 				'name' => 'guid',
@@ -7914,12 +8624,61 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'TEXT',
 					'default' => 'EMPTY',
-					'GUID' => '79ab7f6c-a6b5-4bad-bcdd-c113d49db876',
+					'GUID' => 'f73e8499-6914-4b4b-9289-68deddea38b1',
 					'null_switch' => 'NULL',
 					'unique_key' => false,
 					'key' => false,
 				],
 				'link' => NULL,
+				'fields' => [
+					'view_table' => [
+						'name' => 'view_table',
+						'type' => 'ModalSelect',
+						'link' => [
+							'type' => 1,
+							'table' => '#__componentbuilder_admin_view',
+							'component' => 'com_componentbuilder',
+							'entity' => 'admin_view',
+							'value' => 'system_name',
+							'key' => 'guid',
+						],
+					],
+					'row_type' => [
+						'name' => 'row_type',
+						'type' => 'list',
+						'link' => NULL,
+					],
+					'as' => [
+						'name' => 'as',
+						'type' => 'list',
+						'link' => NULL,
+					],
+					'type' => [
+						'name' => 'type',
+						'type' => 'list',
+						'link' => NULL,
+					],
+					'on_field' => [
+						'name' => 'on_field',
+						'type' => 'text',
+						'link' => NULL,
+					],
+					'operator' => [
+						'name' => 'operator',
+						'type' => 'list',
+						'link' => NULL,
+					],
+					'join_field' => [
+						'name' => 'join_field',
+						'type' => 'text',
+						'link' => NULL,
+					],
+					'selection' => [
+						'name' => 'selection',
+						'type' => 'textarea',
+						'link' => NULL,
+					],
+				],
 			],
 			'access' => [
 				'name' => 'access',
@@ -8719,6 +9478,52 @@ final class Table extends BaseTable implements TableInterface
 					'key' => false,
 				],
 				'link' => NULL,
+				'fields' => [
+					'file' => [
+						'name' => 'file',
+						'type' => 'libraryfiles',
+						'link' => [
+							'type' => 2,
+							'table' => '',
+							'component' => '',
+							'entity' => '',
+							'value' => '',
+							'key' => '',
+						],
+					],
+					'target_behavior' => [
+						'name' => 'target_behavior',
+						'type' => 'list',
+						'link' => NULL,
+					],
+					'target_relation' => [
+						'name' => 'target_relation',
+						'type' => 'list',
+						'link' => NULL,
+					],
+					'option_field' => [
+						'name' => 'option_field',
+						'type' => 'libconfigfield',
+						'link' => [
+							'type' => 1,
+							'table' => '#__componentbuilder_field',
+							'component' => 'com_componentbuilder',
+							'entity' => 'field',
+							'value' => 'name',
+							'key' => 'guid',
+						],
+					],
+					'option_behaviour' => [
+						'name' => 'option_behaviour',
+						'type' => 'list',
+						'link' => NULL,
+					],
+					'field_options' => [
+						'name' => 'field_options',
+						'type' => 'textarea',
+						'link' => NULL,
+					],
+				],
 			],
 			'guid' => [
 				'name' => 'guid',
@@ -8793,7 +9598,7 @@ final class Table extends BaseTable implements TableInterface
 			'type' => [
 				'name' => 'type',
 				'label' => 'COM_COMPONENTBUILDER_SNIPPET_TYPE_LABEL',
-				'type' => 'snippettype',
+				'type' => 'ModalSelect',
 				'title' => false,
 				'list' => 'snippets',
 				'store' => NULL,
@@ -8801,7 +9606,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'VARCHAR(36)',
 					'default' => '',
-					'GUID' => '0cc69ef6-eb4d-4a0d-ad40-84bc1845e48f',
+					'GUID' => '9f3472b3-c2b5-4441-a2b1-49065202e22a',
 					'null_switch' => 'NULL',
 					'unique_key' => false,
 					'key' => true,
@@ -8836,7 +9641,7 @@ final class Table extends BaseTable implements TableInterface
 			'library' => [
 				'name' => 'library',
 				'label' => 'COM_COMPONENTBUILDER_SNIPPET_LIBRARY_LABEL',
-				'type' => 'library',
+				'type' => 'ModalSelect',
 				'title' => false,
 				'list' => 'snippets',
 				'store' => NULL,
@@ -8844,7 +9649,7 @@ final class Table extends BaseTable implements TableInterface
 				'db' => [
 					'type' => 'VARCHAR(36)',
 					'default' => '',
-					'GUID' => '8b97aaa3-28ae-45f1-80ad-6f37116264cf',
+					'GUID' => '897235b0-5c12-4a93-a424-7d8661dc1c9b',
 					'null_switch' => 'NULL',
 					'unique_key' => false,
 					'key' => true,
@@ -9765,6 +10570,38 @@ final class Table extends BaseTable implements TableInterface
 					'key' => false,
 				],
 				'link' => NULL,
+				'fields' => [
+					'name' => [
+						'name' => 'name',
+						'type' => 'text',
+						'link' => NULL,
+					],
+					'example' => [
+						'name' => 'example',
+						'type' => 'textarea',
+						'link' => NULL,
+					],
+					'adjustable' => [
+						'name' => 'adjustable',
+						'type' => 'checkbox',
+						'link' => NULL,
+					],
+					'mandatory' => [
+						'name' => 'mandatory',
+						'type' => 'checkbox',
+						'link' => NULL,
+					],
+					'translatable' => [
+						'name' => 'translatable',
+						'type' => 'checkbox',
+						'link' => NULL,
+					],
+					'description' => [
+						'name' => 'description',
+						'type' => 'textarea',
+						'link' => NULL,
+					],
+				],
 			],
 			'description' => [
 				'name' => 'description',
@@ -9982,6 +10819,25 @@ final class Table extends BaseTable implements TableInterface
 					'key' => false,
 				],
 				'link' => NULL,
+				'fields' => [
+					'translation' => [
+						'name' => 'translation',
+						'type' => 'textarea',
+						'link' => NULL,
+					],
+					'language' => [
+						'name' => 'language',
+						'type' => 'lang',
+						'link' => [
+							'type' => 1,
+							'table' => '#__componentbuilder_language',
+							'component' => 'com_componentbuilder',
+							'entity' => 'language',
+							'value' => 'name',
+							'key' => 'langtag',
+						],
+					],
+				],
 			],
 			'access' => [
 				'name' => 'access',
@@ -10426,6 +11282,18 @@ final class Table extends BaseTable implements TableInterface
 					'key' => false,
 				],
 				'link' => NULL,
+				'fields' => [
+					'target' => [
+						'name' => 'target',
+						'type' => 'text',
+						'link' => NULL,
+					],
+					'value' => [
+						'name' => 'value',
+						'type' => 'textarea',
+						'link' => NULL,
+					],
+				],
 			],
 			'access_repo' => [
 				'name' => 'access_repo',
@@ -10796,6 +11664,87 @@ final class Table extends BaseTable implements TableInterface
 					'key' => false,
 				],
 				'link' => NULL,
+				'fields' => [
+					'field' => [
+						'name' => 'field',
+						'type' => 'ModalSelect',
+						'link' => [
+							'type' => 1,
+							'table' => '#__componentbuilder_field',
+							'component' => 'com_componentbuilder',
+							'entity' => 'field',
+							'value' => 'name',
+							'key' => 'guid',
+						],
+					],
+					'list' => [
+						'name' => 'list',
+						'type' => 'list',
+						'link' => NULL,
+					],
+					'order_list' => [
+						'name' => 'order_list',
+						'type' => 'integer',
+						'link' => NULL,
+					],
+					'title' => [
+						'name' => 'title',
+						'type' => 'checkbox',
+						'link' => NULL,
+					],
+					'alias' => [
+						'name' => 'alias',
+						'type' => 'checkbox',
+						'link' => NULL,
+					],
+					'sort' => [
+						'name' => 'sort',
+						'type' => 'checkbox',
+						'link' => NULL,
+					],
+					'search' => [
+						'name' => 'search',
+						'type' => 'checkbox',
+						'link' => NULL,
+					],
+					'filter' => [
+						'name' => 'filter',
+						'type' => 'list',
+						'link' => NULL,
+					],
+					'link' => [
+						'name' => 'link',
+						'type' => 'checkbox',
+						'link' => NULL,
+					],
+					'tab' => [
+						'name' => 'tab',
+						'type' => 'viewtabs',
+						'link' => [
+							'type' => 1,
+							'table' => '#__componentbuilder_admin_view',
+							'component' => 'com_componentbuilder',
+							'entity' => 'admin_view',
+							'value' => 'addtabs',
+							'key' => 'id',
+						],
+					],
+					'alignment' => [
+						'name' => 'alignment',
+						'type' => 'list',
+						'link' => NULL,
+					],
+					'order_edit' => [
+						'name' => 'order_edit',
+						'type' => 'integer',
+						'link' => NULL,
+					],
+					'permission' => [
+						'name' => 'permission',
+						'type' => 'list',
+						'link' => NULL,
+					],
+				],
 			],
 			'access' => [
 				'name' => 'access',
@@ -10855,6 +11804,52 @@ final class Table extends BaseTable implements TableInterface
 					'key' => false,
 				],
 				'link' => NULL,
+				'fields' => [
+					'target_field' => [
+						'name' => 'target_field',
+						'type' => 'targetfields',
+						'link' => [
+							'type' => 1,
+							'table' => '#__componentbuilder_field',
+							'component' => 'com_componentbuilder',
+							'entity' => 'field',
+							'value' => 'name',
+							'key' => 'guid',
+						],
+					],
+					'target_behavior' => [
+						'name' => 'target_behavior',
+						'type' => 'list',
+						'link' => NULL,
+					],
+					'target_relation' => [
+						'name' => 'target_relation',
+						'type' => 'list',
+						'link' => NULL,
+					],
+					'match_field' => [
+						'name' => 'match_field',
+						'type' => 'matchfield',
+						'link' => [
+							'type' => 1,
+							'table' => '#__componentbuilder_field',
+							'component' => 'com_componentbuilder',
+							'entity' => 'field',
+							'value' => 'name',
+							'key' => 'guid',
+						],
+					],
+					'match_behavior' => [
+						'name' => 'match_behavior',
+						'type' => 'list',
+						'link' => NULL,
+					],
+					'match_options' => [
+						'name' => 'match_options',
+						'type' => 'textarea',
+						'link' => NULL,
+					],
+				],
 			],
 			'access' => [
 				'name' => 'access',
@@ -10914,6 +11909,52 @@ final class Table extends BaseTable implements TableInterface
 					'key' => false,
 				],
 				'link' => NULL,
+				'fields' => [
+					'listfield' => [
+						'name' => 'listfield',
+						'type' => 'listfields',
+						'link' => [
+							'type' => 1,
+							'table' => '#__componentbuilder_field',
+							'component' => 'com_componentbuilder',
+							'entity' => 'field',
+							'value' => 'name',
+							'key' => 'guid',
+						],
+					],
+					'column_name' => [
+						'name' => 'column_name',
+						'type' => 'text',
+						'link' => NULL,
+					],
+					'joinfields' => [
+						'name' => 'joinfields',
+						'type' => 'joinfields',
+						'link' => [
+							'type' => 1,
+							'table' => '#__componentbuilder_field',
+							'component' => 'com_componentbuilder',
+							'entity' => 'field',
+							'value' => 'name',
+							'key' => 'guid',
+						],
+					],
+					'area' => [
+						'name' => 'area',
+						'type' => 'list',
+						'link' => NULL,
+					],
+					'join_type' => [
+						'name' => 'join_type',
+						'type' => 'list',
+						'link' => NULL,
+					],
+					'set' => [
+						'name' => 'set',
+						'type' => 'textarea',
+						'link' => NULL,
+					],
+				],
 			],
 			'access' => [
 				'name' => 'access',
@@ -10973,6 +12014,40 @@ final class Table extends BaseTable implements TableInterface
 					'key' => false,
 				],
 				'link' => NULL,
+				'fields' => [
+					'tab' => [
+						'name' => 'tab',
+						'type' => 'viewtabs',
+						'link' => [
+							'type' => 1,
+							'table' => '#__componentbuilder_admin_view',
+							'component' => 'com_componentbuilder',
+							'entity' => 'admin_view',
+							'value' => 'addtabs',
+							'key' => 'id',
+						],
+					],
+					'position' => [
+						'name' => 'position',
+						'type' => 'list',
+						'link' => NULL,
+					],
+					'name' => [
+						'name' => 'name',
+						'type' => 'text',
+						'link' => NULL,
+					],
+					'permission' => [
+						'name' => 'permission',
+						'type' => 'checkbox',
+						'link' => NULL,
+					],
+					'html' => [
+						'name' => 'html',
+						'type' => 'textarea',
+						'link' => NULL,
+					],
+				],
 			],
 			'access' => [
 				'name' => 'access',
@@ -11032,6 +12107,95 @@ final class Table extends BaseTable implements TableInterface
 					'key' => false,
 				],
 				'link' => NULL,
+				'fields' => [
+					'adminview' => [
+						'name' => 'adminview',
+						'type' => 'ModalSelect',
+						'link' => [
+							'type' => 1,
+							'table' => '#__componentbuilder_admin_view',
+							'component' => 'com_componentbuilder',
+							'entity' => 'admin_view',
+							'value' => 'system_name',
+							'key' => 'guid',
+						],
+					],
+					'icomoon' => [
+						'name' => 'icomoon',
+						'type' => 'list',
+						'link' => NULL,
+					],
+					'mainmenu' => [
+						'name' => 'mainmenu',
+						'type' => 'checkbox',
+						'link' => NULL,
+					],
+					'dashboard_add' => [
+						'name' => 'dashboard_add',
+						'type' => 'checkbox',
+						'link' => NULL,
+					],
+					'dashboard_list' => [
+						'name' => 'dashboard_list',
+						'type' => 'checkbox',
+						'link' => NULL,
+					],
+					'submenu' => [
+						'name' => 'submenu',
+						'type' => 'checkbox',
+						'link' => NULL,
+					],
+					'checkin' => [
+						'name' => 'checkin',
+						'type' => 'checkbox',
+						'link' => NULL,
+					],
+					'history' => [
+						'name' => 'history',
+						'type' => 'checkbox',
+						'link' => NULL,
+					],
+					'joomla_fields' => [
+						'name' => 'joomla_fields',
+						'type' => 'checkbox',
+						'link' => NULL,
+					],
+					'metadata' => [
+						'name' => 'metadata',
+						'type' => 'checkbox',
+						'link' => NULL,
+					],
+					'access' => [
+						'name' => 'access',
+						'type' => 'checkbox',
+						'link' => NULL,
+					],
+					'port' => [
+						'name' => 'port',
+						'type' => 'checkbox',
+						'link' => NULL,
+					],
+					'add_api' => [
+						'name' => 'add_api',
+						'type' => 'list',
+						'link' => NULL,
+					],
+					'filter' => [
+						'name' => 'filter',
+						'type' => 'list',
+						'link' => NULL,
+					],
+					'edit_create_site_view' => [
+						'name' => 'edit_create_site_view',
+						'type' => 'list',
+						'link' => NULL,
+					],
+					'order' => [
+						'name' => 'order',
+						'type' => 'integer',
+						'link' => NULL,
+					],
+				],
 			],
 			'access' => [
 				'name' => 'access',
@@ -11091,6 +12255,45 @@ final class Table extends BaseTable implements TableInterface
 					'key' => false,
 				],
 				'link' => NULL,
+				'fields' => [
+					'siteview' => [
+						'name' => 'siteview',
+						'type' => 'ModalSelect',
+						'link' => [
+							'type' => 1,
+							'table' => '#__componentbuilder_site_view',
+							'component' => 'com_componentbuilder',
+							'entity' => 'site_view',
+							'value' => 'system_name',
+							'key' => 'guid',
+						],
+					],
+					'menu' => [
+						'name' => 'menu',
+						'type' => 'checkbox',
+						'link' => NULL,
+					],
+					'metadata' => [
+						'name' => 'metadata',
+						'type' => 'checkbox',
+						'link' => NULL,
+					],
+					'default_view' => [
+						'name' => 'default_view',
+						'type' => 'checkbox',
+						'link' => NULL,
+					],
+					'access' => [
+						'name' => 'access',
+						'type' => 'checkbox',
+						'link' => NULL,
+					],
+					'public_access' => [
+						'name' => 'public_access',
+						'type' => 'checkbox',
+						'link' => NULL,
+					],
+				],
 			],
 			'access' => [
 				'name' => 'access',
@@ -11150,6 +12353,74 @@ final class Table extends BaseTable implements TableInterface
 					'key' => false,
 				],
 				'link' => NULL,
+				'fields' => [
+					'customadminview' => [
+						'name' => 'customadminview',
+						'type' => 'ModalSelect',
+						'link' => [
+							'type' => 1,
+							'table' => '#__componentbuilder_custom_admin_view',
+							'component' => 'com_componentbuilder',
+							'entity' => 'custom_admin_view',
+							'value' => 'system_name',
+							'key' => 'guid',
+						],
+					],
+					'icomoon' => [
+						'name' => 'icomoon',
+						'type' => 'list',
+						'link' => NULL,
+					],
+					'mainmenu' => [
+						'name' => 'mainmenu',
+						'type' => 'checkbox',
+						'link' => NULL,
+					],
+					'dashboard_list' => [
+						'name' => 'dashboard_list',
+						'type' => 'checkbox',
+						'link' => NULL,
+					],
+					'submenu' => [
+						'name' => 'submenu',
+						'type' => 'checkbox',
+						'link' => NULL,
+					],
+					'metadata' => [
+						'name' => 'metadata',
+						'type' => 'checkbox',
+						'link' => NULL,
+					],
+					'access' => [
+						'name' => 'access',
+						'type' => 'checkbox',
+						'link' => NULL,
+					],
+					'adminviews' => [
+						'name' => 'adminviews',
+						'type' => 'adminsviews',
+						'link' => [
+							'type' => 1,
+							'table' => '#__componentbuilder_admin_view',
+							'component' => 'com_componentbuilder',
+							'entity' => 'admin_view',
+							'value' => 'system_name',
+							'key' => 'guid',
+						],
+					],
+					'before' => [
+						'name' => 'before',
+						'type' => 'componentadminmenus',
+						'link' => [
+							'type' => 1,
+							'table' => '#__componentbuilder_admin_view',
+							'component' => 'com_componentbuilder',
+							'entity' => 'admin_view',
+							'value' => 'system_name',
+							'key' => 'guid',
+						],
+					],
+				],
 			],
 			'access' => [
 				'name' => 'access',
@@ -11209,6 +12480,58 @@ final class Table extends BaseTable implements TableInterface
 					'key' => false,
 				],
 				'link' => NULL,
+				'fields' => [
+					'version' => [
+						'name' => 'version',
+						'type' => 'text',
+						'link' => NULL,
+					],
+					'mysql' => [
+						'name' => 'mysql',
+						'type' => 'textarea',
+						'link' => NULL,
+					],
+					'url' => [
+						'name' => 'url',
+						'type' => 'url',
+						'link' => NULL,
+					],
+					'update_server_adv' => [
+						'name' => 'update_server_adv',
+						'type' => 'radio',
+						'link' => NULL,
+					],
+					'update_server_type' => [
+						'name' => 'update_server_type',
+						'type' => 'list',
+						'link' => NULL,
+					],
+					'update_element' => [
+						'name' => 'update_element',
+						'type' => 'text',
+						'link' => NULL,
+					],
+					'update_state' => [
+						'name' => 'update_state',
+						'type' => 'text',
+						'link' => NULL,
+					],
+					'update_target_version' => [
+						'name' => 'update_target_version',
+						'type' => 'text',
+						'link' => NULL,
+					],
+					'change_log' => [
+						'name' => 'change_log',
+						'type' => 'textarea',
+						'link' => NULL,
+					],
+					'update_client' => [
+						'name' => 'update_client',
+						'type' => 'text',
+						'link' => NULL,
+					],
+				],
 			],
 			'access' => [
 				'name' => 'access',
@@ -11268,6 +12591,35 @@ final class Table extends BaseTable implements TableInterface
 					'key' => false,
 				],
 				'link' => NULL,
+				'fields' => [
+					'adminview' => [
+						'name' => 'adminview',
+						'type' => 'componentadminviews',
+						'link' => [
+							'type' => 1,
+							'table' => '#__componentbuilder_admin_view',
+							'component' => 'com_componentbuilder',
+							'entity' => 'admin_view',
+							'value' => 'system_name',
+							'key' => 'guid',
+						],
+					],
+					'add_sql' => [
+						'name' => 'add_sql',
+						'type' => 'list',
+						'link' => NULL,
+					],
+					'add_sql_options' => [
+						'name' => 'add_sql_options',
+						'type' => 'list',
+						'link' => NULL,
+					],
+					'ids' => [
+						'name' => 'ids',
+						'type' => 'textarea',
+						'link' => NULL,
+					],
+				],
 			],
 			'access' => [
 				'name' => 'access',
@@ -11327,6 +12679,55 @@ final class Table extends BaseTable implements TableInterface
 					'key' => false,
 				],
 				'link' => NULL,
+				'fields' => [
+					'name' => [
+						'name' => 'name',
+						'type' => 'text',
+						'link' => NULL,
+					],
+					'name_code' => [
+						'name' => 'name_code',
+						'type' => 'text',
+						'link' => NULL,
+					],
+					'link' => [
+						'name' => 'link',
+						'type' => 'text',
+						'link' => NULL,
+					],
+					'icon' => [
+						'name' => 'icon',
+						'type' => 'filelist',
+						'link' => NULL,
+					],
+					'mainmenu' => [
+						'name' => 'mainmenu',
+						'type' => 'checkbox',
+						'link' => NULL,
+					],
+					'dashboard_list' => [
+						'name' => 'dashboard_list',
+						'type' => 'checkbox',
+						'link' => NULL,
+					],
+					'submenu' => [
+						'name' => 'submenu',
+						'type' => 'checkbox',
+						'link' => NULL,
+					],
+					'before' => [
+						'name' => 'before',
+						'type' => 'componentadminmenus',
+						'link' => [
+							'type' => 1,
+							'table' => '#__componentbuilder_admin_view',
+							'component' => 'com_componentbuilder',
+							'entity' => 'admin_view',
+							'value' => 'system_name',
+							'key' => 'guid',
+						],
+					],
+				],
 			],
 			'access' => [
 				'name' => 'access',
@@ -11476,6 +12877,20 @@ final class Table extends BaseTable implements TableInterface
 					'key' => false,
 				],
 				'link' => NULL,
+				'fields' => [
+					'siteview' => [
+						'name' => 'siteview',
+						'type' => 'siteviews',
+						'link' => [
+							'type' => 1,
+							'table' => '#__componentbuilder_site_view',
+							'component' => 'com_componentbuilder',
+							'entity' => 'site_view',
+							'value' => 'system_name',
+							'key' => 'guid',
+						],
+					],
+				],
 			],
 			'constructor_before_parent_code' => [
 				'name' => 'constructor_before_parent_code',
@@ -11553,6 +12968,30 @@ final class Table extends BaseTable implements TableInterface
 					'key' => false,
 				],
 				'link' => NULL,
+				'fields' => [
+					'field' => [
+						'name' => 'field',
+						'type' => 'ModalSelect',
+						'link' => [
+							'type' => 1,
+							'table' => '#__componentbuilder_field',
+							'component' => 'com_componentbuilder',
+							'entity' => 'field',
+							'value' => 'name',
+							'key' => 'guid',
+						],
+					],
+					'custom_value' => [
+						'name' => 'custom_value',
+						'type' => 'textarea',
+						'link' => NULL,
+					],
+					'tabname' => [
+						'name' => 'tabname',
+						'type' => 'text',
+						'link' => NULL,
+					],
+				],
 			],
 			'access' => [
 				'name' => 'access',
@@ -11612,6 +13051,23 @@ final class Table extends BaseTable implements TableInterface
 					'key' => false,
 				],
 				'link' => NULL,
+				'fields' => [
+					'name' => [
+						'name' => 'name',
+						'type' => 'text',
+						'link' => NULL,
+					],
+					'header' => [
+						'name' => 'header',
+						'type' => 'text',
+						'link' => NULL,
+					],
+					'html' => [
+						'name' => 'html',
+						'type' => 'textarea',
+						'link' => NULL,
+					],
+				],
 			],
 			'php_dashboard_methods' => [
 				'name' => 'php_dashboard_methods',
@@ -11689,6 +13145,23 @@ final class Table extends BaseTable implements TableInterface
 					'key' => false,
 				],
 				'link' => NULL,
+				'fields' => [
+					'folderpath' => [
+						'name' => 'folderpath',
+						'type' => 'text',
+						'link' => NULL,
+					],
+					'path' => [
+						'name' => 'path',
+						'type' => 'text',
+						'link' => NULL,
+					],
+					'rename' => [
+						'name' => 'rename',
+						'type' => 'checkbox',
+						'link' => NULL,
+					],
+				],
 			],
 			'addfilesfullpath' => [
 				'name' => 'addfilesfullpath',
@@ -11707,6 +13180,23 @@ final class Table extends BaseTable implements TableInterface
 					'key' => false,
 				],
 				'link' => NULL,
+				'fields' => [
+					'filepath' => [
+						'name' => 'filepath',
+						'type' => 'text',
+						'link' => NULL,
+					],
+					'path' => [
+						'name' => 'path',
+						'type' => 'text',
+						'link' => NULL,
+					],
+					'notnew' => [
+						'name' => 'notnew',
+						'type' => 'checkbox',
+						'link' => NULL,
+					],
+				],
 			],
 			'addfolders' => [
 				'name' => 'addfolders',
@@ -11725,6 +13215,30 @@ final class Table extends BaseTable implements TableInterface
 					'key' => false,
 				],
 				'link' => NULL,
+				'fields' => [
+					'folder' => [
+						'name' => 'folder',
+						'type' => 'customfolderlist',
+						'link' => [
+							'type' => 2,
+							'table' => '',
+							'component' => '',
+							'entity' => '',
+							'value' => '',
+							'key' => '',
+						],
+					],
+					'path' => [
+						'name' => 'path',
+						'type' => 'text',
+						'link' => NULL,
+					],
+					'rename' => [
+						'name' => 'rename',
+						'type' => 'checkbox',
+						'link' => NULL,
+					],
+				],
 			],
 			'addfiles' => [
 				'name' => 'addfiles',
@@ -11743,6 +13257,30 @@ final class Table extends BaseTable implements TableInterface
 					'key' => false,
 				],
 				'link' => NULL,
+				'fields' => [
+					'file' => [
+						'name' => 'file',
+						'type' => 'customfilelist',
+						'link' => [
+							'type' => 2,
+							'table' => '',
+							'component' => '',
+							'entity' => '',
+							'value' => '',
+							'key' => '',
+						],
+					],
+					'path' => [
+						'name' => 'path',
+						'type' => 'text',
+						'link' => NULL,
+					],
+					'notnew' => [
+						'name' => 'notnew',
+						'type' => 'checkbox',
+						'link' => NULL,
+					],
+				],
 			],
 			'access' => [
 				'name' => 'access',
@@ -11802,6 +13340,18 @@ final class Table extends BaseTable implements TableInterface
 					'key' => false,
 				],
 				'link' => NULL,
+				'fields' => [
+					'target' => [
+						'name' => 'target',
+						'type' => 'text',
+						'link' => NULL,
+					],
+					'value' => [
+						'name' => 'value',
+						'type' => 'textarea',
+						'link' => NULL,
+					],
+				],
 			],
 			'access' => [
 				'name' => 'access',
@@ -11861,6 +13411,25 @@ final class Table extends BaseTable implements TableInterface
 					'key' => false,
 				],
 				'link' => NULL,
+				'fields' => [
+					'plugin' => [
+						'name' => 'plugin',
+						'type' => 'joomlaplugins',
+						'link' => [
+							'type' => 1,
+							'table' => '#__componentbuilder_joomla_plugin',
+							'component' => 'com_componentbuilder',
+							'entity' => 'joomla_plugin',
+							'value' => 'system_name',
+							'key' => 'guid',
+						],
+					],
+					'target' => [
+						'name' => 'target',
+						'type' => 'list',
+						'link' => NULL,
+					],
+				],
 			],
 			'access' => [
 				'name' => 'access',
@@ -11920,6 +13489,25 @@ final class Table extends BaseTable implements TableInterface
 					'key' => false,
 				],
 				'link' => NULL,
+				'fields' => [
+					'module' => [
+						'name' => 'module',
+						'type' => 'joomlamodules',
+						'link' => [
+							'type' => 1,
+							'table' => '#__componentbuilder_joomla_module',
+							'component' => 'com_componentbuilder',
+							'entity' => 'joomla_module',
+							'value' => 'system_name',
+							'key' => 'guid',
+						],
+					],
+					'target' => [
+						'name' => 'target',
+						'type' => 'list',
+						'link' => NULL,
+					],
+				],
 			],
 			'access' => [
 				'name' => 'access',
@@ -12049,6 +13637,30 @@ final class Table extends BaseTable implements TableInterface
 					'key' => false,
 				],
 				'link' => NULL,
+				'fields' => [
+					'field' => [
+						'name' => 'field',
+						'type' => 'ModalSelect',
+						'link' => [
+							'type' => 1,
+							'table' => '#__componentbuilder_field',
+							'component' => 'com_componentbuilder',
+							'entity' => 'field',
+							'value' => 'name',
+							'key' => 'guid',
+						],
+					],
+					'custom_value' => [
+						'name' => 'custom_value',
+						'type' => 'textarea',
+						'link' => NULL,
+					],
+					'tabname' => [
+						'name' => 'tabname',
+						'type' => 'text',
+						'link' => NULL,
+					],
+				],
 			],
 			'access' => [
 				'name' => 'access',
@@ -12108,6 +13720,23 @@ final class Table extends BaseTable implements TableInterface
 					'key' => false,
 				],
 				'link' => NULL,
+				'fields' => [
+					'folderpath' => [
+						'name' => 'folderpath',
+						'type' => 'text',
+						'link' => NULL,
+					],
+					'path' => [
+						'name' => 'path',
+						'type' => 'text',
+						'link' => NULL,
+					],
+					'rename' => [
+						'name' => 'rename',
+						'type' => 'checkbox',
+						'link' => NULL,
+					],
+				],
 			],
 			'addfilesfullpath' => [
 				'name' => 'addfilesfullpath',
@@ -12126,6 +13755,23 @@ final class Table extends BaseTable implements TableInterface
 					'key' => false,
 				],
 				'link' => NULL,
+				'fields' => [
+					'filepath' => [
+						'name' => 'filepath',
+						'type' => 'text',
+						'link' => NULL,
+					],
+					'path' => [
+						'name' => 'path',
+						'type' => 'text',
+						'link' => NULL,
+					],
+					'notnew' => [
+						'name' => 'notnew',
+						'type' => 'checkbox',
+						'link' => NULL,
+					],
+				],
 			],
 			'addfolders' => [
 				'name' => 'addfolders',
@@ -12144,6 +13790,30 @@ final class Table extends BaseTable implements TableInterface
 					'key' => false,
 				],
 				'link' => NULL,
+				'fields' => [
+					'folder' => [
+						'name' => 'folder',
+						'type' => 'customfolderlist',
+						'link' => [
+							'type' => 2,
+							'table' => '',
+							'component' => '',
+							'entity' => '',
+							'value' => '',
+							'key' => '',
+						],
+					],
+					'path' => [
+						'name' => 'path',
+						'type' => 'text',
+						'link' => NULL,
+					],
+					'rename' => [
+						'name' => 'rename',
+						'type' => 'checkbox',
+						'link' => NULL,
+					],
+				],
 			],
 			'addfiles' => [
 				'name' => 'addfiles',
@@ -12162,6 +13832,30 @@ final class Table extends BaseTable implements TableInterface
 					'key' => false,
 				],
 				'link' => NULL,
+				'fields' => [
+					'file' => [
+						'name' => 'file',
+						'type' => 'customfilelist',
+						'link' => [
+							'type' => 2,
+							'table' => '',
+							'component' => '',
+							'entity' => '',
+							'value' => '',
+							'key' => '',
+						],
+					],
+					'path' => [
+						'name' => 'path',
+						'type' => 'text',
+						'link' => NULL,
+					],
+					'notnew' => [
+						'name' => 'notnew',
+						'type' => 'checkbox',
+						'link' => NULL,
+					],
+				],
 			],
 			'addurls' => [
 				'name' => 'addurls',
@@ -12180,6 +13874,18 @@ final class Table extends BaseTable implements TableInterface
 					'key' => false,
 				],
 				'link' => NULL,
+				'fields' => [
+					'url' => [
+						'name' => 'url',
+						'type' => 'url',
+						'link' => NULL,
+					],
+					'type' => [
+						'name' => 'type',
+						'type' => 'list',
+						'link' => NULL,
+					],
+				],
 			],
 			'access' => [
 				'name' => 'access',
@@ -12345,6 +14051,23 @@ final class Table extends BaseTable implements TableInterface
 					'key' => false,
 				],
 				'link' => NULL,
+				'fields' => [
+					'version' => [
+						'name' => 'version',
+						'type' => 'text',
+						'link' => NULL,
+					],
+					'mysql' => [
+						'name' => 'mysql',
+						'type' => 'textarea',
+						'link' => NULL,
+					],
+					'url' => [
+						'name' => 'url',
+						'type' => 'url',
+						'link' => NULL,
+					],
+				],
 			],
 			'access' => [
 				'name' => 'access',
@@ -12404,6 +14127,23 @@ final class Table extends BaseTable implements TableInterface
 					'key' => false,
 				],
 				'link' => NULL,
+				'fields' => [
+					'folderpath' => [
+						'name' => 'folderpath',
+						'type' => 'text',
+						'link' => NULL,
+					],
+					'path' => [
+						'name' => 'path',
+						'type' => 'text',
+						'link' => NULL,
+					],
+					'rename' => [
+						'name' => 'rename',
+						'type' => 'checkbox',
+						'link' => NULL,
+					],
+				],
 			],
 			'addfilesfullpath' => [
 				'name' => 'addfilesfullpath',
@@ -12422,6 +14162,23 @@ final class Table extends BaseTable implements TableInterface
 					'key' => false,
 				],
 				'link' => NULL,
+				'fields' => [
+					'filepath' => [
+						'name' => 'filepath',
+						'type' => 'text',
+						'link' => NULL,
+					],
+					'path' => [
+						'name' => 'path',
+						'type' => 'text',
+						'link' => NULL,
+					],
+					'notnew' => [
+						'name' => 'notnew',
+						'type' => 'checkbox',
+						'link' => NULL,
+					],
+				],
 			],
 			'addfolders' => [
 				'name' => 'addfolders',
@@ -12440,6 +14197,30 @@ final class Table extends BaseTable implements TableInterface
 					'key' => false,
 				],
 				'link' => NULL,
+				'fields' => [
+					'folder' => [
+						'name' => 'folder',
+						'type' => 'customfolderlist',
+						'link' => [
+							'type' => 2,
+							'table' => '',
+							'component' => '',
+							'entity' => '',
+							'value' => '',
+							'key' => '',
+						],
+					],
+					'path' => [
+						'name' => 'path',
+						'type' => 'text',
+						'link' => NULL,
+					],
+					'rename' => [
+						'name' => 'rename',
+						'type' => 'checkbox',
+						'link' => NULL,
+					],
+				],
 			],
 			'addfiles' => [
 				'name' => 'addfiles',
@@ -12458,6 +14239,30 @@ final class Table extends BaseTable implements TableInterface
 					'key' => false,
 				],
 				'link' => NULL,
+				'fields' => [
+					'file' => [
+						'name' => 'file',
+						'type' => 'customfilelist',
+						'link' => [
+							'type' => 2,
+							'table' => '',
+							'component' => '',
+							'entity' => '',
+							'value' => '',
+							'key' => '',
+						],
+					],
+					'path' => [
+						'name' => 'path',
+						'type' => 'text',
+						'link' => NULL,
+					],
+					'notnew' => [
+						'name' => 'notnew',
+						'type' => 'checkbox',
+						'link' => NULL,
+					],
+				],
 			],
 			'addurls' => [
 				'name' => 'addurls',
@@ -12476,6 +14281,18 @@ final class Table extends BaseTable implements TableInterface
 					'key' => false,
 				],
 				'link' => NULL,
+				'fields' => [
+					'url' => [
+						'name' => 'url',
+						'type' => 'url',
+						'link' => NULL,
+					],
+					'type' => [
+						'name' => 'type',
+						'type' => 'list',
+						'link' => NULL,
+					],
+				],
 			],
 			'access' => [
 				'name' => 'access',
@@ -12612,6 +14429,23 @@ final class Table extends BaseTable implements TableInterface
 					'key' => false,
 				],
 				'link' => NULL,
+				'fields' => [
+					'version' => [
+						'name' => 'version',
+						'type' => 'text',
+						'link' => NULL,
+					],
+					'mysql' => [
+						'name' => 'mysql',
+						'type' => 'textarea',
+						'link' => NULL,
+					],
+					'url' => [
+						'name' => 'url',
+						'type' => 'url',
+						'link' => NULL,
+					],
+				],
 			],
 			'access' => [
 				'name' => 'access',
@@ -12671,6 +14505,23 @@ final class Table extends BaseTable implements TableInterface
 					'key' => false,
 				],
 				'link' => NULL,
+				'fields' => [
+					'folderpath' => [
+						'name' => 'folderpath',
+						'type' => 'text',
+						'link' => NULL,
+					],
+					'path' => [
+						'name' => 'path',
+						'type' => 'text',
+						'link' => NULL,
+					],
+					'rename' => [
+						'name' => 'rename',
+						'type' => 'checkbox',
+						'link' => NULL,
+					],
+				],
 			],
 			'addfilesfullpath' => [
 				'name' => 'addfilesfullpath',
@@ -12689,6 +14540,23 @@ final class Table extends BaseTable implements TableInterface
 					'key' => false,
 				],
 				'link' => NULL,
+				'fields' => [
+					'filepath' => [
+						'name' => 'filepath',
+						'type' => 'text',
+						'link' => NULL,
+					],
+					'path' => [
+						'name' => 'path',
+						'type' => 'text',
+						'link' => NULL,
+					],
+					'notnew' => [
+						'name' => 'notnew',
+						'type' => 'checkbox',
+						'link' => NULL,
+					],
+				],
 			],
 			'addfolders' => [
 				'name' => 'addfolders',
@@ -12707,6 +14575,30 @@ final class Table extends BaseTable implements TableInterface
 					'key' => false,
 				],
 				'link' => NULL,
+				'fields' => [
+					'folder' => [
+						'name' => 'folder',
+						'type' => 'customfolderlist',
+						'link' => [
+							'type' => 2,
+							'table' => '',
+							'component' => '',
+							'entity' => '',
+							'value' => '',
+							'key' => '',
+						],
+					],
+					'path' => [
+						'name' => 'path',
+						'type' => 'text',
+						'link' => NULL,
+					],
+					'rename' => [
+						'name' => 'rename',
+						'type' => 'checkbox',
+						'link' => NULL,
+					],
+				],
 			],
 			'addfiles' => [
 				'name' => 'addfiles',
@@ -12725,6 +14617,30 @@ final class Table extends BaseTable implements TableInterface
 					'key' => false,
 				],
 				'link' => NULL,
+				'fields' => [
+					'file' => [
+						'name' => 'file',
+						'type' => 'customfilelist',
+						'link' => [
+							'type' => 2,
+							'table' => '',
+							'component' => '',
+							'entity' => '',
+							'value' => '',
+							'key' => '',
+						],
+					],
+					'path' => [
+						'name' => 'path',
+						'type' => 'text',
+						'link' => NULL,
+					],
+					'notnew' => [
+						'name' => 'notnew',
+						'type' => 'checkbox',
+						'link' => NULL,
+					],
+				],
 			],
 			'addurls' => [
 				'name' => 'addurls',
@@ -12743,6 +14659,18 @@ final class Table extends BaseTable implements TableInterface
 					'key' => false,
 				],
 				'link' => NULL,
+				'fields' => [
+					'url' => [
+						'name' => 'url',
+						'type' => 'url',
+						'link' => NULL,
+					],
+					'type' => [
+						'name' => 'type',
+						'type' => 'list',
+						'link' => NULL,
+					],
+				],
 			],
 			'access' => [
 				'name' => 'access',

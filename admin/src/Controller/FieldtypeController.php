@@ -103,7 +103,7 @@ class FieldtypeController extends FormController
 		$item = $this->input->post->get('jform', array(), 'array');
 
 		// check if user has the right
-		$user = Factory::getUser();
+		$user = $this->app->getIdentity();
 
 		// set default error message
 		$message = '<h1>' . Text::_('COM_COMPONENTBUILDER_PERMISSION_DENIED') . '</h1>';
@@ -128,8 +128,8 @@ class FieldtypeController extends FormController
 				if (FieldtypeFactory::_('Joomla.Fieldtype.Remote.Get')->reset([$guid]))
 				{
 					// set success message
-					$message = '<h1>'.Text::_('COM_COMPONENTBUILDER_SUCCESS').'</h1>';
-					$message .= '<p>'.Text::_('COM_COMPONENTBUILDER_THE_JOOMLA_FIELD_TYPE_HAS_SUCCESSFULLY_BEEN_RESET').'</p>';
+					$message = '<h1>' . Text::_('COM_COMPONENTBUILDER_SUCCESS') . '</h1>';
+					$message .= '<p>' . Text::_('COM_COMPONENTBUILDER_THE_JOOMLA_FIELD_TYPE_HAS_SUCCESSFULLY_BEEN_RESET') . '</p>';
 					$status = 'success';
 					$success = true;
 				}
@@ -147,7 +147,7 @@ class FieldtypeController extends FormController
 		// set redirect
 		$redirect_url = Route::_(
 			'index.php?option=com_componentbuilder&view=fieldtype'
-			. $this->getRedirectToItemAppend($id), $success
+			. $this->getRedirectToItemAppend($id), false
 		);
 
 		$this->setRedirect($redirect_url, $message, $status);
@@ -178,7 +178,7 @@ class FieldtypeController extends FormController
 		$item = $this->input->post->get('jform', array(), 'array');
 
 		// check if user has the right
-		$user = Factory::getUser();
+		$user = $this->app->getIdentity();
 
 		// set default error message
 		$message = '<h1>' . Text::_('COM_COMPONENTBUILDER_PERMISSION_DENIED') . '</h1>';
@@ -189,6 +189,8 @@ class FieldtypeController extends FormController
 		// load the ID
 		$id = $item['id'] ?? null;
 		$guid = $item['guid'] ?? null;
+
+		$message_bus = ['warning', 'error'];
 
 		// check if there is any selections
 		if ($id === null || $guid === null)
@@ -203,15 +205,50 @@ class FieldtypeController extends FormController
 				if (FieldtypeFactory::_('Joomla.Fieldtype.Remote.Set')->items([$guid]))
 				{
 					// set success message
-					$message = '<h1>'.Text::_('COM_COMPONENTBUILDER_SUCCESS').'</h1>';
-					$message .= '<p>'.Text::_('COM_COMPONENTBUILDER_THE_JOOMLA_FIELD_TYPE_HAS_SUCCESSFULLY_BEEN_PUSHED').'</p>';
+					$message = '<h1>' . Text::_('COM_COMPONENTBUILDER_SUCCESS') . '</h1>';
+					$message .= '<p>' . Text::_('COM_COMPONENTBUILDER_THE_JOOMLA_FIELD_TYPE_HAS_SUCCESSFULLY_BEEN_PUSHED') . '</p>';
 					$status = 'success';
 					$success = true;
 				}
 				else
 				{
+					// Load any messages from the message bus
+					$message_bucket = [];
+
+					foreach ($message_bus as $message_key)
+					{
+						if (($messages = FieldtypeFactory::_('Power.Message')->get($message_key, null)) !== null)
+						{
+							$message_bucket[$message_key] = $messages;
+						}
+					}
+
+					// Initialize base values
 					$message = '<h1>' . Text::_('COM_COMPONENTBUILDER_PUSH_FAILED') . '</h1>';
 					$message .= '<p>' . Text::_('COM_COMPONENTBUILDER_THE_PUSH_OF_THIS_JOOMLA_FIELD_TYPE_HAS_FAILED') . '</p>';
+					$status = 'error';
+
+					// Handle both error and warning
+					if (isset($message_bucket['error'], $message_bucket['warning']))
+					{
+						$message .= '<p>' . implode('<br>', $message_bucket['error']) . '</p>';
+
+						foreach ($message_bucket['warning'] as $warning)
+						{
+							$this->app->enqueueMessage($warning, 'warning');
+						}
+					}
+					elseif (isset($message_bucket['error']))
+					{
+						$message .= '<p>' . implode('<br>', $message_bucket['error']) . '</p>';
+					}
+					elseif (isset($message_bucket['warning']))
+					{
+						$status = 'warning';
+						$message = '<h1>' . Text::_('COM_COMPONENTBUILDER_PUSH_WAS_UNSUCCESSFUL') . '</h1>';
+						$message .= '<p>' . Text::_('COM_COMPONENTBUILDER_THE_PUSH_OF_THIS_JOOMLA_FIELD_TYPE_COULD_NOT_BE_COMPLETED') . '</p>';
+						$message .= '<p>' . implode('<br>', $message_bucket['warning']) . '</p>';
+					}
 				}
 			} catch (\Exception $e) {
 				$message = '<h1>' . Text::_('COM_COMPONENTBUILDER_PUSH_FAILED') . '</h1>';
@@ -222,7 +259,7 @@ class FieldtypeController extends FormController
 		// set redirect
 		$redirect_url = Route::_(
 			'index.php?option=com_componentbuilder&view=fieldtype'
-			. $this->getRedirectToItemAppend($id), $success
+			. $this->getRedirectToItemAppend($id), false
 		);
 
 		$this->setRedirect($redirect_url, $message, $status);

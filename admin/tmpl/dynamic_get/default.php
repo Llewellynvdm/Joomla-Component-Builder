@@ -34,7 +34,7 @@ $tmpl    = $tmpl ? '&tmpl=' . $tmpl : '';
 	var outerDiv = document.querySelector('body');
 	var loadingDiv = document.createElement('div');
 	loadingDiv.id = 'loading';
-	loadingDiv.style.cssText = "background: rgba(255, 255, 255, .8) url('components/com_componentbuilder/assets/images/import.gif') 50% 15% no-repeat; top: " + (outerDiv.getBoundingClientRect().top + window.pageYOffset) + "px; left: " + (outerDiv.getBoundingClientRect().left + window.pageXOffset) + "px; width: " + outerDiv.offsetWidth + "px; height: " + outerDiv.offsetHeight + "px; position: fixed; opacity: 0.80; -ms-filter: progid:DXImageTransform.Microsoft.Alpha(Opacity=80); filter: alpha(opacity=80); display: none;";
+	loadingDiv.style.cssText = "background: rgba(255, 255, 255, .8) url('components/com_componentbuilder/assets/images/ajax.gif') 50% 35% no-repeat; top: " + (outerDiv.getBoundingClientRect().top + window.pageYOffset) + "px; left: " + (outerDiv.getBoundingClientRect().left + window.pageXOffset) + "px; width: " + outerDiv.offsetWidth + "px; height: " + outerDiv.offsetHeight + "px; position: fixed; opacity: 0.80; -ms-filter: progid:DXImageTransform.Microsoft.Alpha(Opacity=80); filter: alpha(opacity=80); display: none;";
 	outerDiv.appendChild(loadingDiv);
 	loadingDiv.style.display = 'block';
 	// when page is ready remove and show
@@ -643,10 +643,10 @@ jQuery('#adminForm').on('change', '#jform_gettype',function (e)
 
 
 <?php $fieldNrs = range(0, 50, 1); ?>
-<?php $fieldNames = array('db' => 'Db', 'view' => 'View'); ?>
+<?php $fieldNames = ['db' => ['function_name' => 'Db', 'key' => 'table_main'], 'view' => ['function_name' => 'View', 'key' => 'table_main_id']]; ?>
 // for the vlaues already set
 document.addEventListener('DOMContentLoaded', function() {
-    <?php foreach($fieldNames as $fieldName => $funcName): ?>
+    <?php foreach($fieldNames as $fieldName => $details): ?>
         <?php foreach($fieldNrs as $fieldNr): ?>
             updateSubItems('<?php echo $fieldName ?>', <?php echo $fieldNr ?>, '_', '_');
         <?php endforeach; ?>
@@ -663,11 +663,15 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 });
 
-<?php foreach($fieldNames as $fieldName => $funcName): ?>
+<?php foreach($fieldNames as $fieldName => $details): ?>
 document.getElementById('adminForm').addEventListener('change', function(e) {
-    if (e.target && e.target.id === 'jform_<?php echo $fieldName ?>_table_main') {
-        let value_<?php echo $fieldName ?> = e.target.options[e.target.selectedIndex].value;
-        get<?php echo $funcName; ?>TableColumns(value_<?php echo $fieldName ?>, 'a', '<?php echo $fieldName ?>', 3, true, '', '');
+    if (e.target && e.target.id === 'jform_<?php echo $fieldName ?>_<?php echo $details['key']; ?>') {
+        <?php if ($fieldName === 'view'): ?>
+            let value_<?php echo $fieldName ?> = e.target.value;
+        <?php else: ?>
+            let value_<?php echo $fieldName ?> = e.target.options[e.target.selectedIndex].value;
+        <?php endif; ?>
+        get<?php echo $details['function_name']; ?>TableColumns(value_<?php echo $fieldName ?>, 'a', '<?php echo $fieldName ?>', 3, true, '', '');
     }
 });
 <?php endforeach; ?>

@@ -23,12 +23,5 @@ use VDM\Joomla\Abstraction\Remote\Get as ExtendingGet;
  */
 final class Get extends ExtendingGet implements GetInterface
 {
-	/**
-	 * Table Name
-	 *
-	 * @var    string
-	 * @since 3.2.1
-	 */
-	protected string $table = 'power';
 }
 

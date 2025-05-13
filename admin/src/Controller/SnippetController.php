@@ -78,6 +78,85 @@ class SnippetController extends FormController
 	 */
 	protected int $refid;
 
+
+	/**
+	 * Resets the specified Snippet.
+	 *
+	 * This function performs several checks and operations:
+	 * 1. It verifies the authenticity of the request to prevent request forgery.
+	 * 2. It retrieves the item data posted by the user.
+	 * 3. It checks whether the current user has the necessary permissions to reset the Snippet.
+	 * 4. It validates the presence of the necessary item identifiers (ID and GUID).
+	 * 5. If the user is authorized and the identifiers are valid, it attempts to reset the specified Snippet.
+	 * 6. Depending on the result of the reset operation, it sets the appropriate success or error message.
+	 * 7. It redirects the user to a specified URL with the result message and status.
+	 *
+	 * @return bool True on successful reset, false on failure.
+	 */
+	public function resetPowers()
+	{
+		// Check for request forgeries
+		Session::checkToken() or die(Text::_('JINVALID_TOKEN'));
+
+		// get Item posted
+		$item = $this->input->post->get('jform', array(), 'array');
+
+		// load the ID
+		$id = $item['id'] ?? null;
+
+		// set default in development message
+		$message = '<h1>' . Text::_('COM_COMPONENTBUILDER_STILL_IN_DEVELOPMENT') . '</h1>';
+		$message .= '<p>' . Text::_('COM_COMPONENTBUILDER_ONCE_COMPLETED_THIS_FEATURE_WILL_ALLOW_YOU_TO_RESET_BOTH_DEMO_AND_USERCREATED_SNIPPET_WITHIN_THIS_JCB_INSTANCE') . '</p>';
+
+		// set redirect
+		$redirect_url = Route::_(
+			'index.php?option=com_componentbuilder&view=snippet'
+			. $this->getRedirectToItemAppend($id), false
+		);
+		$this->setRedirect($redirect_url, $message, 'success');
+
+		return true;
+	}
+
+	 /**
+	 * Pushes the specified Snippet.
+	 *
+	 * This function performs several checks and operations:
+	 * 1. It verifies the authenticity of the request to prevent request forgery.
+	 * 2. It retrieves the item data posted by the user.
+	 * 3. It checks whether the current user has the necessary permissions to push the Snippet.
+	 * 4. It validates the presence of the necessary item identifiers (ID and GUID).
+	 * 5. If the user is authorized and the identifiers are valid, it attempts to push the specified Snippet.
+	 * 6. Depending on the result of the push operation, it sets the appropriate success or error message.
+	 * 7. It redirects the user to a specified URL with the result message and status.
+	 *
+	 * @return bool True on successful push, false on failure.
+	 */
+	public function pushPowers()
+	{
+		// Check for request forgeries
+		Session::checkToken() or die(Text::_('JINVALID_TOKEN'));
+
+		// get Item posted
+		$item = $this->input->post->get('jform', array(), 'array');
+
+		// load the ID
+		$id = $item['id'] ?? null;
+
+		// set default in development message
+		$message = '<h1>' . Text::_('COM_COMPONENTBUILDER_STILL_IN_DEVELOPMENT') . '</h1>';
+		$message .= '<p>' . Text::_('COM_COMPONENTBUILDER_ONCE_COMPLETED_THIS_FEATURE_WILL_ALLOW_YOU_TO_PUSH_USERCREATED_SNIPPET_FROM_THIS_JCB_INSTANCE_TO_YOUR_CONFIGURED_REPOSITORIES') . '</p>';
+
+		// set redirect
+		$redirect_url = Route::_(
+			'index.php?option=com_componentbuilder&view=snippet'
+			. $this->getRedirectToItemAppend($id), false
+		);
+		$this->setRedirect($redirect_url, $message, 'success');
+
+		return true;
+	}
+
 	/**
 	 * Method override to check if you can add a new record.
 	 *

@@ -674,6 +674,7 @@ class Config extends ComponentConfig
 		// these strings are used to search for language strings in all content
 		return [
 			'jjt' => 'Joomla' . '.JText._(',
+			'jjtn' => 'Joomla' . '.Text._(',
 			'js' => 'Text:' . ':script(',
 			't' => 'Text:' . ':_(',            // namespace and J version will be found
 			'ts' => 'Text:' . ':sprintf(',  // namespace and J version will be found

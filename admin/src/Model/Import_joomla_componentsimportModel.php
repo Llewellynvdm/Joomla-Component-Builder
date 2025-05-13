@@ -22,14 +22,8 @@ use Joomla\String\StringHelper;
 use Joomla\Utilities\ArrayHelper;
 use PhpOffice\PhpSpreadsheet\IOFactory;
 use VDM\Component\Componentbuilder\Administrator\Helper\ComponentbuilderHelper;
-use VDM\Joomla\Componentbuilder\Package\Factory as PackageFactory;
-use VDM\Joomla\Utilities\ObjectHelper;
-use VDM\Joomla\Utilities\JsonHelper;
-use VDM\Joomla\Utilities\FileHelper;
-use VDM\Joomla\Utilities\GetHelper;
-use VDM\Joomla\Utilities\GuidHelper;
-use Joomla\CMS\Component\ComponentHelper;
 use VDM\Joomla\Utilities\StringHelper as UtilitiesStringHelper;
+use VDM\Joomla\Utilities\FileHelper;
 use VDM\Joomla\Utilities\ArrayHelper as UtilitiesArrayHelper;
 use Joomla\CMS\Filesystem\Folder as FilesystemFolder;
 

@@ -3407,7 +3407,7 @@ abstract class ComponentbuilderHelper
 			$script['view'][] = self::_t(1) . "var outerDiv = \$('body');";
 			$script['view'][] = "";
 			$script['view'][] = PHP_EOL . self::_t(1) . "\$('<div id=\"loading\"></div>')";
-			$script['view'][] = self::_t(2) . ".css(\"background\", \"rgba(255, 255, 255, .8) url('components/com_[[[-#-#-component]]]/assets/images/import.gif') 50% 15% no-repeat\")";
+			$script['view'][] = self::_t(2) . ".css(\"background\", \"rgba(255, 255, 255, .8) url('components/com_[[[-#-#-component]]]/assets/images/ajax.gif') 50% 35% no-repeat\")";
 			$script['view'][] = self::_t(2) . ".css(\"top\", outerDiv.position().top - \$(window).scrollTop())";
 			$script['view'][] = self::_t(2) . ".css(\"left\", outerDiv.position().left - \$(window).scrollLeft())";
 			$script['view'][] = self::_t(2) . ".css(\"width\", outerDiv.width())";

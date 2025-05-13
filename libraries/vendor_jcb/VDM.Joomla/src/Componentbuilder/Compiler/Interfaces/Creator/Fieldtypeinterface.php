@@ -38,8 +38,8 @@ interface Fieldtypeinterface
 	 * @return mixed    The field (two return types based of field_builder_type selected Object->xml or String)
 	 * @since 3.2.0
 	 */
-	public function get(string $setType, array &$fieldAttributes, string &$name,
-		string &$typeName, string &$langView, string &$nameSingleCode, string &$nameListCode,
+	public function get(string $setType, array &$fieldAttributes, string $name,
+		string $typeName, string $langView, string $nameSingleCode, string $nameListCode,
 		array $placeholders, ?array &$optionArray, ?array $custom = null, string $taber = '');
 }
 

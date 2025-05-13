@@ -154,12 +154,16 @@
 			<!-- Option Set. -->
 			<option value="">
 				COM_COMPONENTBUILDER_REPOSITORY_SELECT_AN_OPTION</option>
-			<option value="1">
-				COM_COMPONENTBUILDER_REPOSITORY_SUPER_POWER</option>
-			<option value="2">
-				COM_COMPONENTBUILDER_REPOSITORY_JOOMLA_POWER</option>
+			<option value="4">
+				COM_COMPONENTBUILDER_REPOSITORY_JCB_PACKAGES</option>
 			<option value="3">
 				COM_COMPONENTBUILDER_REPOSITORY_JOOMLA_FIELD_TYPES</option>
+			<option value="2">
+				COM_COMPONENTBUILDER_REPOSITORY_JOOMLA_POWER</option>
+			<option value="5">
+				COM_COMPONENTBUILDER_REPOSITORY_SNIPPETS</option>
+			<option value="1">
+				COM_COMPONENTBUILDER_REPOSITORY_SUPER_POWER</option>
 		</field>
 		<!-- Type Field. Type: List. (joomla) -->
 		<field
