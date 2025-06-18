@@ -12,6 +12,7 @@
 namespace VDM\Joomla\Componentbuilder\Package\Field\Readme;
 
 
+use VDM\Joomla\Utilities\GetHelper;
 use VDM\Joomla\Interfaces\Readme\ItemInterface;
 
 
@@ -23,54 +24,171 @@ use VDM\Joomla\Interfaces\Readme\ItemInterface;
 final class Item implements ItemInterface
 {
 	/**
-	 * Get an item readme
+	 * The field type array
 	 *
-	 * @param object  $item  An item details.
+	 * @var    array
+	 * @since 5.1.1
+	 */
+	protected array $fieldTypes = [];
+
+	/**
+	 * Generate a README in Markdown format for a JCB Field.
 	 *
-	 * @return string
-	 * @since 3.2.2
+	 * Provides a structured summary of the field definition, including type, XML, and database schema.
+	 *
+	 * @param  object  $item  The field item definition.
+	 *
+	 * @return string  The generated Markdown.
+	 * @since  5.1.1
 	 */
 	public function get(object $item): string
 	{
-		// build readme
-		$readme = ["```
-     ██╗ ██████╗  ██████╗ ███╗   ███╗██╗      █████╗ 
-     ██║██╔═══██╗██╔═══██╗████╗ ████║██║     ██╔══██╗
-     ██║██║   ██║██║   ██║██╔████╔██║██║     ███████║
-██   ██║██║   ██║██║   ██║██║╚██╔╝██║██║     ██╔══██║
-╚█████╔╝╚██████╔╝╚██████╔╝██║ ╚═╝ ██║███████╗██║  ██║
- ╚════╝  ╚═════╝  ╚═════╝ ╚═╝     ╚═╝╚══════╝╚═╝  ╚═╝
-                                                     
-███████╗██╗███████╗██╗     ██████╗                   
-██╔════╝██║██╔════╝██║     ██╔══██╗                  
-█████╗  ██║█████╗  ██║     ██║  ██║                  
-██╔══╝  ██║██╔══╝  ██║     ██║  ██║                  
-██║     ██║███████╗███████╗██████╔╝                  
-╚═╝     ╚═╝╚══════╝╚══════╝╚═════╝                   
-```"];
-		// system name
-		$readme[] = "# " . $item->name;
+		$readme = [];
 
-		if (!empty($item->description))
+		// Title
+		$readme[] = '### JCB! Field';
+		$fieldName = $item->name ?? 'error: missing name';
+		$readme[] = "# {$fieldName}";
+		$readme[] = '';
+
+		// Field type
+		$fieldtypeName = $this->getFieldType($item);
+		$readme[] = '> Field Type: ' . ($fieldtypeName ?? 'error: missing field type');
+		$readme[] = '';
+
+		// Database structure
+		$datatype = $item->datatype ?? 'error: missing data type';
+
+		$datalength = $item->datalenght ?? 'other';
+		if (strtolower($datalength) === 'other')
 		{
-			$readme[] = "\n" . $item->description;
+			$datalength = $item->datalenght_other ?? 'error: missing data length';
 		}
 
-		$readme[] = "\nThe Joomla Field is the heartbeat of every JCB‑built component: it defines a slice of the data schema, drives form generation, and dictates how a single piece of information is captured, validated, and stored in the database. By combining its fieldtype, datatype, and parameters into a reusable building block, the field underpins every admin view, site view, and custom admin view, making it a foundational element of the entire JCB ecosystem. By using the \"reset\" button, you can instantly synchronize this Field with the authoritative version hosted in our core repository, ensuring your Components always benefit from the latest refinements, performance optimizations, and security enhancements.\n\n If you want something more different from the provided fields. Fork the repo, tailor the field, and point JCB to your branch. Whether you’re storing different types of data, setting different parameters, you stay in charge while still enjoying JCB’s effortless deployment workflow.\n
-\n
-\"This flexible approach embraces JCB’s open-source model, giving you the freedom to adapt your components to your exact needs while staying connected to a powerful and community-driven ecosystem.\"\n";
+		$datadefault = $item->datadefault ?? 'other';
+		if (strtolower($datadefault) === 'other')
+		{
+			$datadefault = $item->datadefault_other ?? 'error: missing data default';
+		}
 
-		// yes you can remove this, but why?
-		$readme[] = "\n---\n```
-     ██╗ ██████╗██████╗
-     ██║██╔════╝██╔══██╗
-     ██║██║     ██████╔╝
-██   ██║██║     ██╔══██╗
-╚█████╔╝╚██████╗██████╔╝
- ╚════╝  ╚═════╝╚═════╝
-```\n> Build with [Joomla Component Builder](https://git.vdm.dev/joomla/Component-Builder)\n\n";
+		$nullSwitch = $item->null_switch ?? 'error: missing null switch';
+
+		$indexType = match ((int) ($item->indexes ?? 0)) {
+			2       => 'KEY',
+			1       => 'UNIQUE KEY',
+			default => 'NOT INDEX',
+		};
+
+		$modeling = $this->getEncodingTypeLabel((int) ($item->store ?? 0));
+
+		// XML block
+		$readme[] = '## Field XML:';
+		$readme[] = '```xml';
+		$readme[] = rtrim((string) ($item->xml ?? '<error: missing xml />'));
+		$readme[] = '```';
+		$readme[] = '';
+
+		// Database block
+		$readme[] = '## Database:';
+		$readme[] = "- Data type: {$datatype}";
+		$readme[] = "- Data length: {$datalength}";
+		$readme[] = "- Data default: {$datadefault}";
+		$readme[] = "- Null switch: {$nullSwitch}";
+		$readme[] = "- Index: {$indexType}";
+		$readme[] = "- Modeling: {$modeling}";
+		$readme[] = '';
+
+		// Footer
+		$readme[] = '> Define, capture, and control data effortlessly with this Field; the core building block of every JCB component.';
+		$readme[] = '';
+
+		$readme[] = <<<MD
+### Used in [Joomla Component Builder](https://www.joomlacomponentbuilder.com) - [Source](https://git.vdm.dev/joomla/Component-Builder) - [Mirror](https://github.com/vdm-io/Joomla-Component-Builder) - [Download](https://git.vdm.dev/joomla/pkg-component-builder/releases)
+
+---
+[![Joomla Volunteer Portal](https://img.shields.io/badge/-Joomla-gold?logo=joomla)](https://volunteers.joomla.org/joomlers/1396-llewellyn-van-der-merwe "Join Llewellyn on the Joomla Volunteer Portal: Shaping the Future Together!") [![Octoleo](https://img.shields.io/badge/-Octoleo-black?logo=linux)](https://git.vdm.dev/octoleo "--quiet") [![Llewellyn](https://img.shields.io/badge/-Llewellyn-ffffff?logo=gitea)](https://git.vdm.dev/Llewellyn "Collaborate and Innovate with Llewellyn on Git: Building a Better Code Future!") [![Telegram](https://img.shields.io/badge/-Telegram-blue?logo=telegram)](https://t.me/Joomla_component_builder "Join Llewellyn and the Community on Telegram: Building Joomla Components Together!") [![Mastodon](https://img.shields.io/badge/-Mastodon-9e9eec?logo=mastodon)](https://joomla.social/@llewellyn "Connect and Engage with Llewellyn on Joomla Social: Empowering Communities, One Post at a Time!") [![X (Twitter)](https://img.shields.io/badge/-X-black?logo=x)](https://x.com/llewellynvdm "Join the Conversation with Llewellyn on X: Where Ideas Take Flight!") [![GitHub](https://img.shields.io/badge/-GitHub-181717?logo=github)](https://github.com/Llewellynvdm "Build, Innovate, and Thrive with Llewellyn on GitHub: Turning Ideas into Impact!") [![YouTube](https://img.shields.io/badge/-YouTube-ff0000?logo=youtube)](https://www.youtube.com/@OctoYou "Explore, Learn, and Create with Llewellyn on YouTube: Your Gateway to Inspiration!") [![n8n](https://img.shields.io/badge/-n8n-black?logo=n8n)](https://n8n.io/creators/octoleo "Effortless Automation and Impactful Workflows with Llewellyn on n8n!") [![Docker Hub](https://img.shields.io/badge/-Docker-grey?logo=docker)](https://hub.docker.com/u/llewellyn "Llewellyn on Docker: Containerize Your Creativity!") [![Open Collective](https://img.shields.io/badge/-Donate-green?logo=opencollective)](https://opencollective.com/joomla-component-builder "Donate towards JCB: Help Llewellyn financially so he can continue developing this great tool!") [![GPG Key](https://img.shields.io/badge/-GPG-blue?logo=gnupg)](https://git.vdm.dev/Llewellyn/gpg "Unlock Trust and Security with Llewellyn's GPG Key: Your Gateway to Verified Connections!")
+MD;
 
 		return implode("\n", $readme);
+	}
+
+	/**
+	 * Converts an integer encoding type value to its corresponding string label.
+	 *
+	 * @param  int  $value  The integer value representing the encoding type.
+	 *
+	 * @return string  The matching label or fallback message if invalid.
+	 * @since  5.1.1
+	 */
+	protected function getEncodingTypeLabel(int $value): string
+	{
+		static $map = [
+			0 => 'Default',
+			1 => 'JSON',
+			2 => 'base64',
+			3 => 'Basic Encryption (local-DB-key)',
+			5 => 'Medium Encryption (local-file-key)',
+			6 => 'Expert Mode - Custom',
+		];
+
+		return $map[$value] ?? 'error: unknown encoding type';
+	}
+
+	/**
+	 * Get the field type value from the item XML or fallback sources.
+	 *
+	 * Retrieves the field type label based on the item's `fieldtype` and optional cached mappings.
+	 * If not cached, it attempts to resolve it via `GetHelper::var()` and caches the result.
+	 * If all else fails, tries to extract the field type from raw XML using pattern matching.
+	 *
+	 * @param  object  $item  The item object containing fieldtype and xml data.
+	 *
+	 * @return string|null  The resolved field type label or null if not determinable.
+	 * @since  5.1.1
+	 */
+	protected function getFieldType(object $item): ?string
+	{
+		$fieldtype = $item->fieldtype ?? null;
+
+		// Fastest path: known in cache
+		if ($fieldtype !== null && isset($this->fieldTypes[$fieldtype]))
+		{
+			return $this->fieldTypes[$fieldtype];
+		}
+
+		// Attempt to resolve type by name or helper (only if fieldtype exists)
+		if ($fieldtype !== null)
+		{
+			$type = $item->fieldtype_name
+				?? GetHelper::var('fieldtype', $fieldtype, 'guid', 'name');
+
+			if ($type !== null)
+			{
+				$this->fieldTypes[$fieldtype] = $type;
+				return $type;
+			}
+		}
+
+		// Extract XML if present and try to determine type
+		if (!empty($item->xml))
+		{
+			$type = GetHelper::var((string) $item->xml, 'type="', '"');
+
+			if ($fieldtype !== null)
+			{
+				$this->fieldTypes[$fieldtype] = $type ?? null;
+			}
+
+			return $type;
+		}
+
+		// Fallback: nothing worked
+		if ($fieldtype !== null)
+		{
+			$this->fieldTypes[$fieldtype] = null;
+		}
+
+		return null;
 	}
 }
 

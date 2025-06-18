@@ -15,21 +15,23 @@ namespace VDM\Joomla\Componentbuilder\Snippet\Service;
 use Joomla\DI\Container;
 use Joomla\DI\ServiceProviderInterface;
 use VDM\Joomla\Componentbuilder\Snippet\Config;
-use VDM\Joomla\Componentbuilder\Power\Table;
-use VDM\Joomla\Componentbuilder\Package\MessageBus;
 use VDM\Joomla\Componentbuilder\Snippet\Grep;
 use VDM\Joomla\Componentbuilder\Snippet\Remote\Config as RemoteConfig;
 use VDM\Joomla\Componentbuilder\Package\Dependency\Resolver;
 use VDM\Joomla\Componentbuilder\Power\Remote\Get;
-use VDM\Joomla\Componentbuilder\Snippet\Remote\Set;
+use VDM\Joomla\Componentbuilder\Package\Remote\Set;
+use VDM\Joomla\Componentbuilder\Snippet\Builder\Entities;
+use VDM\Joomla\Componentbuilder\Package\Builder\Set as BuilderSet;
+use VDM\Joomla\Componentbuilder\Package\Builder\Get as BuilderGet;
 use VDM\Joomla\Componentbuilder\Snippet\Readme\Item as ItemReadme;
 use VDM\Joomla\Componentbuilder\Snippet\Readme\Main as MainReadme;
+use VDM\Joomla\Componentbuilder\SnippetType\Remote\Config as SnippetType;
 
 
 /**
  * Snippet Service Provider
  * 
- * @since  5.2.1
+ * @since  5.1.1
  */
 class Snippet implements ServiceProviderInterface
 {
@@ -39,18 +41,12 @@ class Snippet implements ServiceProviderInterface
 	 * @param   Container  $container  The DI container.
 	 *
 	 * @return  void
-	 * @since   5.2.1
+	 * @since   5.1.1
 	 */
 	public function register(Container $container)
 	{
-		$container->alias(Config::class, 'Config')
-			->share('Config', [$this, 'getConfig'], true);
-
-		$container->alias(Table::class, 'Power.Table')->alias('Table', 'Power.Table')
-			->share('Power.Table', [$this, 'getPowerTable'], true);
-
-		$container->alias(MessageBus::class, 'Power.Message')
-			->share('Power.Message', [$this, 'getMessageBus'], true);
+		$container->alias(Config::class, 'Snippet.Config')->alias('Config', 'Snippet.Config')
+			->share('Snippet.Config', [$this, 'getConfig'], true);
 
 		$container->alias(Grep::class, 'Snippet.Grep')
 			->share('Snippet.Grep', [$this, 'getGrep'], true);
@@ -62,16 +58,40 @@ class Snippet implements ServiceProviderInterface
 			->share('Snippet.Resolver', [$this, 'getResolver'], true);
 
 		$container->alias(Get::class, 'Snippet.Remote.Get')
-			->share('Snippet.Remote.Get', [$this, 'getRemoteGet'], true);
+			->share('Snippet.Remote.Get', [$this, 'getSnippetGet'], true);
 
 		$container->alias(Set::class, 'Snippet.Remote.Set')
-			->share('Snippet.Remote.Set', [$this, 'getRemoteSet'], true);
+			->share('Snippet.Remote.Set', [$this, 'getSnippetSet'], true);
+
+		$container->alias(Entities::class, 'Snippet.Entities')
+			->share('Snippet.Entities', [$this, 'getSnippetEntities'], true);
+
+		$container->alias(BuilderSet::class, 'Package.Builder.Set')
+			->share('Package.Builder.Set', [$this, 'getBuilderSet'], true);
+
+		$container->alias(BuilderGet::class, 'Package.Builder.Get')
+			->share('Package.Builder.Get', [$this, 'getBuilderGet'], true);
 
 		$container->alias(ItemReadme::class, 'Snippet.Readme.Item')
 			->share('Snippet.Readme.Item', [$this, 'getItemReadme'], true);
 
 		$container->alias(MainReadme::class, 'Snippet.Readme.Main')
 			->share('Snippet.Readme.Main', [$this, 'getMainReadme'], true);
+
+		$container->alias(Grep::class, 'SnippetType.Grep')
+			->share('SnippetType.Grep', [$this, 'getSnippetTypeGrep'], true);
+
+		$container->alias(SnippetType::class, 'SnippetType.Remote.Config')
+			->share('SnippetType.Remote.Config', [$this, 'getSnippetTypeRemoteConfig'], true);
+
+		$container->alias(Resolver::class, 'SnippetType.Resolver')
+			->share('SnippetType.Resolver', [$this, 'getSnippetTypeResolver'], true);
+
+		$container->alias(Get::class, 'SnippetType.Remote.Get')
+			->share('SnippetType.Remote.Get', [$this, 'getSnippetTypeRemoteGet'], true);
+
+		$container->alias(Set::class, 'SnippetType.Remote.Set')
+			->share('SnippetType.Remote.Set', [$this, 'getSnippetTypeRemoteSet'], true);
 	}
 
 	/**
@@ -80,37 +100,11 @@ class Snippet implements ServiceProviderInterface
 	 * @param   Container  $container  The DI container.
 	 *
 	 * @return  Config
-	 * @since   5.2.1
+	 * @since   5.1.1
 	 */
 	public function getConfig(Container $container): Config
 	{
 		return new Config();
-	}
-
-	/**
-	 * Get The Power Table Class.
-	 *
-	 * @param   Container  $container  The DI container.
-	 *
-	 * @return  Table
-	 * @since   5.2.1
-	 */
-	public function getPowerTable(Container $container): Table
-	{
-		return new Table();
-	}
-
-	/**
-	 * Get The Message Bus Class.
-	 *
-	 * @param   Container  $container  The DI container.
-	 *
-	 * @return  MessageBus
-	 * @since   5.2.1
-	 */
-	public function getMessageBus(Container $container): MessageBus
-	{
-		return new MessageBus();
 	}
 
 	/**
@@ -119,15 +113,16 @@ class Snippet implements ServiceProviderInterface
 	 * @param   Container  $container  The DI container.
 	 *
 	 * @return  Grep
-	 * @since   5.2.1
+	 * @since   5.1.1
 	 */
 	public function getGrep(Container $container): Grep
 	{
 		return new Grep(
 			$container->get('Snippet.Remote.Config'),
-			$container->get('Gitea.Repository.Contents'),
+			$container->get('Git.Repository.Contents'),
 			$container->get('Network.Resolve'),
-			$container->get('Config')->approved_joomla_paths
+			$container->get('Power.Tracker'),
+			$container->get('Snippet.Config')->approved_joomla_paths
 		);
 	}
 
@@ -137,7 +132,7 @@ class Snippet implements ServiceProviderInterface
 	 * @param   Container  $container  The DI container.
 	 *
 	 * @return  RemoteConfig
-	 * @since  5.2.1
+	 * @since  5.1.1
 	 */
 	public function getRemoteConfig(Container $container): RemoteConfig
 	{
@@ -152,14 +147,16 @@ class Snippet implements ServiceProviderInterface
 	 * @param   Container  $container  The DI container.
 	 *
 	 * @return  Resolver
-	 * @since 5.2.1
+	 * @since 5.1.1
 	 */
 	public function getResolver(Container $container): Resolver
 	{
 		return new Resolver(
 			$container->get('Snippet.Remote.Config'),
+			$container->get('Utilities.Normalize'),
 			$container->get('Power.Tracker'),
-			$container->get('Power.Table')
+			$container->get('Power.Table'),
+			$container->get('Load')
 		);
 	}
 
@@ -169,14 +166,16 @@ class Snippet implements ServiceProviderInterface
 	 * @param   Container  $container  The DI container.
 	 *
 	 * @return  Get
-	 * @since   5.2.1
+	 * @since   5.1.1
 	 */
-	public function getRemoteGet(Container $container): Get
+	public function getSnippetGet(Container $container): Get
 	{
 		return new Get(
 			$container->get('Snippet.Remote.Config'),
 			$container->get('Snippet.Grep'),
-			$container->get('Data.Item')
+			$container->get('Data.Item'),
+			$container->get('Power.Tracker'),
+			$container->get('Power.Message')
 		);
 	}
 
@@ -186,19 +185,68 @@ class Snippet implements ServiceProviderInterface
 	 * @param   Container  $container  The DI container.
 	 *
 	 * @return  Set
-	 * @since   5.2.1
+	 * @since   5.1.1
 	 */
-	public function getRemoteSet(Container $container): Set
+	public function getSnippetSet(Container $container): Set
 	{
 		return new Set(
-			$container->get('Snippet.Remote.Config'),
+			$container->get('Power.Tracker'),
+			$container->get('Power.Message'),
 			$container->get('Snippet.Grep'),
-			$container->get('Data.Items'),
+			$container->get('Snippet.Resolver'),
+			$container->get('Snippet.Remote.Config'),
 			$container->get('Snippet.Readme.Item'),
 			$container->get('Snippet.Readme.Main'),
-			$container->get('Gitea.Repository.Contents'),
-			$container->get('Power.Message'),
-			$container->get('Config')->approved_joomla_paths
+			$container->get('Git.Repository.Contents'),
+			$container->get('Data.Items'),
+			$container->get('Snippet.Config')->approved_joomla_paths
+		);
+	}
+
+	/**
+	 * Get The Entities Class.
+	 *
+	 * @param   Container  $container  The DI container.
+	 *
+	 * @return  Entities
+	 * @since   5.1.1
+	 */
+	public function getSnippetEntities(Container $container): Entities
+	{
+		return new Entities();
+	}
+
+	/**
+	 * Get The Builder Set Class.
+	 *
+	 * @param   Container  $container  The DI container.
+	 *
+	 * @return  BuilderSet
+	 * @since   5.1.1
+	 */
+	public function getBuilderSet(Container $container): BuilderSet
+	{
+		return new BuilderSet(
+			$container->get('Snippet.Entities'),
+			$container->get('Power.Tracker'),
+			$container,
+		);
+	}
+
+	/**
+	 * Get The Builder Get Class.
+	 *
+	 * @param   Container  $container  The DI container.
+	 *
+	 * @return  BuilderGet
+	 * @since   5.1.1
+	 */
+	public function getBuilderGet(Container $container): BuilderGet
+	{
+		return new BuilderGet(
+			$container->get('Snippet.Entities'),
+			$container->get('Power.Tracker'),
+			$container,
 		);
 	}
 
@@ -208,7 +256,7 @@ class Snippet implements ServiceProviderInterface
 	 * @param   Container  $container  The DI container.
 	 *
 	 * @return  ItemReadme
-	 * @since   5.2.1
+	 * @since   5.1.1
 	 */
 	public function getItemReadme(Container $container): ItemReadme
 	{
@@ -221,11 +269,107 @@ class Snippet implements ServiceProviderInterface
 	 * @param   Container  $container  The DI container.
 	 *
 	 * @return  MainReadme
-	 * @since   5.2.1
+	 * @since   5.1.1
 	 */
 	public function getMainReadme(Container $container): MainReadme
 	{
 		return new MainReadme();
+	}
+
+	/**
+	 * Get The Grep Class.
+	 *
+	 * @param   Container  $container  The DI container.
+	 *
+	 * @return  Grep
+	 * @since   5.1.1
+	 */
+	public function getSnippetTypeGrep(Container $container): Grep
+	{
+		return new Grep(
+			$container->get('SnippetType.Remote.Config'),
+			$container->get('Git.Repository.Contents'),
+			$container->get('Network.Resolve'),
+			$container->get('Power.Tracker'),
+			$container->get('Snippet.Config')->approved_joomla_paths
+		);
+	}
+
+	/**
+	 * Get The Remote Configure Class.
+	 *
+	 * @param   Container  $container  The DI container.
+	 *
+	 * @return  SnippetType
+	 * @since  5.1.1
+	 */
+	public function getSnippetTypeRemoteConfig(Container $container): SnippetType
+	{
+		return new SnippetType(
+			$container->get('Power.Table')
+		);
+	}
+
+	/**
+	 * Get The Resolver Class.
+	 *
+	 * @param   Container  $container  The DI container.
+	 *
+	 * @return  Resolver
+	 * @since 5.1.1
+	 */
+	public function getSnippetTypeResolver(Container $container): Resolver
+	{
+		return new Resolver(
+			$container->get('SnippetType.Remote.Config'),
+			$container->get('Utilities.Normalize'),
+			$container->get('Power.Tracker'),
+			$container->get('Power.Table'),
+			$container->get('Load')
+		);
+	}
+
+	/**
+	 * Get The Remote Get Class.
+	 *
+	 * @param   Container  $container  The DI container.
+	 *
+	 * @return  Get
+	 * @since   5.1.1
+	 */
+	public function getSnippetTypeRemoteGet(Container $container): Get
+	{
+		return new Get(
+			$container->get('SnippetType.Remote.Config'),
+			$container->get('SnippetType.Grep'),
+			$container->get('Data.Item'),
+			$container->get('Power.Tracker'),
+			$container->get('Power.Message')
+		);
+	}
+
+	/**
+	 * Get The Remote Set Class.
+	 *
+	 * @param   Container  $container  The DI container.
+	 *
+	 * @return  Set
+	 * @since   5.1.1
+	 */
+	public function getSnippetTypeRemoteSet(Container $container): Set
+	{
+		return new Set(
+			$container->get('Power.Tracker'),
+			$container->get('Power.Message'),
+			$container->get('SnippetType.Grep'),
+			$container->get('SnippetType.Resolver'),
+			$container->get('SnippetType.Remote.Config'),
+			$container->get('Snippet.Readme.Item'),
+			$container->get('Snippet.Readme.Main'),
+			$container->get('Git.Repository.Contents'),
+			$container->get('Data.Items'),
+			$container->get('Snippet.Config')->approved_joomla_paths
+		);
 	}
 }
 

@@ -19,7 +19,7 @@ use VDM\Joomla\Abstraction\Remote\Config as ExtendingConfig;
 /**
  * Base Configure values for the remote classes
  * 
- * @since 5.2.1
+ * @since 5.1.1
  */
 final class Config extends ExtendingConfig implements ConfigInterface
 {
@@ -27,7 +27,7 @@ final class Config extends ExtendingConfig implements ConfigInterface
 	 * Table Name
 	 *
 	 * @var    string
-	 * @since  5.2.1
+	 * @since  5.1.1
 	 */
 	protected string $table = 'joomla_component';
 
@@ -35,73 +35,92 @@ final class Config extends ExtendingConfig implements ConfigInterface
 	 * Area Name
 	 *
 	 * @var   string|null
-	 * @since 5.2.1
+	 * @since 5.1.1
 	 */
-	protected ?string $area = 'Component';
-
-	/**
-	 * Prefix Key
-	 *
-	 * @var    string
-	 * @since 5.2.1
-	 */
-	protected string $prefix_key = '';
-
-	/**
-	 * Suffix Key
-	 *
-	 * @var    string
-	 * @since 5.2.1
-	 */
-	protected string $suffix_key = '';
+	protected ?string $area = 'Joomla Component';
 
 	/**
 	 * The main readme file path
 	 *
 	 * @var    string
-	 * @since  5.2.1
+	 * @since  5.1.1
 	 */
-	protected string $main_readme_path = 'src/README.md';
+	protected string $main_readme_path = 'README.md';
 
 	/**
 	 * The index file path (index of all items)
 	 *
 	 * @var    string
-	 * @since 5.2.1
+	 * @since 5.1.1
 	 */
-	protected string $index_path = 'component-index.json';
-
-	/**
-	 * The item settings file path
-	 *
-	 * @var   string
-	 * @since 3.2.2
-	 */
-	// [DEFAULT] protected string $settings_path = 'item.json';
+	protected string $index_path = 'index/joomla-component.json';
 
 	/**
 	 * The item (files) source path
 	 *
 	 * @var    string
-	 * @since  5.2.1
+	 * @since  5.1.1
 	 */
 	protected string $src_path = 'src/joomla_component';
 
 	/**
-	 * The item guid=unique field
+	 * The ignore fields
 	 *
-	 * @var    string
-	 * @since  5.2.1
+	 * @var   array
+	 * @since  5.1.1
 	 */
-	// [DEFAULT] protected string $guid_field = 'guid';
+	protected array $ignore = [
+		'access',
+		'export_key',
+		'joomla_source_link',
+		'export_buy_link',
+		'update_server',
+		'add_sales_server',
+		'sales_server',
+		'translation_tool',
+		'crowdin_project_identifier',
+		'crowdin_project_api_key',
+		'crowdin_username',
+		'crowdin_account_api_key',
+		'created',
+		'modified'
+	];
 
 	/**
-	 * The item map
+	 * The files (to map target files to move in an entity)
+	 *
+	 *   Use a pipe in the name to denote
+	 *   subform location of the value
+	 *      format: [field_name => path, field_name|subfrom_key => path]
+	 *
+	 * @var   array
+	 * @since  5.1.1
+	 */
+	protected array $files = [
+		'image' => 'images'
+	];
+
+	/**
+	 * The direct entities/children of this entity
 	 *
 	 * @var    array
-	 * @since 5.0.3
-	protected array $map = [];
-	[DEFAULT] */
+	 * @since  5.1.1
+	 */
+	protected array $children = [
+		'component_admin_views',
+		'component_custom_admin_views',
+		'component_site_views',
+		'component_router',
+		'component_config',
+		'component_placeholders',
+		'component_updates',
+		'component_files_folders',
+		'component_custom_admin_menus',
+		'component_dashboard',
+		'component_modules',
+		'component_plugins',
+		// 'custom_code' TODO
+	];
 
 	/**
 	 * The index map
@@ -110,12 +129,14 @@ final class Config extends ExtendingConfig implements ConfigInterface
 	 *
 	 * @var    array
 	 * @since  5.0.3
+	 */
 	protected array $index_map = [
 		'name' => 'index_map_IndexName',
 		'path' => 'index_map_IndexPath',
-		'guid' => 'index_map_IndexGUID'
+		'settings' => 'index_map_IndexSettingsPath',
+		'guid' => 'index_map_IndexGUID',
+		'desc' => 'index_map_ShortDescription'
 	];
-	[DEFAULT]  */
 
 	/**
 	 * The index header
@@ -127,25 +148,14 @@ final class Config extends ExtendingConfig implements ConfigInterface
 	 *
 	 * @var    array
 	 * @since  5.1.1
+	 */
 	protected array $index_header = [
 		'name',
+		'desc',
 		'path',
+		'settings',
 		'guid',
 		'local'
 	];
-	[DEFAULT]  */
-
-	/**
-	 * Core Placeholders
-	 *
-	 * @var    array
-	 * @since  5.0.3
-	protected array $placeholders = [
-		'[['.'[NamespacePrefix]]]' => 'VDM',
-		'[['.'[ComponentNamespace]]]' => 'Componentbuilder',
-		'[['.'[Component]]]' => 'Componentbuilder', 
-		'[['.'[component]]]' => 'componentbuilder'
-	];
-	[DEFAULT] */
 }
 

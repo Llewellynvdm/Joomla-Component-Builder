@@ -8,112 +8,49 @@
  * @license    GNU General Public License version 2 or later; see LICENSE.txt
  */
 
-// Some Global Values
-jform_vvvvwakvwt_required = false;
-
 // Initial Script
 document.addEventListener('DOMContentLoaded', function()
 {
-	var extension_type_vvvvwak = jQuery("#jform_extension_type").val();
-	vvvvwak(extension_type_vvvvwak);
+	var extension_type_vvvvwag = jQuery("#jform_extension_type").val();
+	vvvvwag(extension_type_vvvvwag);
 });
 
-// the vvvvwak function
-function vvvvwak(extension_type_vvvvwak)
+// the vvvvwag function
+function vvvvwag(extension_type_vvvvwag)
 {
-	if (isSet(extension_type_vvvvwak) && extension_type_vvvvwak.constructor !== Array)
+	if (isSet(extension_type_vvvvwag) && extension_type_vvvvwag.constructor !== Array)
 	{
-		var temp_vvvvwak = extension_type_vvvvwak;
-		var extension_type_vvvvwak = [];
-		extension_type_vvvvwak.push(temp_vvvvwak);
+		var temp_vvvvwag = extension_type_vvvvwag;
+		var extension_type_vvvvwag = [];
+		extension_type_vvvvwag.push(temp_vvvvwag);
 	}
-	else if (!isSet(extension_type_vvvvwak))
+	else if (!isSet(extension_type_vvvvwag))
 	{
-		var extension_type_vvvvwak = [];
+		var extension_type_vvvvwag = [];
 	}
-	var extension_type = extension_type_vvvvwak.some(extension_type_vvvvwak_SomeFunc);
+	var extension_type = extension_type_vvvvwag.some(extension_type_vvvvwag_SomeFunc);
 
 
 	// set this function logic
 	if (extension_type)
 	{
 		jQuery('#jform_joomla_plugin_group').closest('.control-group').show();
-		// add required attribute to joomla_plugin_group field
-		if (jform_vvvvwakvwt_required)
-		{
-			updateFieldRequired('joomla_plugin_group',0);
-			jQuery('#jform_joomla_plugin_group').prop('required','required');
-			jQuery('#jform_joomla_plugin_group').attr('aria-required',true);
-			jQuery('#jform_joomla_plugin_group').addClass('required');
-			jform_vvvvwakvwt_required = false;
-		}
 	}
 	else
 	{
 		jQuery('#jform_joomla_plugin_group').closest('.control-group').hide();
-		// remove required attribute from joomla_plugin_group field
-		if (!jform_vvvvwakvwt_required)
-		{
-			updateFieldRequired('joomla_plugin_group',1);
-			jQuery('#jform_joomla_plugin_group').removeAttr('required');
-			jQuery('#jform_joomla_plugin_group').removeAttr('aria-required');
-			jQuery('#jform_joomla_plugin_group').removeClass('required');
-			jform_vvvvwakvwt_required = true;
-		}
 	}
 }
 
-// the vvvvwak Some function
-function extension_type_vvvvwak_SomeFunc(extension_type_vvvvwak)
+// the vvvvwag Some function
+function extension_type_vvvvwag_SomeFunc(extension_type_vvvvwag)
 {
 	// set the function logic
-	if (extension_type_vvvvwak == 'plugins' || extension_type_vvvvwak == 'plugin')
+	if (extension_type_vvvvwag == 'plugins' || extension_type_vvvvwag == 'plugin')
 	{
 		return true;
 	}
 	return false;
-}
-
-// update fields required
-function updateFieldRequired(name, status) {
-	// check if not_required exist
-	if (document.getElementById('jform_not_required')) {
-		var not_required = jQuery('#jform_not_required').val().split(",");
-
-		if(status == 1)
-		{
-			not_required.push(name);
-		}
-		else
-		{
-			not_required = removeFieldFromNotRequired(not_required, name);
-		}
-
-		jQuery('#jform_not_required').val(fixNotRequiredArray(not_required).toString());
-	}
-}
-
-// remove field from not_required
-function removeFieldFromNotRequired(array, what) {
-	return array.filter(function(element){
-		return element !== what;
-	});
-}
-
-// fix not required array
-function fixNotRequiredArray(array) {
-	var seen = {};
-	return removeEmptyFromNotRequiredArray(array).filter(function(item) {
-		return seen.hasOwnProperty(item) ? false : (seen[item] = true);
-	});
-}
-
-// remove empty from not_required array
-function removeEmptyFromNotRequiredArray(array) {
-	return array.filter(function (el) {
-		// remove ( 一_一) as well - lol
-		return (el.length > 0 && '一_一' !== el);
-	});
 }
 
 // the isSet function

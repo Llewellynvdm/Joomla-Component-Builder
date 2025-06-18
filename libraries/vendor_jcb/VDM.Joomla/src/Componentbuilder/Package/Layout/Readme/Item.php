@@ -23,56 +23,64 @@ use VDM\Joomla\Interfaces\Readme\ItemInterface;
 final class Item implements ItemInterface
 {
 	/**
-	 * Get an item readme
+	 * Generate a README for a JCB Layout in Markdown format.
 	 *
-	 * @param object  $item  An item details.
+	 * Includes layout name, alias render key, optional PHP code, and HTML layout content.
 	 *
-	 * @return string
-	 * @since 3.2.2
+	 * @param  object  $item  The layout definition object.
+	 *
+	 * @return string  The generated README.
+	 * @since  5.1.1
 	 */
 	public function get(object $item): string
 	{
-		// build readme
-		$readme = ["```
-     ██╗ ██████╗  ██████╗ ███╗   ███╗██╗      █████╗ 
-     ██║██╔═══██╗██╔═══██╗████╗ ████║██║     ██╔══██╗
-     ██║██║   ██║██║   ██║██╔████╔██║██║     ███████║
-██   ██║██║   ██║██║   ██║██║╚██╔╝██║██║     ██╔══██║
-╚█████╔╝╚██████╔╝╚██████╔╝██║ ╚═╝ ██║███████╗██║  ██║
- ╚════╝  ╚═════╝  ╚═════╝ ╚═╝     ╚═╝╚══════╝╚═╝  ╚═╝
-                                                     
-██╗      █████╗ ██╗   ██╗ ██████╗ ██╗   ██╗████████╗ 
-██║     ██╔══██╗╚██╗ ██╔╝██╔═══██╗██║   ██║╚══██╔══╝ 
-██║     ███████║ ╚████╔╝ ██║   ██║██║   ██║   ██║    
-██║     ██╔══██║  ╚██╔╝  ██║   ██║██║   ██║   ██║    
-███████╗██║  ██║   ██║   ╚██████╔╝╚██████╔╝   ██║    
-╚══════╝╚═╝  ╚═╝   ╚═╝    ╚═════╝  ╚═════╝    ╚═╝
-```"];
-		// system name
-		$readme[] = "# " . $item->name;
+		$readme = [];
 
-		if (!empty($item->description))
+		// Title
+		$readme[] = '### JCB! Layout';
+		$readme[] = '# ' . ($item->name ?? 'error: missing name');
+		$readme[] = '';
+
+		// Layout alias usage
+		if (!empty($item->alias))
 		{
-			$readme[] = "\n" . $item->description;
+			$readme[] = '## Key:';
+			$readme[] = '```php';
+			$readme[] = "echo Layout" . "Helper::render('{$item->alias}', [?]);";
+			$readme[] = '```';
+			$readme[] = '';
 		}
 
-		$readme[] = "The Joomla layout within this repository offer a robust mechanism for integrating structured, reusable HTML and PHP code into Joomla Component Builder (JCB). Each layout is carefully crafted to ensure full compatibility and ease of use within the JCB framework, allowing developers to streamline interface design, enforce consistency, and accelerate custom component development.\n
-\n
-Using the reset functionality, you can quickly update any individual layout to the latest version from the official core repository, ensuring that your components benefit from the most recent improvements, features, and fixes.\n
-\n
-For developers who require more tailored solutions, this repository can be forked. By pointing your JCB instance to your custom fork, you gain full control over your layouts, allowing you to modify, maintain, and distribute them independently from the main JCB repository.\n
-\n
-This flexible approach embraces JCB’s open-source model, giving you the freedom to adapt your components to your exact needs while staying connected to a powerful and community-driven ecosystem.\n";
+		// PHP view block
+		if (($item->add_php_view ?? 0) == 1 && !empty($item->php_view))
+		{
+			$readme[] = '## PHP:';
+			$readme[] = '```php';
+			$readme[] = rtrim($item->php_view);
+			$readme[] = '```';
+			$readme[] = '';
+		}
 
-		// yes you can remove this, but why?
-		$readme[] = "\n---\n```
-     ██╗ ██████╗██████╗
-     ██║██╔════╝██╔══██╗
-     ██║██║     ██████╔╝
-██   ██║██║     ██╔══██╗
-╚█████╔╝╚██████╗██████╔╝
- ╚════╝  ╚═════╝╚═════╝
-```\n> Build with [Joomla Component Builder](https://git.vdm.dev/joomla/Component-Builder)\n\n";
+		// HTML layout block
+		if (!empty($item->layout))
+		{
+			$readme[] = '## HTML:';
+			$readme[] = '```html';
+			$readme[] = rtrim($item->layout);
+			$readme[] = '```';
+			$readme[] = '';
+		}
+
+		// Footer
+		$readme[] = '> Enhance your Joomla components with a reusable layout that ensures consistent design, easy updates, and full compatibility within the JCB framework.';
+		$readme[] = '';
+
+		$readme[] = <<<MD
+### Used in [Joomla Component Builder](https://www.joomlacomponentbuilder.com) - [Source](https://git.vdm.dev/joomla/Component-Builder) - [Mirror](https://github.com/vdm-io/Joomla-Component-Builder) - [Download](https://git.vdm.dev/joomla/pkg-component-builder/releases)
+
+---
+[![Joomla Volunteer Portal](https://img.shields.io/badge/-Joomla-gold?logo=joomla)](https://volunteers.joomla.org/joomlers/1396-llewellyn-van-der-merwe "Join Llewellyn on the Joomla Volunteer Portal: Shaping the Future Together!") [![Octoleo](https://img.shields.io/badge/-Octoleo-black?logo=linux)](https://git.vdm.dev/octoleo "--quiet") [![Llewellyn](https://img.shields.io/badge/-Llewellyn-ffffff?logo=gitea)](https://git.vdm.dev/Llewellyn "Collaborate and Innovate with Llewellyn on Git: Building a Better Code Future!") [![Telegram](https://img.shields.io/badge/-Telegram-blue?logo=telegram)](https://t.me/Joomla_component_builder "Join Llewellyn and the Community on Telegram: Building Joomla Components Together!") [![Mastodon](https://img.shields.io/badge/-Mastodon-9e9eec?logo=mastodon)](https://joomla.social/@llewellyn "Connect and Engage with Llewellyn on Joomla Social: Empowering Communities, One Post at a Time!") [![X (Twitter)](https://img.shields.io/badge/-X-black?logo=x)](https://x.com/llewellynvdm "Join the Conversation with Llewellyn on X: Where Ideas Take Flight!") [![GitHub](https://img.shields.io/badge/-GitHub-181717?logo=github)](https://github.com/Llewellynvdm "Build, Innovate, and Thrive with Llewellyn on GitHub: Turning Ideas into Impact!") [![YouTube](https://img.shields.io/badge/-YouTube-ff0000?logo=youtube)](https://www.youtube.com/@OctoYou "Explore, Learn, and Create with Llewellyn on YouTube: Your Gateway to Inspiration!") [![n8n](https://img.shields.io/badge/-n8n-black?logo=n8n)](https://n8n.io/creators/octoleo "Effortless Automation and Impactful Workflows with Llewellyn on n8n!") [![Docker Hub](https://img.shields.io/badge/-Docker-grey?logo=docker)](https://hub.docker.com/u/llewellyn "Llewellyn on Docker: Containerize Your Creativity!") [![Open Collective](https://img.shields.io/badge/-Donate-green?logo=opencollective)](https://opencollective.com/joomla-component-builder "Donate towards JCB: Help Llewellyn financially so he can continue developing this great tool!") [![GPG Key](https://img.shields.io/badge/-GPG-blue?logo=gnupg)](https://git.vdm.dev/Llewellyn/gpg "Unlock Trust and Security with Llewellyn's GPG Key: Your Gateway to Verified Connections!")
+MD;
 
 		return implode("\n", $readme);
 	}

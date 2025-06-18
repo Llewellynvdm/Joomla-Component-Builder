@@ -31,15 +31,6 @@
 			layout="joomla.form.field.list-fancy-select"
 		/>
 		<field
-			type="maingets"
-			name="main_get"
-			label="COM_COMPONENTBUILDER_SITE_VIEW_MAIN_GET_LABEL"
-			layout="joomla.form.field.list-fancy-select"
-			multiple="true"
-			hint="COM_COMPONENTBUILDER_FILTER_SELECT_MAIN_GET"
-			class="js-select-submit-on-change"
-		/>
-		<field
 			type="siteviewsfilteraddphpajax"
 			name="add_php_ajax"
 			label="COM_COMPONENTBUILDER_SITE_VIEW_ADD_PHP_AJAX_LABEL"

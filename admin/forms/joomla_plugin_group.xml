@@ -113,17 +113,30 @@
 			message="COM_COMPONENTBUILDER_JOOMLA_PLUGIN_GROUP_NAME_MESSAGE"
 			hint="COM_COMPONENTBUILDER_JOOMLA_PLUGIN_GROUP_NAME_HINT"
 		/>
-		<!-- Class_extends Field. Type: Classextends. (custom) -->
+		<!-- Class_extends Field. Type: Modalselect. (custom) -->
 		<field
-			type="classextends"
+			type="ModalSelect"
 			name="class_extends"
 			label="COM_COMPONENTBUILDER_JOOMLA_PLUGIN_GROUP_CLASS_EXTENDS_LABEL"
-			class="list_class"
-			layout="joomla.form.field.list-fancy-select"
-			multiple="false"
-			default="0"
+			sql_title_table="#__componentbuilder_class_extends"
+			sql_title_column="name"
+			data-key-name="guid"
+			sql_title_key="guid"
+			urlSelect="index.php?option=com_componentbuilder&amp;view=class_extendings&amp;layout=modal&amp;tmpl=component&amp;titleKey=guid&amp;filter[extension_type]=plugins"
+			urlNew="index.php?option=com_componentbuilder&amp;task=class_extends.add&amp;layout=modal&amp;tmpl=component"
+			urlEdit="index.php?option=com_componentbuilder&amp;task=class_extends.edit&amp;guid={id}&amp;layout=modal&amp;tmpl=component&amp;titleKey=guid"
+			titleSelect="COM_COMPONENTBUILDER_JOOMLA_PLUGIN_GROUP_CLASS_EXTENDS_TITLESELECT"
+			titleNew="COM_COMPONENTBUILDER_JOOMLA_PLUGIN_GROUP_CLASS_EXTENDS_TITLENEW"
+			titleEdit="COM_COMPONENTBUILDER_JOOMLA_PLUGIN_GROUP_CLASS_EXTENDS_TITLEEDIT"
+			iconSelect="icon-copy"
+			select="true"
+			new="true"
+			edit="true"
+			clear="true"
 			required="true"
-			button="true"
+			class="input-large"
+			description="COM_COMPONENTBUILDER_JOOMLA_PLUGIN_GROUP_CLASS_EXTENDS_DESCRIPTION"
+			hint="COM_COMPONENTBUILDER_JOOMLA_PLUGIN_GROUP_CLASS_EXTENDS_HINT"
 		/>
 		<!-- Guid Field. Type: Text. (joomla) -->
 		<field

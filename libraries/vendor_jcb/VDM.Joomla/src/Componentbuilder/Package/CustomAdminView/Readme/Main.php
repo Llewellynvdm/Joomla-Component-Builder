@@ -13,6 +13,7 @@ namespace VDM\Joomla\Componentbuilder\Package\CustomAdminView\Readme;
 
 
 use VDM\Joomla\Interfaces\Readme\MainInterface;
+use VDM\Joomla\Componentbuilder\Package\Readme\Main as ExtendingMain;
 
 
 /**
@@ -20,215 +21,107 @@ use VDM\Joomla\Interfaces\Readme\MainInterface;
  * 
  * @since  5.1.1
  */
-final class Main implements MainInterface
+final class Main extends ExtendingMain implements MainInterface
 {
 	/**
-	 * Get Main Readme
+	 * Generate the main README for the JCB Custom Admin Views repository in Markdown format.
 	 *
-	 * @param array    $items  All items of this repository.
+	 * Custom Admin Views represent fully customizable back-end interfaces within Joomla components.
+	 * This method generates a Markdown README that explains their purpose, structure, and role in JCB.
 	 *
-	 * @return string
-	 * @since 3.2.0
+	 * @param  array  $items  All Custom Admin View entries stored in the repository.
+	 *
+	 * @return string  The full generated Markdown README.
+	 * @since  5.1.1
 	 */
 	public function get(array $items): string
 	{
-		// build readme
-		$readme = ["```
-     ██╗ ██████╗  ██████╗ ███╗   ███╗██╗      █████╗                                                                                        
-     ██║██╔═══██╗██╔═══██╗████╗ ████║██║     ██╔══██╗                                                                                       
-     ██║██║   ██║██║   ██║██╔████╔██║██║     ███████║                                                                                       
-██   ██║██║   ██║██║   ██║██║╚██╔╝██║██║     ██╔══██║                                                                                       
-╚█████╔╝╚██████╔╝╚██████╔╝██║ ╚═╝ ██║███████╗██║  ██║                                                                                       
- ╚════╝  ╚═════╝  ╚═════╝ ╚═╝     ╚═╝╚══════╝╚═╝  ╚═╝                                                                                       
-                                                                                                                                            
- ██████╗██╗   ██╗███████╗████████╗ ██████╗ ███╗   ███╗     █████╗ ██████╗ ███╗   ███╗██╗███╗   ██╗    ██╗   ██╗██╗███████╗██╗    ██╗███████╗
-██╔════╝██║   ██║██╔════╝╚══██╔══╝██╔═══██╗████╗ ████║    ██╔══██╗██╔══██╗████╗ ████║██║████╗  ██║    ██║   ██║██║██╔════╝██║    ██║██╔════╝
-██║     ██║   ██║███████╗   ██║   ██║   ██║██╔████╔██║    ███████║██║  ██║██╔████╔██║██║██╔██╗ ██║    ██║   ██║██║█████╗  ██║ █╗ ██║███████╗
-██║     ██║   ██║╚════██║   ██║   ██║   ██║██║╚██╔╝██║    ██╔══██║██║  ██║██║╚██╔╝██║██║██║╚██╗██║    ╚██╗ ██╔╝██║██╔══╝  ██║███╗██║╚════██║
-╚██████╗╚██████╔╝███████║   ██║   ╚██████╔╝██║ ╚═╝ ██║    ██║  ██║██████╔╝██║ ╚═╝ ██║██║██║ ╚████║     ╚████╔╝ ██║███████╗╚███╔███╔╝███████║
- ╚═════╝ ╚═════╝ ╚══════╝   ╚═╝    ╚═════╝ ╚═╝     ╚═╝    ╚═╝  ╚═╝╚═════╝ ╚═╝     ╚═╝╚═╝╚═╝  ╚═══╝      ╚═══╝  ╚═╝╚══════╝ ╚══╝╚══╝ ╚══════╝
-```"];
+		$readme = [];
 
-		// default description of custom admin views
-		$readme[] = "\n### What are Joomla Custom Admin Views?\nJoomla Custom Admin Views give you a blank canvas within Joomla Component Builder (JCB) to paint the perfect back‑end experience. Just like with a Site View, Rather than settling for auto‑generated tables and field mappings, you compose each view with your own markup, PHP logic, Dynamic Gets, Templates, and Layouts—achieving pixel‑level precision over how data is retrieved, displayed, and managed inside the Joomla administrator.\n
-\n
-Whenever you need to update Custom Admin Views in any JCB project, simply select the desired Custom Admin Views and click the \"reset\" button. This action will automatically synchronize the Custom Admin Views with its corresponding version hosted in our core repository, ensuring you always have the latest updates.\n
-\n
-Should you wish to tailor a Custom Admin View to your specific workflow—adding new filters, integrating dashboards, or overhauling the UI—you can fork this repository and point your JCB instance to your fork. This lets you maintain and evolve Custom Admin Views independently of the main JCB community while preserving the convenience of JCB’s one‑click update mechanism.\n
-\n
-\"We believe this approach empowers you to extend and customize JCB to fit your unique requirements, exemplifying the true spirit of freedom in software development. We trust you will find this capability both useful and aligned with the expectations of how open-source software should function.\"\n";
+		// Header
+		$readme[] = '# JCB! Custom Admin Views';
+		$readme[] = '';
 
-		// get the readme body
-		$readme[] = $this->readmeBuilder($items);
+		// Overview
+		$readme[] = '### What Are Custom Admin Views?';
+		$readme[] = <<<MD
+**Custom Admin Views** give you complete freedom to define bespoke administrative interfaces  
+within your Joomla components — without being limited to Joomla's default view generators.
 
-		// yes you can remove this, but why?
-		$readme[] = "\n---\n```
-     ██╗ ██████╗  ██████╗ ███╗   ███╗██╗      █████╗
-     ██║██╔═══██╗██╔═══██╗████╗ ████║██║     ██╔══██╗
-     ██║██║   ██║██║   ██║██╔████╔██║██║     ███████║
-██   ██║██║   ██║██║   ██║██║╚██╔╝██║██║     ██╔══██║
-╚█████╔╝╚██████╔╝╚██████╔╝██║ ╚═╝ ██║███████╗██║  ██║
- ╚════╝  ╚═════╝  ╚═════╝ ╚═╝     ╚═╝╚══════╝╚═╝  ╚═╝
- ██████╗ ██████╗ ███╗   ███╗██████╗  ██████╗ ███╗   ██╗███████╗███╗   ██╗████████╗
-██╔════╝██╔═══██╗████╗ ████║██╔══██╗██╔═══██╗████╗  ██║██╔════╝████╗  ██║╚══██╔══╝
-██║     ██║   ██║██╔████╔██║██████╔╝██║   ██║██╔██╗ ██║█████╗  ██╔██╗ ██║   ██║
-██║     ██║   ██║██║╚██╔╝██║██╔═══╝ ██║   ██║██║╚██╗██║██╔══╝  ██║╚██╗██║   ██║
-╚██████╗╚██████╔╝██║ ╚═╝ ██║██║     ╚██████╔╝██║ ╚████║███████╗██║ ╚████║   ██║
- ╚═════╝ ╚═════╝ ╚═╝     ╚═╝╚═╝      ╚═════╝ ╚═╝  ╚═══╝╚══════╝╚═╝  ╚═══╝   ╚═╝
-██████╗ ██╗   ██╗██╗██╗     ██████╗ ███████╗██████╗
-██╔══██╗██║   ██║██║██║     ██╔══██╗██╔════╝██╔══██╗
-██████╔╝██║   ██║██║██║     ██║  ██║█████╗  ██████╔╝
-██╔══██╗██║   ██║██║██║     ██║  ██║██╔══╝  ██╔══██╗
-██████╔╝╚██████╔╝██║███████╗██████╔╝███████╗██║  ██║
-╚═════╝  ╚═════╝ ╚═╝╚══════╝╚═════╝ ╚══════╝╚═╝  ╚═╝
-```\n> Build with [Joomla Component Builder](https://git.vdm.dev/joomla/Component-Builder)\n\n";
+They are the **admin-side counterpart to Site Views**, built using:
+- **Templates** and **Layouts** (for structural rendering)
+- **Dynamic Gets** (for advanced data querying)
+- **Custom Code** (for reusable backend logic or overrides)
+- Optional **JavaScript and CSS Libraries**
+
+Custom Admin Views let you create:
+- Data dashboards
+- Import/export areas
+- Report generators
+- One-off administrative tools
+- Multi-tab editing views
+...all from inside JCB.
+
+This turns Joomla's back-end into a **powerful canvas** for any interface you envision —  
+fully powered by the same JCB architecture used throughout the frontend.
+
+---
+MD;
+
+		// Editing and structure
+		$readme[] = '### How Are Custom Admin Views Composed?';
+		$readme[] = <<<MD
+Each Custom Admin View can be:
+- An **Item View** (display a single entity)
+- A **List View** (show multiple items with pagination)
+- A **Hybrid or Utility View** (batch editing, uploading, dashboards, etc.)
+
+These views are built through:
+- One or more **Dynamic Gets** to fetch related data across tables
+- Optional integration of **Forms**, **Filters**, or **Toolbars**
+- **Templates and Layouts** for structuring how content is displayed
+- **Custom Code Blocks** to inject logic at strategic compile points
+
+This gives you complete control over both data and design.
+
+---
+MD;
+
+		// Reset / Fork / Sync
+		$readme[] = '### Reset, Fork, or Customize';
+		$readme[] = <<<MD
+Just like other JCB-powered assets, Custom Admin Views support version-controlled workflows:
+
+- **Init** a Custom Admin View from this repository
+- **Reset** to sync with the latest updates
+- **Push** your own improved versions
+- Or **Fork** the repo to fully customize your private admin interfaces
+
+Every Custom Admin View can evolve with your project's back-end needs,  
+and JCB ensures your changes are safely retained through the compile lifecycle.
+
+> Admin interface design should never be an afterthought. With Custom Admin Views, you own the experience — from logic to layout, all inside Joomla Component Builder.
+
+---
+MD;
+
+		// Index header
+		$readme[] = '### Index of Custom Admin Views';
+		$readme[] = '';
+
+		// Generate the index block
+		$readme[] = $this->getIndex($items);
+		$readme[] = '';
+
+		$readme[] = <<<MD
+### All used in [Joomla Component Builder](https://www.joomlacomponentbuilder.com) - [Source](https://git.vdm.dev/joomla/Component-Builder) - [Mirror](https://github.com/vdm-io/Joomla-Component-Builder) - [Download](https://git.vdm.dev/joomla/pkg-component-builder/releases)
+
+---
+[![Joomla Volunteer Portal](https://img.shields.io/badge/-Joomla-gold?logo=joomla)](https://volunteers.joomla.org/joomlers/1396-llewellyn-van-der-merwe "Join Llewellyn on the Joomla Volunteer Portal: Shaping the Future Together!") [![Octoleo](https://img.shields.io/badge/-Octoleo-black?logo=linux)](https://git.vdm.dev/octoleo "--quiet") [![Llewellyn](https://img.shields.io/badge/-Llewellyn-ffffff?logo=gitea)](https://git.vdm.dev/Llewellyn "Collaborate and Innovate with Llewellyn on Git: Building a Better Code Future!") [![Telegram](https://img.shields.io/badge/-Telegram-blue?logo=telegram)](https://t.me/Joomla_component_builder "Join Llewellyn and the Community on Telegram: Building Joomla Components Together!") [![Mastodon](https://img.shields.io/badge/-Mastodon-9e9eec?logo=mastodon)](https://joomla.social/@llewellyn "Connect and Engage with Llewellyn on Joomla Social: Empowering Communities, One Post at a Time!") [![X (Twitter)](https://img.shields.io/badge/-X-black?logo=x)](https://x.com/llewellynvdm "Join the Conversation with Llewellyn on X: Where Ideas Take Flight!") [![GitHub](https://img.shields.io/badge/-GitHub-181717?logo=github)](https://github.com/Llewellynvdm "Build, Innovate, and Thrive with Llewellyn on GitHub: Turning Ideas into Impact!") [![YouTube](https://img.shields.io/badge/-YouTube-ff0000?logo=youtube)](https://www.youtube.com/@OctoYou "Explore, Learn, and Create with Llewellyn on YouTube: Your Gateway to Inspiration!") [![n8n](https://img.shields.io/badge/-n8n-black?logo=n8n)](https://n8n.io/creators/octoleo "Effortless Automation and Impactful Workflows with Llewellyn on n8n!") [![Docker Hub](https://img.shields.io/badge/-Docker-grey?logo=docker)](https://hub.docker.com/u/llewellyn "Llewellyn on Docker: Containerize Your Creativity!") [![Open Collective](https://img.shields.io/badge/-Donate-green?logo=opencollective)](https://opencollective.com/joomla-component-builder "Donate towards JCB: Help Llewellyn financially so he can continue developing this great tool!") [![GPG Key](https://img.shields.io/badge/-GPG-blue?logo=gnupg)](https://git.vdm.dev/Llewellyn/gpg "Unlock Trust and Security with Llewellyn's GPG Key: Your Gateway to Verified Connections!")
+MD;
 
 		return implode("\n", $readme);
 	}
 
-	/**
-	 * The readme builder
-	 *
-	 * @param array    $classes  The powers.
-	 *
-	 * @return string
-	 * @since 3.2.0
-	 */
-	private function readmeBuilder(array &$items): string
-	{
-		$classes = [];
-		foreach ($items as $guid => $power)
-		{
-			// add to the sort bucket
-			$classes[] = [
-				'name' => $power['name'],
-				'link' => $this->indexLinkPower($power)
-			];
-		}
-
-		return $this->readmeModel($classes);
-	}
-
-	/**
-	 * Sort and model the readme classes
-	 *
-	 * @param array $classes The powers.
-	 *
-	 * @return string
-	 * @since 3.2.0
-	 */
-	private function readmeModel(array &$classes): string
-	{
-		$this->sortClasses($classes);
-
-		return $this->generateIndex($classes);
-	}
-
-	/**
-	 * Generate the index string for classes
-	 *
-	 * @param array $classes The sorted classes
-	 *
-	 * @return string The index string
-	 */
-	private function generateIndex(array &$classes): string
-	{
-		$result = "# Index of Joomla! Field Types\n";
-
-		foreach ($classes as $class)
-		{
-			// Add the class details
-			$result .= "\n - " . $class['link'];
-		}
-
-		return $result;
-	}
-
-	/**
-	 * Sort the flattened array using a single sorting function
-	 *
-	 * @param array $classes The classes to sort
-	 *
-	 * @since 3.2.0
-	 */
-	private function sortClasses(array &$classes): void
-	{
-		usort($classes, function ($a, $b) {
-			return $this->compareName($a, $b);
-		});
-	}
-
-	/**
-	 * Compare the name of two classes
-	 *
-	 * @param array $a First class
-	 * @param array $b Second class
-	 *
-	 * @return int Comparison result
-	 * @since 3.2.0
-	 */
-	private function compareName(array $a, array $b): int
-	{
-		return strcmp($a['name'], $b['name']);
-	}
-
-	/**
-	 * Build the Link to the power in this repository
-	 *
-	 * @param array  $power  The power details.
-	 *
-	 * @return string
-	 * @since 3.2.0
-	 */
-	private function indexLinkPower(array &$power): string
-	{
-		$name = $power['name'] ?? 'error';
-		return '**' . $name . "** | "
-			. $this->linkPowerRepo($power) . ' | '
-			. $this->linkPowerSettings($power) . ' | '
-			. $this->linkPowerDesc($power);
-	}
-
-	/**
-	 * Build the Link to the power in this repository
-	 *
-	 * @param array  $power  The power details.
-	 *
-	 * @return string
-	 * @since 3.2.0
-	 */
-	private function linkPowerRepo(array &$power): string
-	{
-		$path = $power['path'] ?? 'error';
-		return '[Details](' . $path . ')';
-	}
-
-	/**
-	 * Build the Link to the power settings in this repository
-	 *
-	 * @param array  $power  The power details.
-	 *
-	 * @return string
-	 * @since 3.2.0
-	 */
-	private function linkPowerSettings(array &$power): string
-	{
-		$settings = $power['settings'] ?? 'error';
-		return '[Settings](' . $settings . ')';
-	}
-
-	/**
-	 * Get the short description
-	 *
-	 * @param array  $power  The power details.
-	 *
-	 * @return string
-	 * @since 3.2.0
-	 */
-	private function linkPowerDesc(array &$power): string
-	{
-		$jpk = $power['desc'] ?? '';
-		return $jpk;
-	}
 }
 

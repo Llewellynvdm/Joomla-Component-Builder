@@ -55,7 +55,9 @@ final class Set extends ExtendingSet implements SetInterface
 			json_encode($item, JSON_PRETTY_PRINT), // The file content.
 			'Update ' . $item->name, // The commit message.
 			$sha, // The blob SHA of the old file.
-			$repo->write_branch // The branch name.
+			$repo->write_branch, // The branch name.
+			$repo->author_name, // The author name.
+			$repo->author_email // The author email.
 		);
 
 		$success = is_object($result);
@@ -85,7 +87,9 @@ final class Set extends ExtendingSet implements SetInterface
 			$this->index_map_IndexSettingsPath($item), // The file path.
 			json_encode($item, JSON_PRETTY_PRINT), // The file content.
 			'Create ' . $item->name, // The commit message.
-			$repo->write_branch // The branch name.
+			$repo->write_branch, // The branch name.
+			$repo->author_name, // The author name.
+			$repo->author_email // The author email.
 		);
 
 		return is_object($result);
@@ -113,11 +117,13 @@ final class Set extends ExtendingSet implements SetInterface
 		$this->git->update(
 			$repo->organisation, // The owner name.
 			$repo->repository, // The repository name.
-			$this->index_map_IndexPath($item) . '/README.md', // The file path.
+			$this->index_map_IndexReadmePath($item), // The file path.
 			$this->itemReadme->get($item), // The file content.
-			'Update ' . $item->name . ' readme file', // The commit message.
+			'Update ' . ($this->index_map_IndexName($item) ?? 'fieldtype') . ' readme file', // The commit message.
 			$sha, // The blob SHA of the old file.
-			$repo->write_branch // The branch name.
+			$repo->write_branch, // The branch name.
+			$repo->author_name, // The author name.
+			$repo->author_email // The author email.
 		);
 	}
 
@@ -135,10 +141,12 @@ final class Set extends ExtendingSet implements SetInterface
 		$this->git->create(
 			$repo->organisation, // The owner name.
 			$repo->repository, // The repository name.
-			$this->index_map_IndexPath($item) . '/README.md', // The file path.
+			$this->index_map_IndexReadmePath($item), // The file path.
 			$this->itemReadme->get($item), // The file content.
-			'Create ' . $item->name . ' readme file', // The commit message.
-			$repo->write_branch // The branch name.
+			'Create ' . ($this->index_map_IndexName($item) ?? 'fieldtype') . ' readme file', // The commit message.
+			$repo->write_branch, // The branch name.
+			$repo->author_name, // The author name.
+			$repo->author_email // The author email.
 		);
 	}
 
@@ -160,14 +168,18 @@ final class Set extends ExtendingSet implements SetInterface
 	/**
 	 * Get the item Short Description for the index values
 	 *
-	 * @param object $item
+	 * @param  object  $item  The item object to extract description from.
 	 *
-	 * @return string|null
+	 * @return string|null  The trimmed short or fallback description, or null if both are empty.
 	 * @since  5.0.3
 	 */
 	protected function index_map_ShortDescription(object $item): ?string
 	{
-		return $item->short_description ?? $item->description ?? null;
+		$description = $item->short_description ?? $item->description ?? '';
+
+		$description = trim($description);
+
+		return $description !== '' ? $description : null;
 	}
 }
 

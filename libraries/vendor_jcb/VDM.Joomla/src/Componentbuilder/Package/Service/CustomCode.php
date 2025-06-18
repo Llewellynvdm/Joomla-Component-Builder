@@ -26,7 +26,7 @@ use VDM\Joomla\Componentbuilder\Package\CustomCode\Readme\Main as MainReadme;
 /**
  * Custom Code Service Provider
  * 
- * @since  5.2.1
+ * @since  5.1.1
  */
 class CustomCode implements ServiceProviderInterface
 {
@@ -36,30 +36,17 @@ class CustomCode implements ServiceProviderInterface
 	 * @param   Container  $container  The DI container.
 	 *
 	 * @return  void
-	 * @since   5.2.1
+	 * @since   5.1.1
 	 */
 	public function register(Container $container)
 	{
-		$container->alias(Grep::class, 'CustomCode.Grep')
-			->share('CustomCode.Grep', [$this, 'getGrep'], true);
-
-		$container->alias(Config::class, 'CustomCode.Remote.Config')
-			->share('CustomCode.Remote.Config', [$this, 'getRemoteConfig'], true);
-
-		$container->alias(Resolver::class, 'CustomCode.Resolver')
-			->share('CustomCode.Resolver', [$this, 'getResolver'], true);
-
-		$container->alias(Get::class, 'CustomCode.Remote.Get')
-			->share('CustomCode.Remote.Get', [$this, 'getRemoteGet'], true);
-
-		$container->alias(Set::class, 'CustomCode.Remote.Set')
-			->share('CustomCode.Remote.Set', [$this, 'getRemoteSet'], true);
-
-		$container->alias(ItemReadme::class, 'CustomCode.Readme.Item')
-			->share('CustomCode.Readme.Item', [$this, 'getItemReadme'], true);
-
-		$container->alias(MainReadme::class, 'CustomCode.Readme.Main')
-			->share('CustomCode.Readme.Main', [$this, 'getMainReadme'], true);
+		$container->share('CustomCode.Grep', [$this, 'getGrep'], true);
+		$container->share('CustomCode.Remote.Config', [$this, 'getRemoteConfig'], true);
+		$container->share('CustomCode.Resolver', [$this, 'getResolver'], true);
+		$container->share('CustomCode.Remote.Get', [$this, 'getRemoteGet'], true);
+		$container->share('CustomCode.Remote.Set', [$this, 'getRemoteSet'], true);
+		$container->share('CustomCode.Readme.Item', [$this, 'getItemReadme'], true);
+		$container->share('CustomCode.Readme.Main', [$this, 'getMainReadme'], true);
 	}
 
 	/**
@@ -68,14 +55,15 @@ class CustomCode implements ServiceProviderInterface
 	 * @param   Container  $container  The DI container.
 	 *
 	 * @return  Grep
-	 * @since   5.2.1
+	 * @since   5.1.1
 	 */
 	public function getGrep(Container $container): Grep
 	{
 		return new Grep(
 			$container->get('CustomCode.Remote.Config'),
-			$container->get('Gitea.Repository.Contents'),
+			$container->get('Git.Repository.Contents'),
 			$container->get('Network.Resolve'),
+			$container->get('Power.Tracker'),
 			$container->get('Config')->approved_package_paths
 		);
 	}
@@ -86,7 +74,7 @@ class CustomCode implements ServiceProviderInterface
 	 * @param   Container  $container  The DI container.
 	 *
 	 * @return  Config
-	 * @since  5.2.1
+	 * @since  5.1.1
 	 */
 	public function getRemoteConfig(Container $container): Config
 	{
@@ -101,14 +89,16 @@ class CustomCode implements ServiceProviderInterface
 	 * @param   Container  $container  The DI container.
 	 *
 	 * @return  Resolver
-	 * @since 5.2.1
+	 * @since 5.1.1
 	 */
 	public function getResolver(Container $container): Resolver
 	{
 		return new Resolver(
 			$container->get('CustomCode.Remote.Config'),
+			$container->get('Utilities.Normalize'),
 			$container->get('Power.Tracker'),
-			$container->get('Power.Table')
+			$container->get('Power.Table'),
+			$container->get('Load')
 		);
 	}
 
@@ -118,14 +108,16 @@ class CustomCode implements ServiceProviderInterface
 	 * @param   Container  $container  The DI container.
 	 *
 	 * @return  Get
-	 * @since   5.2.1
+	 * @since   5.1.1
 	 */
 	public function getRemoteGet(Container $container): Get
 	{
 		return new Get(
 			$container->get('CustomCode.Remote.Config'),
 			$container->get('CustomCode.Grep'),
-			$container->get('Data.Item')
+			$container->get('Data.Item'),
+			$container->get('Power.Tracker'),
+			$container->get('Power.Message')
 		);
 	}
 
@@ -135,18 +127,21 @@ class CustomCode implements ServiceProviderInterface
 	 * @param   Container  $container  The DI container.
 	 *
 	 * @return  Set
-	 * @since   5.2.1
+	 * @since   5.1.1
 	 */
 	public function getRemoteSet(Container $container): Set
 	{
 		return new Set(
-			$container->get('CustomCode.Remote.Config'),
+			$container->get('Data.Load'),
+			$container->get('Power.Tracker'),
+			$container->get('Power.Message'),
 			$container->get('CustomCode.Grep'),
-			$container->get('Data.Items'),
+			$container->get('CustomCode.Resolver'),
+			$container->get('CustomCode.Remote.Config'),
 			$container->get('CustomCode.Readme.Item'),
 			$container->get('CustomCode.Readme.Main'),
-			$container->get('Gitea.Repository.Contents'),
-			$container->get('Power.Message'),
+			$container->get('Git.Repository.Contents'),
+			$container->get('Data.Items'),
 			$container->get('Config')->approved_package_paths
 		);
 	}
@@ -157,7 +152,7 @@ class CustomCode implements ServiceProviderInterface
 	 * @param   Container  $container  The DI container.
 	 *
 	 * @return  ItemReadme
-	 * @since   5.2.1
+	 * @since   5.1.1
 	 */
 	public function getItemReadme(Container $container): ItemReadme
 	{
@@ -170,7 +165,7 @@ class CustomCode implements ServiceProviderInterface
 	 * @param   Container  $container  The DI container.
 	 *
 	 * @return  MainReadme
-	 * @since   5.2.1
+	 * @since   5.1.1
 	 */
 	public function getMainReadme(Container $container): MainReadme
 	{

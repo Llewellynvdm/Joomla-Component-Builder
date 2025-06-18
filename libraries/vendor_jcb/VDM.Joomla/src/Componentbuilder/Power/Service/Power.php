@@ -15,8 +15,6 @@ namespace VDM\Joomla\Componentbuilder\Power\Service;
 use Joomla\DI\Container;
 use Joomla\DI\ServiceProviderInterface;
 use VDM\Joomla\Componentbuilder\Power\Config;
-use VDM\Joomla\Componentbuilder\Power\Table;
-use VDM\Joomla\Componentbuilder\Package\MessageBus;
 use VDM\Joomla\Componentbuilder\Power\Grep;
 use VDM\Joomla\Componentbuilder\Power\Remote\Config as RemoteConfig;
 use VDM\Joomla\Componentbuilder\Power\Remote\Get;
@@ -44,14 +42,8 @@ class Power implements ServiceProviderInterface
 	 */
 	public function register(Container $container)
 	{
-		$container->alias(Config::class, 'Config')
-			->share('Config', [$this, 'getConfig'], true);
-
-		$container->alias(Table::class, 'Power.Table')->alias('Table', 'Power.Table')
-			->share('Power.Table', [$this, 'getPowerTable'], true);
-
-		$container->alias(MessageBus::class, 'Power.Message')
-			->share('Power.Message', [$this, 'getMessageBus'], true);
+		$container->alias(Config::class, 'Power.Config')->alias('Config', 'Power.Config')
+			->share('Power.Config', [$this, 'getConfig'], true);
 
 		$container->alias(Grep::class, 'Power.Grep')
 			->share('Power.Grep', [$this, 'getGrep'], true);
@@ -92,32 +84,6 @@ class Power implements ServiceProviderInterface
 	}
 
 	/**
-	 * Get The Power Table Class.
-	 *
-	 * @param   Container  $container  The DI container.
-	 *
-	 * @return  Table
-	 * @since  5.1.1
-	 */
-	public function getPowerTable(Container $container): Table
-	{
-		return new Table();
-	}
-
-	/**
-	 * Get The Message Bus Class.
-	 *
-	 * @param   Container  $container  The DI container.
-	 *
-	 * @return  MessageBus
-	 * @since  5.2.1
-	 */
-	public function getMessageBus(Container $container): MessageBus
-	{
-		return new MessageBus();
-	}
-
-	/**
 	 * Get The Grep Class.
 	 *
 	 * @param   Container  $container  The DI container.
@@ -129,10 +95,11 @@ class Power implements ServiceProviderInterface
 	{
 		return new Grep(
 			$container->get('Power.Remote.Config'),
-			$container->get('Gitea.Repository.Contents'),
+			$container->get('Git.Repository.Contents'),
 			$container->get('Network.Resolve'),
-			$container->get('Config')->approved_paths,
-			$container->get('Config')->local_powers_repository_path
+			$container->get('Power.Tracker'),
+			$container->get('Power.Config')->approved_paths,
+			$container->get('Power.Config')->local_powers_repository_path
 		);
 	}
 
@@ -164,7 +131,9 @@ class Power implements ServiceProviderInterface
 		return new Get(
 			$container->get('Power.Remote.Config'),
 			$container->get('Power.Grep'),
-			$container->get('Data.Item')
+			$container->get('Data.Item'),
+			$container->get('Power.Tracker'),
+			$container->get('Power.Message')
 		);
 	}
 
@@ -184,10 +153,11 @@ class Power implements ServiceProviderInterface
 			$container->get('Data.Items'),
 			$container->get('Power.Readme.Item'),
 			$container->get('Power.Readme.Main'),
-			$container->get('Gitea.Repository.Contents'),
+			$container->get('Git.Repository.Contents'),
+			$container->get('Power.Tracker'),
 			$container->get('Power.Message'),
 			$container->get('Power.Parser'),
-			$container->get('Config')->approved_paths
+			$container->get('Power.Config')->approved_paths
 		);
 	}
 

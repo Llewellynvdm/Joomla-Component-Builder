@@ -13,6 +13,7 @@ namespace VDM\Joomla\Componentbuilder\Snippet\Readme;
 
 
 use VDM\Joomla\Interfaces\Readme\MainInterface;
+use VDM\Joomla\Componentbuilder\Package\Readme\Main as ExtendingMain;
 
 
 /**
@@ -20,206 +21,96 @@ use VDM\Joomla\Interfaces\Readme\MainInterface;
  * 
  * @since  5.1.1
  */
-final class Main implements MainInterface
+final class Main extends ExtendingMain implements MainInterface
 {
 	/**
-	 * Get Main Readme
+	 * Generate the main README for the JCB Snippets repository in Markdown format.
 	 *
-	 * @param array    $items  All items of this repository.
+	 * Snippets are reusable UI patterns or markup blocks designed to accelerate the development
+	 * of Joomla components using JCB. This README outlines what Snippets are, how they are used,
+	 * and how they are managed via the JCB interface and Git repositories.
 	 *
-	 * @return string
-	 * @since 3.2.0
+	 * @param  array  $items  All snippets currently stored in the repository.
+	 *
+	 * @return string  The full generated Markdown README.
+	 * @since  3.2.0
 	 */
 	public function get(array $items): string
 	{
-		// build readme
-		$readme = ["```
-███████╗███╗   ██╗██╗██████╗ ██████╗ ███████╗████████╗███████╗
-██╔════╝████╗  ██║██║██╔══██╗██╔══██╗██╔════╝╚══██╔══╝██╔════╝
-███████╗██╔██╗ ██║██║██████╔╝██████╔╝█████╗     ██║   ███████╗
-╚════██║██║╚██╗██║██║██╔═══╝ ██╔═══╝ ██╔══╝     ██║   ╚════██║
-███████║██║ ╚████║██║██║     ██║     ███████╗   ██║   ███████║
-╚══════╝╚═╝  ╚═══╝╚═╝╚═╝     ╚═╝     ╚══════╝   ╚═╝   ╚══════╝
-```"];
+		$readme = [];
 
-		// default description of super powers
-		$readme[] = "\n### What is JCB Snippets?\n
-\nJCB snippets provide a powerful way to define and reuse small blocks of code throughout your JCB-generated components. This repository serves as a central system for maintaining, updating, and distributing these snippets within the Joomla Component Builder (JCB) ecosystem.\n
-\nWhen you need to update any snippet in JCB, simply select the desired snippet and click the **“reset”** button. This will automatically sync the selected snippet with the latest version hosted in our core repository, ensuring you benefit from the most up-to-date improvements and fixes.\n
-\nIf you prefer to tailor snippets to your specific development style or component structure, you can fork this repository and point your JCB instance to your own fork. This allows you to independently maintain and update your custom snippet collection, offering the flexibility to build components your way—while still leveraging the foundation provided by the community.\n
-\nWe believe this approach empowers you to extend and customize JCB to meet your exact needs, embodying the open-source principles of freedom, adaptability, and shared progress.\n";
+		// Header
+		$readme[] = '# JCB! Snippets';
+		$readme[] = '';
 
-		// get the readme body
-		$readme[] = $this->readmeBuilder($items);
+		// What is it?
+		$readme[] = '### What Are JCB Snippets?';
+		$readme[] = <<<MD
+JCB Snippets are **reusable HTML-based code blocks** used to accelerate the creation of views, templates, and layouts in JCB.
 
-		// yes you can remove this, but why?
-		$readme[] = "\n---\n```
-     ██╗ ██████╗  ██████╗ ███╗   ███╗██╗      █████╗
-     ██║██╔═══██╗██╔═══██╗████╗ ████║██║     ██╔══██╗
-     ██║██║   ██║██║   ██║██╔████╔██║██║     ███████║
-██   ██║██║   ██║██║   ██║██║╚██╔╝██║██║     ██╔══██║
-╚█████╔╝╚██████╔╝╚██████╔╝██║ ╚═╝ ██║███████╗██║  ██║
- ╚════╝  ╚═════╝  ╚═════╝ ╚═╝     ╚═╝╚══════╝╚═╝  ╚═╝
- ██████╗ ██████╗ ███╗   ███╗██████╗  ██████╗ ███╗   ██╗███████╗███╗   ██╗████████╗
-██╔════╝██╔═══██╗████╗ ████║██╔══██╗██╔═══██╗████╗  ██║██╔════╝████╗  ██║╚══██╔══╝
-██║     ██║   ██║██╔████╔██║██████╔╝██║   ██║██╔██╗ ██║█████╗  ██╔██╗ ██║   ██║
-██║     ██║   ██║██║╚██╔╝██║██╔═══╝ ██║   ██║██║╚██╗██║██╔══╝  ██║╚██╗██║   ██║
-╚██████╗╚██████╔╝██║ ╚═╝ ██║██║     ╚██████╔╝██║ ╚████║███████╗██║ ╚████║   ██║
- ╚═════╝ ╚═════╝ ╚═╝     ╚═╝╚═╝      ╚═════╝ ╚═╝  ╚═══╝╚══════╝╚═╝  ╚═══╝   ╚═╝
-██████╗ ██╗   ██╗██╗██╗     ██████╗ ███████╗██████╗
-██╔══██╗██║   ██║██║██║     ██╔══██╗██╔════╝██╔══██╗
-██████╔╝██║   ██║██║██║     ██║  ██║█████╗  ██████╔╝
-██╔══██╗██║   ██║██║██║     ██║  ██║██╔══╝  ██╔══██╗
-██████╔╝╚██████╔╝██║███████╗██████╔╝███████╗██║  ██║
-╚═════╝  ╚═════╝ ╚═╝╚══════╝╚═════╝ ╚══════╝╚═╝  ╚═╝
-```\n> Build with [Joomla Component Builder](https://git.vdm.dev/joomla/Component-Builder)\n\n";
+They typically represent:
+
+- UI blocks using frameworks like **UIkit**, **Bootstrap**, etc.
+- Common layout structures or placeholders
+- Ready-to-use HTML patterns for admin or frontend views
+
+Snippets are ideal for streamlining repetitive markup, prototyping custom layouts, and establishing consistent structure in your components.
+
+---
+MD;
+
+		$readme[] = '### Why Use Snippets?';
+		$readme[] = <<<MD
+JCB Snippets are built to improve **development speed and reusability**:
+
+- Eliminate repetition in view and layout files
+- Maintain visual and structural consistency
+- Share UI patterns across projects or teams
+- Quickly inject reusable frontend logic
+
+Although helpful to beginners, Snippets are not beginner-only features —  
+they offer serious workflow efficiency for advanced developers too.
+
+---
+MD;
+
+		$readme[] = '### How Are Snippets Used in JCB?';
+		$readme[] = <<<MD
+Snippets are managed entirely from within the JCB GUI:
+
+1. Click the **Init** button in the Snippets view.
+2. Choose a **repository** to fetch Snippets from.
+3. After selecting the repository, a list of available Snippets will be shown.
+4. Select the Snippets you'd like to initialize into your local JCB project.
+
+Once a snippet is initialized:
+
+- You can **Reset** it at any time to match its latest version from the repository.
+- If you have write access, you can **Push** your updates back to the repository.
+
+Alternatively, fork this repository, push changes to your own fork,  
+and submit pull requests to propose improvements upstream.
+
+> All Snippets are stored as simple files under version control — supporting both collaboration and independence.
+
+---
+MD;
+
+		$readme[] = '### Index of JCB Snippets';
+		$readme[] = '';
+
+		// Snippet listing
+		$readme[] = $this->getIndex($items);
+		$readme[] = '';
+
+		$readme[] = <<<MD
+### All used in [Joomla Component Builder](https://www.joomlacomponentbuilder.com) - [Source](https://git.vdm.dev/joomla/Component-Builder) - [Mirror](https://github.com/vdm-io/Joomla-Component-Builder) - [Download](https://git.vdm.dev/joomla/pkg-component-builder/releases)
+
+---
+[![Joomla Volunteer Portal](https://img.shields.io/badge/-Joomla-gold?logo=joomla)](https://volunteers.joomla.org/joomlers/1396-llewellyn-van-der-merwe "Join Llewellyn on the Joomla Volunteer Portal: Shaping the Future Together!") [![Octoleo](https://img.shields.io/badge/-Octoleo-black?logo=linux)](https://git.vdm.dev/octoleo "--quiet") [![Llewellyn](https://img.shields.io/badge/-Llewellyn-ffffff?logo=gitea)](https://git.vdm.dev/Llewellyn "Collaborate and Innovate with Llewellyn on Git: Building a Better Code Future!") [![Telegram](https://img.shields.io/badge/-Telegram-blue?logo=telegram)](https://t.me/Joomla_component_builder "Join Llewellyn and the Community on Telegram: Building Joomla Components Together!") [![Mastodon](https://img.shields.io/badge/-Mastodon-9e9eec?logo=mastodon)](https://joomla.social/@llewellyn "Connect and Engage with Llewellyn on Joomla Social: Empowering Communities, One Post at a Time!") [![X (Twitter)](https://img.shields.io/badge/-X-black?logo=x)](https://x.com/llewellynvdm "Join the Conversation with Llewellyn on X: Where Ideas Take Flight!") [![GitHub](https://img.shields.io/badge/-GitHub-181717?logo=github)](https://github.com/Llewellynvdm "Build, Innovate, and Thrive with Llewellyn on GitHub: Turning Ideas into Impact!") [![YouTube](https://img.shields.io/badge/-YouTube-ff0000?logo=youtube)](https://www.youtube.com/@OctoYou "Explore, Learn, and Create with Llewellyn on YouTube: Your Gateway to Inspiration!") [![n8n](https://img.shields.io/badge/-n8n-black?logo=n8n)](https://n8n.io/creators/octoleo "Effortless Automation and Impactful Workflows with Llewellyn on n8n!") [![Docker Hub](https://img.shields.io/badge/-Docker-grey?logo=docker)](https://hub.docker.com/u/llewellyn "Llewellyn on Docker: Containerize Your Creativity!") [![Open Collective](https://img.shields.io/badge/-Donate-green?logo=opencollective)](https://opencollective.com/joomla-component-builder "Donate towards JCB: Help Llewellyn financially so he can continue developing this great tool!") [![GPG Key](https://img.shields.io/badge/-GPG-blue?logo=gnupg)](https://git.vdm.dev/Llewellyn/gpg "Unlock Trust and Security with Llewellyn's GPG Key: Your Gateway to Verified Connections!")
+MD;
 
 		return implode("\n", $readme);
-	}
-
-	/**
-	 * The readme builder
-	 *
-	 * @param array    $classes  The powers.
-	 *
-	 * @return string
-	 * @since 3.2.0
-	 */
-	private function readmeBuilder(array &$items): string
-	{
-		$classes = [];
-		foreach ($items as $guid => $power)
-		{
-			// add to the sort bucket
-			$classes[] = [
-				'name' => $power['name'],
-				'link' => $this->indexLinkPower($power)
-			];
-		}
-
-		return $this->readmeModel($classes);
-	}
-
-	/**
-	 * Sort and model the readme classes
-	 *
-	 * @param array $classes The powers.
-	 *
-	 * @return string
-	 * @since 3.2.0
-	 */
-	private function readmeModel(array &$classes): string
-	{
-		$this->sortClasses($classes);
-
-		return $this->generateIndex($classes);
-	}
-
-	/**
-	 * Generate the index string for classes
-	 *
-	 * @param array $classes The sorted classes
-	 *
-	 * @return string The index string
-	 */
-	private function generateIndex(array &$classes): string
-	{
-		$result = "# Index of Snippets\n";
-
-		foreach ($classes as $class)
-		{
-			// Add the class details
-			$result .= "\n - " . $class['link'];
-		}
-
-		return $result;
-	}
-
-	/**
-	 * Sort the flattened array using a single sorting function
-	 *
-	 * @param array $classes The classes to sort
-	 *
-	 * @since 3.2.0
-	 */
-	private function sortClasses(array &$classes): void
-	{
-		usort($classes, function ($a, $b) {
-			return $this->compareName($a, $b);
-		});
-	}
-
-	/**
-	 * Compare the name of two classes
-	 *
-	 * @param array $a First class
-	 * @param array $b Second class
-	 *
-	 * @return int Comparison result
-	 * @since 3.2.0
-	 */
-	private function compareName(array $a, array $b): int
-	{
-		return strcmp($a['name'], $b['name']);
-	}
-
-	/**
-	 * Build the Link to the power in this repository
-	 *
-	 * @param array  $power  The power details.
-	 *
-	 * @return string
-	 * @since 3.2.0
-	 */
-	private function indexLinkPower(array &$power): string
-	{
-		$name = $power['name'] ?? 'error';
-		return '**' . $name . "** | "
-			. $this->linkPowerRepo($power) . ' | '
-			. $this->linkPowerSettings($power) . ' | '
-			. $this->linkPowerDesc($power);
-	}
-
-	/**
-	 * Build the Link to the power in this repository
-	 *
-	 * @param array  $power  The power details.
-	 *
-	 * @return string
-	 * @since 3.2.0
-	 */
-	private function linkPowerRepo(array &$power): string
-	{
-		$path = $power['path'] ?? 'error';
-		return '[Details](' . $path . ')';
-	}
-
-	/**
-	 * Build the Link to the power settings in this repository
-	 *
-	 * @param array  $power  The power details.
-	 *
-	 * @return string
-	 * @since 3.2.0
-	 */
-	private function linkPowerSettings(array &$power): string
-	{
-		$settings = $power['settings'] ?? 'error';
-		return '[Settings](' . $settings . ')';
-	}
-
-	/**
-	 * Get the short description
-	 *
-	 * @param array  $power  The power details.
-	 *
-	 * @return string
-	 * @since 3.2.0
-	 */
-	private function linkPowerDesc(array &$power): string
-	{
-		$jpk = $power['desc'] ?? '';
-		return $jpk;
 	}
 }
 

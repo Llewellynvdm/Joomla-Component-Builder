@@ -187,17 +187,30 @@
 			hint="COM_COMPONENTBUILDER_CLASS_PROPERTY_COMMENT_HINT"
 			required="false"
 		/>
-		<!-- Joomla_plugin_group Field. Type: Joomlaplugingroups. (custom) -->
+		<!-- Joomla_plugin_group Field. Type: Modalselect. (custom) -->
 		<field
-			type="joomlaplugingroups"
+			type="ModalSelect"
 			name="joomla_plugin_group"
 			label="COM_COMPONENTBUILDER_CLASS_PROPERTY_JOOMLA_PLUGIN_GROUP_LABEL"
-			class="list_class"
-			layout="joomla.form.field.list-fancy-select"
-			multiple="false"
-			default="0"
-			required="true"
-			button="true"
+			sql_title_table="#__componentbuilder_joomla_plugin_group"
+			sql_title_column="name"
+			data-key-name="guid"
+			sql_title_key="guid"
+			urlSelect="index.php?option=com_componentbuilder&amp;view=joomla_plugin_groups&amp;layout=modal&amp;tmpl=component&amp;titleKey=guid"
+			urlNew="index.php?option=com_componentbuilder&amp;task=joomla_plugin_group.add&amp;layout=modal&amp;tmpl=component"
+			urlEdit="index.php?option=com_componentbuilder&amp;task=joomla_plugin_group.edit&amp;guid={id}&amp;layout=modal&amp;tmpl=component&amp;titleKey=guid"
+			titleSelect="COM_COMPONENTBUILDER_CLASS_PROPERTY_JOOMLA_PLUGIN_GROUP_TITLESELECT"
+			titleNew="COM_COMPONENTBUILDER_CLASS_PROPERTY_JOOMLA_PLUGIN_GROUP_TITLENEW"
+			titleEdit="COM_COMPONENTBUILDER_CLASS_PROPERTY_JOOMLA_PLUGIN_GROUP_TITLEEDIT"
+			iconSelect="icon-copy"
+			select="true"
+			new="true"
+			edit="true"
+			clear="true"
+			class="input-large"
+			description="COM_COMPONENTBUILDER_CLASS_PROPERTY_JOOMLA_PLUGIN_GROUP_DESCRIPTION"
+			hint="COM_COMPONENTBUILDER_CLASS_PROPERTY_JOOMLA_PLUGIN_GROUP_HINT"
+			showon="extension_type:plugins"
 		/>
 		<!-- Default Field. Type: Textarea. (joomla) -->
 		<field

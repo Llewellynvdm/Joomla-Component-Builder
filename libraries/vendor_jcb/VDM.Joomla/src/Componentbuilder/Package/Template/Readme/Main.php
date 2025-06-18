@@ -13,6 +13,7 @@ namespace VDM\Joomla\Componentbuilder\Package\Template\Readme;
 
 
 use VDM\Joomla\Interfaces\Readme\MainInterface;
+use VDM\Joomla\Componentbuilder\Package\Readme\Main as ExtendingMain;
 
 
 /**
@@ -20,217 +21,96 @@ use VDM\Joomla\Interfaces\Readme\MainInterface;
  * 
  * @since  5.1.1
  */
-final class Main implements MainInterface
+final class Main extends ExtendingMain implements MainInterface
 {
 	/**
-	 * Get Main Readme
+	 * Generate the main README for the JCB Templates repository in Markdown format.
 	 *
-	 * @param array    $items  All items of this repository.
+	 * Templates define high-level structures for rendering admin or site views
+	 * in Joomla components built with JCB. They often include reusable layouts and logic,
+	 * and offer developers modular control over output presentation.
 	 *
-	 * @return string
-	 * @since 3.2.0
+	 * @param  array  $items  All templates currently stored in the repository.
+	 *
+	 * @return string  The full generated Markdown README.
+	 * @since  5.1.1
 	 */
 	public function get(array $items): string
 	{
-		// build readme
-		$readme = ["```
-     ██╗ ██████╗  ██████╗ ███╗   ███╗██╗      █████╗                         
-     ██║██╔═══██╗██╔═══██╗████╗ ████║██║     ██╔══██╗                        
-     ██║██║   ██║██║   ██║██╔████╔██║██║     ███████║                        
-██   ██║██║   ██║██║   ██║██║╚██╔╝██║██║     ██╔══██║                        
-╚█████╔╝╚██████╔╝╚██████╔╝██║ ╚═╝ ██║███████╗██║  ██║                        
- ╚════╝  ╚═════╝  ╚═════╝ ╚═╝     ╚═╝╚══════╝╚═╝  ╚═╝                        
-                                                                             
-████████╗███████╗███╗   ███╗██████╗ ██╗      █████╗ ████████╗███████╗███████╗
-╚══██╔══╝██╔════╝████╗ ████║██╔══██╗██║     ██╔══██╗╚══██╔══╝██╔════╝██╔════╝
-   ██║   █████╗  ██╔████╔██║██████╔╝██║     ███████║   ██║   █████╗  ███████╗
-   ██║   ██╔══╝  ██║╚██╔╝██║██╔═══╝ ██║     ██╔══██║   ██║   ██╔══╝  ╚════██║
-   ██║   ███████╗██║ ╚═╝ ██║██║     ███████╗██║  ██║   ██║   ███████╗███████║
-   ╚═╝   ╚══════╝╚═╝     ╚═╝╚═╝     ╚══════╝╚═╝  ╚═╝   ╚═╝   ╚══════╝╚══════╝
-```"];
+		$readme = [];
 
-		// default description of templates
-		$readme[] = "\n### What is Joomla Templates?\nThe Joomla templates in this repository serve as high-level structural wrappers for site views and custom admin views within Joomla Component Builder (JCB). These templates often include one or more layouts, and or other templates and are responsible for organizing how data, code, and reusable elements are assembled before rendering the final output of a view.\n
-\n
-Templates provide the upper layer of logic and presentation, making it easier to maintain consistency, manage shared view logic, and encapsulate complex rendering workflows. They are especially useful when you need to apply a uniform structure across multiple views while still allowing flexibility through included layouts or conditional blocks.\n
-\n
-You can use the reset feature to sync any template with the latest maintained version from the JCB core repository. This ensures your templates are always aligned with the most recent standards and improvements.\n
-\n
-For projects that require customization, simply fork this repository and point your JCB instance to your fork. This gives you full control to extend or override templates without affecting or relying on the core version—empowering you to create tailored solutions that fit your exact needs.\n
-\n
-This flexible approach embraces JCB’s open-source model, giving you the freedom to adapt your components to your exact needs while staying connected to a powerful and community-driven ecosystem.\n";
+		// Header
+		$readme[] = '# JCB! Templates';
+		$readme[] = '';
 
-		// get the readme body
-		$readme[] = $this->readmeBuilder($items);
+		// What is it?
+		$readme[] = '### What Are JCB Templates?';
+		$readme[] = <<<MD
+JCB Templates provide **modular, reusable view structures** for rendering HTML output in Joomla components.  
+They are used within both **site views** and **custom admin views**, functioning as high-level wrappers for your display logic.
 
-		// yes you can remove this, but why?
-		$readme[] = "\n---\n```
-     ██╗ ██████╗  ██████╗ ███╗   ███╗██╗      █████╗
-     ██║██╔═══██╗██╔═══██╗████╗ ████║██║     ██╔══██╗
-     ██║██║   ██║██║   ██║██╔████╔██║██║     ███████║
-██   ██║██║   ██║██║   ██║██║╚██╔╝██║██║     ██╔══██║
-╚█████╔╝╚██████╔╝╚██████╔╝██║ ╚═╝ ██║███████╗██║  ██║
- ╚════╝  ╚═════╝  ╚═════╝ ╚═╝     ╚═╝╚══════╝╚═╝  ╚═╝
- ██████╗ ██████╗ ███╗   ███╗██████╗  ██████╗ ███╗   ██╗███████╗███╗   ██╗████████╗
-██╔════╝██╔═══██╗████╗ ████║██╔══██╗██╔═══██╗████╗  ██║██╔════╝████╗  ██║╚══██╔══╝
-██║     ██║   ██║██╔████╔██║██████╔╝██║   ██║██╔██╗ ██║█████╗  ██╔██╗ ██║   ██║
-██║     ██║   ██║██║╚██╔╝██║██╔═══╝ ██║   ██║██║╚██╗██║██╔══╝  ██║╚██╗██║   ██║
-╚██████╗╚██████╔╝██║ ╚═╝ ██║██║     ╚██████╔╝██║ ╚████║███████╗██║ ╚████║   ██║
- ╚═════╝ ╚═════╝ ╚═╝     ╚═╝╚═╝      ╚═════╝ ╚═╝  ╚═══╝╚══════╝╚═╝  ╚═══╝   ╚═╝
-██████╗ ██╗   ██╗██╗██╗     ██████╗ ███████╗██████╗
-██╔══██╗██║   ██║██║██║     ██╔══██╗██╔════╝██╔══██╗
-██████╔╝██║   ██║██║██║     ██║  ██║█████╗  ██████╔╝
-██╔══██╗██║   ██║██║██║     ██║  ██║██╔══╝  ██╔══██╗
-██████╔╝╚██████╔╝██║███████╗██████╔╝███████╗██║  ██║
-╚═════╝  ╚═════╝ ╚═╝╚══════╝╚═════╝ ╚══════╝╚═╝  ╚═╝
-```\n> Build with [Joomla Component Builder](https://git.vdm.dev/joomla/Component-Builder)\n\n";
+Templates typically include or call:
+
+- **Layouts** — smaller reusable view fragments
+- **Other Templates** — to nest and reuse structures
+- **PHP Logic & HTML** — for dynamic rendering
+
+Much like Joomla's native template system, JCB Templates allow **clean separation of logic and presentation**, and can be overridden or extended easily.
+
+---
+MD;
+
+		$readme[] = '### Why Use Templates in JCB?';
+		$readme[] = <<<MD
+Templates help you organize and modularize how your component's output is rendered. They offer:
+
+- Clear and reusable structure across views
+- Easier maintenance and visual consistency
+- The ability to nest layouts and embed templates
+- Override support for custom behaviors
+
+This system mirrors Joomla's own MVC view rendering and fits naturally into both frontend and backend component workflows.
+
+---
+MD;
+
+		$readme[] = '### How Do You Manage Templates in JCB?';
+		$readme[] = <<<MD
+Templates are managed directly in the **Templates** tab within JCB's GUI.
+
+To import a template from this repository:
+
+1. Click **Init** in the Templates section.
+2. Select the repository you want to pull from.
+3. Choose the Templates you'd like to import.
+
+You can then:
+
+- **Reset** any Template to refresh it from the repo
+- **Push** updates back if you maintain this repository
+- Or **fork** the repo to maintain your own version of templates
+
+This process allows rapid syncing, reuse, and sharing of structured view logic across projects.
+
+---
+MD;
+
+		$readme[] = '### Index of JCB Templates';
+		$readme[] = '';
+
+		// Template listing
+		$readme[] = $this->getIndex($items);
+		$readme[] = '';
+
+		$readme[] = <<<MD
+### All used in [Joomla Component Builder](https://www.joomlacomponentbuilder.com) - [Source](https://git.vdm.dev/joomla/Component-Builder) - [Mirror](https://github.com/vdm-io/Joomla-Component-Builder) - [Download](https://git.vdm.dev/joomla/pkg-component-builder/releases)
+
+---
+[![Joomla Volunteer Portal](https://img.shields.io/badge/-Joomla-gold?logo=joomla)](https://volunteers.joomla.org/joomlers/1396-llewellyn-van-der-merwe "Join Llewellyn on the Joomla Volunteer Portal: Shaping the Future Together!") [![Octoleo](https://img.shields.io/badge/-Octoleo-black?logo=linux)](https://git.vdm.dev/octoleo "--quiet") [![Llewellyn](https://img.shields.io/badge/-Llewellyn-ffffff?logo=gitea)](https://git.vdm.dev/Llewellyn "Collaborate and Innovate with Llewellyn on Git: Building a Better Code Future!") [![Telegram](https://img.shields.io/badge/-Telegram-blue?logo=telegram)](https://t.me/Joomla_component_builder "Join Llewellyn and the Community on Telegram: Building Joomla Components Together!") [![Mastodon](https://img.shields.io/badge/-Mastodon-9e9eec?logo=mastodon)](https://joomla.social/@llewellyn "Connect and Engage with Llewellyn on Joomla Social: Empowering Communities, One Post at a Time!") [![X (Twitter)](https://img.shields.io/badge/-X-black?logo=x)](https://x.com/llewellynvdm "Join the Conversation with Llewellyn on X: Where Ideas Take Flight!") [![GitHub](https://img.shields.io/badge/-GitHub-181717?logo=github)](https://github.com/Llewellynvdm "Build, Innovate, and Thrive with Llewellyn on GitHub: Turning Ideas into Impact!") [![YouTube](https://img.shields.io/badge/-YouTube-ff0000?logo=youtube)](https://www.youtube.com/@OctoYou "Explore, Learn, and Create with Llewellyn on YouTube: Your Gateway to Inspiration!") [![n8n](https://img.shields.io/badge/-n8n-black?logo=n8n)](https://n8n.io/creators/octoleo "Effortless Automation and Impactful Workflows with Llewellyn on n8n!") [![Docker Hub](https://img.shields.io/badge/-Docker-grey?logo=docker)](https://hub.docker.com/u/llewellyn "Llewellyn on Docker: Containerize Your Creativity!") [![Open Collective](https://img.shields.io/badge/-Donate-green?logo=opencollective)](https://opencollective.com/joomla-component-builder "Donate towards JCB: Help Llewellyn financially so he can continue developing this great tool!") [![GPG Key](https://img.shields.io/badge/-GPG-blue?logo=gnupg)](https://git.vdm.dev/Llewellyn/gpg "Unlock Trust and Security with Llewellyn's GPG Key: Your Gateway to Verified Connections!")
+MD;
 
 		return implode("\n", $readme);
 	}
 
-	/**
-	 * The readme builder
-	 *
-	 * @param array    $classes  The powers.
-	 *
-	 * @return string
-	 * @since 3.2.0
-	 */
-	private function readmeBuilder(array &$items): string
-	{
-		$classes = [];
-		foreach ($items as $guid => $power)
-		{
-			// add to the sort bucket
-			$classes[] = [
-				'name' => $power['name'],
-				'link' => $this->indexLinkPower($power)
-			];
-		}
-
-		return $this->readmeModel($classes);
-	}
-
-	/**
-	 * Sort and model the readme classes
-	 *
-	 * @param array $classes The powers.
-	 *
-	 * @return string
-	 * @since 3.2.0
-	 */
-	private function readmeModel(array &$classes): string
-	{
-		$this->sortClasses($classes);
-
-		return $this->generateIndex($classes);
-	}
-
-	/**
-	 * Generate the index string for classes
-	 *
-	 * @param array $classes The sorted classes
-	 *
-	 * @return string The index string
-	 */
-	private function generateIndex(array &$classes): string
-	{
-		$result = "# Index of Joomla! Field Types\n";
-
-		foreach ($classes as $class)
-		{
-			// Add the class details
-			$result .= "\n - " . $class['link'];
-		}
-
-		return $result;
-	}
-
-	/**
-	 * Sort the flattened array using a single sorting function
-	 *
-	 * @param array $classes The classes to sort
-	 *
-	 * @since 3.2.0
-	 */
-	private function sortClasses(array &$classes): void
-	{
-		usort($classes, function ($a, $b) {
-			return $this->compareName($a, $b);
-		});
-	}
-
-	/**
-	 * Compare the name of two classes
-	 *
-	 * @param array $a First class
-	 * @param array $b Second class
-	 *
-	 * @return int Comparison result
-	 * @since 3.2.0
-	 */
-	private function compareName(array $a, array $b): int
-	{
-		return strcmp($a['name'], $b['name']);
-	}
-
-	/**
-	 * Build the Link to the power in this repository
-	 *
-	 * @param array  $power  The power details.
-	 *
-	 * @return string
-	 * @since 3.2.0
-	 */
-	private function indexLinkPower(array &$power): string
-	{
-		$name = $power['name'] ?? 'error';
-		return '**' . $name . "** | "
-			. $this->linkPowerRepo($power) . ' | '
-			. $this->linkPowerSettings($power) . ' | '
-			. $this->linkPowerDesc($power);
-	}
-
-	/**
-	 * Build the Link to the power in this repository
-	 *
-	 * @param array  $power  The power details.
-	 *
-	 * @return string
-	 * @since 3.2.0
-	 */
-	private function linkPowerRepo(array &$power): string
-	{
-		$path = $power['path'] ?? 'error';
-		return '[Details](' . $path . ')';
-	}
-
-	/**
-	 * Build the Link to the power settings in this repository
-	 *
-	 * @param array  $power  The power details.
-	 *
-	 * @return string
-	 * @since 3.2.0
-	 */
-	private function linkPowerSettings(array &$power): string
-	{
-		$settings = $power['settings'] ?? 'error';
-		return '[Settings](' . $settings . ')';
-	}
-
-	/**
-	 * Get the short description
-	 *
-	 * @param array  $power  The power details.
-	 *
-	 * @return string
-	 * @since 3.2.0
-	 */
-	private function linkPowerDesc(array &$power): string
-	{
-		$jpk = $power['desc'] ?? '';
-		return $jpk;
-	}
 }
 

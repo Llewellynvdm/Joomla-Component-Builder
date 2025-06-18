@@ -352,7 +352,6 @@
 			new="true"
 			edit="true"
 			clear="true"
-			required="true"
 			class="input-large"
 			description="COM_COMPONENTBUILDER_DYNAMIC_GET_VIEW_TABLE_MAIN_DESCRIPTION"
 			hint="COM_COMPONENTBUILDER_DYNAMIC_GET_VIEW_TABLE_MAIN_HINT"

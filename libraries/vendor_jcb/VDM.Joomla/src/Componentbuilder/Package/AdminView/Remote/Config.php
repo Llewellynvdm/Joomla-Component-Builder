@@ -40,28 +40,12 @@ final class Config extends ExtendingConfig implements ConfigInterface
 	protected ?string $area = 'Admin View';
 
 	/**
-	 * Prefix Key
-	 *
-	 * @var    string
-	 * @since 3.2.2
-	 */
-	protected string $prefix_key = '';
-
-	/**
-	 * Suffix Key
-	 *
-	 * @var    string
-	 * @since 3.2.2
-	 */
-	protected string $suffix_key = '';
-
-	/**
 	 * The main readme file path
 	 *
 	 * @var    string
 	 * @since  5.1.1
 	 */
-	protected string $main_readme_path = 'src/admin_view/README.md';
+	protected string $main_readme_path = 'README_ADMIN_VIEWS.md';
 
 	/**
 	 * The index file path (index of all items)
@@ -69,15 +53,7 @@ final class Config extends ExtendingConfig implements ConfigInterface
 	 * @var    string
 	 * @since 3.2.2
 	 */
-	protected string $index_path = 'admin-view-index.json';
-
-	/**
-	 * The item settings file path
-	 *
-	 * @var   string
-	 * @since 3.2.2
-	 */
-	// [DEFAULT] protected string $settings_path = 'item.json';
+	protected string $index_path = 'index/admin-view.json';
 
 	/**
 	 * The item (files) source path
@@ -88,64 +64,79 @@ final class Config extends ExtendingConfig implements ConfigInterface
 	protected string $src_path = 'src/admin_view';
 
 	/**
-	 * The item guid=unique field
+	 * The ignore fields
 	 *
-	 * @var    string
+	 * @var   array
 	 * @since  5.1.1
 	 */
-	// [DEFAULT] protected string $guid_field = 'guid';
+	protected array $ignore = [
+		'access',
+		'addtables'
+	];
 
 	/**
-	 * The item map
+	 * The files (to map target files to move in an entity)
+	 *
+	 *   Use a pipe in the name to denote
+	 *   subform location of the value
+	 *      format: [field_name => path, field_name|subfrom_key => path]
+	 *
+	 * @var   array
+	 * @since  5.1.1
+	 */
+	protected array $files = [
+		'icon' => 'images',
+		'icon_add' => 'images',
+		'icon_category' => 'images'
+	];
+
+	/**
+	 * The direct entities/children of this entity
 	 *
 	 * @var    array
-	 * @since 5.0.3
-	protected array $map = [];
-	[DEFAULT] */
+	 * @since  5.1.1
+	 */
+	protected array $children = [
+		'admin_fields',
+		'admin_fields_relations',
+		'admin_fields_conditions',
+		'admin_custom_tabs'
+	];
 
 	/**
 	 * The index map
-	 *    must always have: [name,path,guid]
+	 *    must always have: [name,path,settings,guid]
 	 *    you can add more
 	 *
 	 * @var    array
 	 * @since  5.0.3
+	 */
 	protected array $index_map = [
 		'name' => 'index_map_IndexName',
 		'path' => 'index_map_IndexPath',
-		'guid' => 'index_map_IndexGUID'
+		'settings' => 'index_map_IndexSettingsPath',
+		'guid' => 'index_map_IndexGUID',
+		'desc' => 'index_map_ShortDescription'
 	];
-	[DEFAULT]  */
 
 	/**
 	 * The index header
 	 *    mapping the index map to a table
-	 *    must always have: [name,path,guid,local]
+	 *    must always have: [name,path,settings,guid,local]
 	 *    with [name] always first
-	 *    with [path,guid,local] always last
+	 *    with [path,settings,guid,local] always last
 	 *    you can add more in between
 	 *
 	 * @var    array
 	 * @since  5.1.1
+	 */
 	protected array $index_header = [
 		'name',
+		'desc',
 		'path',
+		'settings',
 		'guid',
 		'local'
 	];
-	[DEFAULT]  */
-
-	/**
-	 * Core Placeholders
-	 *
-	 * @var    array
-	 * @since  5.0.3
-	protected array $placeholders = [
-		'[['.'[NamespacePrefix]]]' => 'VDM',
-		'[['.'[ComponentNamespace]]]' => 'Componentbuilder',
-		'[['.'[Component]]]' => 'Componentbuilder', 
-		'[['.'[component]]]' => 'componentbuilder'
-	];
-	[DEFAULT] */
 }
 

@@ -38,7 +38,7 @@ abstract class ###Component###Email
 	public static $active = [];
 
 	/**
-	 * Configuraiton object
+	 * Configuration object
 	 *
 	 * @var    Registry
 	 */

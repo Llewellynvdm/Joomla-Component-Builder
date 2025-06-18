@@ -18,7 +18,7 @@ use VDM\Joomla\Interfaces\Remote\ConfigInterface;
 /**
  * Base remote interface
  * 
- * @since 5.2.1
+ * @since 5.1.1
  */
 interface BaseInterface extends ConfigInterface
 {
@@ -41,13 +41,5 @@ interface BaseInterface extends ConfigInterface
 	 * @since  3.2.2
 	 */
 	public function getIndexItem(object $item): ?array;
-
-	/**
-	 * Get index header
-	 *
-	 * @return array
-	 * @since  5.2.1
-	 */
-	public function getIndexHeader(): array;
 }
 

@@ -138,6 +138,7 @@ class PowerController extends FormController
 	 * 7. It redirects the user to a specified URL with the result message and status.
 	 *
 	 * @return bool True on successful reset, false on failure.
+	 * @since  5.1.1
 	 */
 	public function resetPowers()
 	{
@@ -156,9 +157,12 @@ class PowerController extends FormController
 		$status = 'error';
 		$success = false;
 
+		// get the guid field of this entity
+		$key_field = PowerFactory::_('Power.Remote.Get')->getGuidField();
+
 		// load the ID
 		$id = $item['id'] ?? null;
-		$guid = $item['guid'] ?? null;
+		$guid = $item[$key_field] ?? null;
 
 		// check if there is any selections
 		if ($id === null || $guid === null)
@@ -213,6 +217,7 @@ class PowerController extends FormController
 	 * 7. It redirects the user to a specified URL with the result message and status.
 	 *
 	 * @return bool True on successful push, false on failure.
+	 * @since  5.1.1
 	 */
 	public function pushPowers()
 	{
@@ -231,9 +236,12 @@ class PowerController extends FormController
 		$status = 'error';
 		$success = false;
 
+		// get the guid field of this entity
+		$key_field = PowerFactory::_('Power.Remote.Set')->getGuidField();
+
 		// load the ID
 		$id = $item['id'] ?? null;
-		$guid = $item['guid'] ?? null;
+		$guid = $item[$key_field] ?? null;
 
 		$message_bus = ['warning', 'error'];
 

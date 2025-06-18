@@ -53,9 +53,11 @@ final class Set extends ExtendingSet implements SetInterface
 			$repo->repository, // The repository name.
 			$this->index_map_IndexSettingsPath($item), // The file path.
 			json_encode($item, JSON_PRETTY_PRINT), // The file content.
-			'Update ' . $item->system_name, // The commit message.
+			'Update ' . $item_name, // The commit message.
 			$sha, // The blob SHA of the old file.
-			$repo->write_branch // The branch name.
+			$repo->write_branch, // The branch name.
+			$repo->author_name, // The author name.
+			$repo->author_email // The author email.
 		);
 
 		$success = is_object($result);
@@ -84,8 +86,10 @@ final class Set extends ExtendingSet implements SetInterface
 			$repo->repository, // The repository name.
 			$this->index_map_IndexSettingsPath($item), // The file path.
 			json_encode($item, JSON_PRETTY_PRINT), // The file content.
-			'Create ' . $item->system_name, // The commit message.
-			$repo->write_branch // The branch name.
+			'Create ' . $this->index_map_IndexName($item), // The commit message.
+			$repo->write_branch, // The branch name.
+			$repo->author_name, // The author name.
+			$repo->author_email // The author email.
 		);
 
 		return is_object($result);
@@ -113,11 +117,13 @@ final class Set extends ExtendingSet implements SetInterface
 		$this->git->update(
 			$repo->organisation, // The owner name.
 			$repo->repository, // The repository name.
-			$this->index_map_IndexPath($item) . '/README.md', // The file path.
+			$this->index_map_IndexReadmePath($item), // The file path.
 			$this->itemReadme->get($item), // The file content.
-			'Update ' . $item->system_name . ' readme file', // The commit message.
+			'Update ' . $this->index_map_IndexName($item) . ' readme file', // The commit message.
 			$sha, // The blob SHA of the old file.
-			$repo->write_branch // The branch name.
+			$repo->write_branch, // The branch name.
+			$repo->author_name, // The author name.
+			$repo->author_email // The author email.
 		);
 	}
 
@@ -135,10 +141,12 @@ final class Set extends ExtendingSet implements SetInterface
 		$this->git->create(
 			$repo->organisation, // The owner name.
 			$repo->repository, // The repository name.
-			$this->index_map_IndexPath($item) . '/README.md', // The file path.
+			$this->index_map_IndexReadmePath($item), // The file path.
 			$this->itemReadme->get($item), // The file content.
-			'Create ' . $item->system_name . ' readme file', // The commit message.
-			$repo->write_branch // The branch name.
+			'Create ' . $this->index_map_IndexName($item) . ' readme file', // The commit message.
+			$repo->write_branch, // The branch name.
+			$repo->author_name, // The author name.
+			$repo->author_email // The author email.
 		);
 	}
 }

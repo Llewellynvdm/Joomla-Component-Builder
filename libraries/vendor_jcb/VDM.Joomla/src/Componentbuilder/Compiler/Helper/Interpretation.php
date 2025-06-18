@@ -12,8 +12,8 @@
 namespace VDM\Joomla\Componentbuilder\Compiler\Helper;
 
 
-use Joomla\CMS\Filesystem\File;
-use Joomla\CMS\Filesystem\Folder;
+use Joomla\Filesystem\File;
+use Joomla\Filesystem\Folder;
 use Joomla\CMS\Language\Text;
 use VDM\Component\Componentbuilder\Administrator\Helper\ComponentbuilderHelper;
 use VDM\Joomla\FOF\Encrypt\AES;
@@ -324,10 +324,13 @@ class Interpretation extends Fields
 			{
 				// the text for the file BAKING
 				CFactory::_('Compiler.Builder.Content.Multi')->set('emailer_' . $component . '|BAKING', ''); // <<-- to insure it gets updated
-				// return the code need to load the abstract class
-				return PHP_EOL . "\JLoader::register('" . $Component
-					. "Email', JPATH_COMPONENT_ADMINISTRATOR . '/helpers/"
-					. $component . "email.php'); ";
+				if (CFactory::_('Config')->get('joomla_version', 3) == 3)
+				{
+					// return the code need to load the abstract class
+					return PHP_EOL . "\JLoader::register('" . $Component
+						. "Email', JPATH_ADMINISTRATOR . '/components/com_{$component}/helpers/"
+						. $component . "email.php'); ";
+				}
 			}
 		}
 
@@ -935,29 +938,6 @@ class Interpretation extends Fields
 				$function[] = Indent::_(3) . "}";
 				$function[] = Indent::_(2) . "}";
 			}
-			// add the whmcs option
-			if (CFactory::_('Compiler.Builder.Model.Whmcs.Field')->isActive()
-				|| CFactory::_('Component')->get('add_license'))
-			{
-				$function[] = Indent::_(2) . "//" . Line::_(__Line__, __Class__)
-					. " WHMCS Encryption Type";
-				$function[] = Indent::_(2)
-					. "if ('whmcs' === \$type || 'advanced' === \$type)";
-				$function[] = Indent::_(2) . "{";
-				$function[] = Indent::_(3)
-					. "\$key = \$params->get('whmcs_key', \$default);";
-				$function[] = Indent::_(3) . "if (Super_" . "__1f28cb53_60d9_4db1_b517_3c7dc6b429ef___Power::check(\$key))";
-				$function[] = Indent::_(3) . "{";
-				$function[] = Indent::_(4) . "//" . Line::_(__Line__, __Class__)
-					. " load the file";
-				$function[] = Indent::_(4)
-					. "JLoader::import( 'whmcs', JPATH_COMPONENT_ADMINISTRATOR);";
-				$function[] = PHP_EOL . Indent::_(4)
-					. "\$the = new \WHMCS(\$key);";
-				$function[] = PHP_EOL . Indent::_(4) . "return \$the->_key;";
-				$function[] = Indent::_(3) . "}";
-				$function[] = Indent::_(2) . "}";
-			}
 			// end the function
 			$function[] = PHP_EOL . Indent::_(2) . "return \$default;";
 			$function[] = Indent::_(1) . "}";
@@ -991,7 +971,7 @@ class Interpretation extends Fields
 					. "\$path = '/'. trim(str_replace('//', '/', \$path), '/');";
 				$function[] = Indent::_(2) . "//" . Line::_(__Line__, __Class__)
 					. " Check if folder exist";
-				$function[] = Indent::_(2) . "if (!Folder::exists(\$path))";
+				$function[] = Indent::_(2) . "if (!is_dir(\$path))";
 				$function[] = Indent::_(2) . "{";
 				$function[] = Indent::_(3) . "//" . Line::_(__Line__, __Class__)
 					. " Lock key.";
@@ -5787,7 +5767,7 @@ class Interpretation extends Fields
 					__LINE__,__CLASS__
 				) . " add the google chart builder class.";
 			$chart[] = Indent::_(2)
-				. "require_once JPATH_COMPONENT_ADMINISTRATOR.'/helpers/chartbuilder.php';";
+				. "require_once JPATH_ADMINISTRATOR . '/components/com_" . CFactory::_('Config')->component_code_name . "/helpers/chartbuilder.php';";
 			$chart[] = Indent::_(2) . "//" . Line::_(__Line__, __Class__)
 				. " load the google chart js.";
 			$chart[] = Indent::_(2)
@@ -5837,12 +5817,12 @@ class Interpretation extends Fields
 				if (CFactory::_('Config')->build_target === 'site')
 				{
 					$setter .= PHP_EOL . Indent::_(2)
-						. "require_once( JPATH_COMPONENT_SITE.'/helpers/headercheck.php' );";
+						. "require_once( JPATH_SITE . '/components/com_" . CFactory::_('Config')->component_code_name . "/helpers/headercheck.php' );";
 				}
 				else
 				{
 					$setter .= PHP_EOL . Indent::_(2)
-						. "require_once( JPATH_COMPONENT_ADMINISTRATOR.'/helpers/headercheck.php' );";
+						. "require_once( JPATH_ADMINISTRATOR . '/components/com_" . CFactory::_('Config')->component_code_name . "/helpers/headercheck.php' );";
 				}
 				$setter .= PHP_EOL . Indent::_(2) . "//" . Line::_(__Line__, __Class__)
 					. " Initialize the header checker.";
@@ -23310,7 +23290,7 @@ class Interpretation extends Fields
 							// set path
 							$path = $module->folder_path . '/language/' . $tag . '/';
 							// create path if not exist
-							if (!Folder::exists($path))
+							if (!is_dir($path))
 							{
 								Folder::create($path);
 								// count the folder created

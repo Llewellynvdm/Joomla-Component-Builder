@@ -13,6 +13,7 @@ namespace VDM\Joomla\Componentbuilder\Package\AdminView\Readme;
 
 
 use VDM\Joomla\Interfaces\Readme\MainInterface;
+use VDM\Joomla\Componentbuilder\Package\Readme\Main as ExtendingMain;
 
 
 /**
@@ -20,215 +21,98 @@ use VDM\Joomla\Interfaces\Readme\MainInterface;
  * 
  * @since  5.1.1
  */
-final class Main implements MainInterface
+final class Main extends ExtendingMain implements MainInterface
 {
 	/**
-	 * Get Main Readme
+	 * Generate the main README for the JCB Admin Views repository in Markdown format.
 	 *
-	 * @param array    $items  All items of this repository.
+	 * Admin Views are the backbone of JCB components — deeply tied to database tables
+	 * and used to generate Joomla-compliant back-end views, forms, and logic.
 	 *
-	 * @return string
-	 * @since 3.2.0
+	 * @param  array  $items  All Admin View definitions in this repository.
+	 *
+	 * @return string  The full generated Markdown README.
+	 * @since  5.1.1
 	 */
 	public function get(array $items): string
 	{
-		// build readme
-		$readme = ["```
-     ██╗ ██████╗  ██████╗ ███╗   ███╗██╗      █████╗                              
-     ██║██╔═══██╗██╔═══██╗████╗ ████║██║     ██╔══██╗                             
-     ██║██║   ██║██║   ██║██╔████╔██║██║     ███████║                             
-██   ██║██║   ██║██║   ██║██║╚██╔╝██║██║     ██╔══██║                             
-╚█████╔╝╚██████╔╝╚██████╔╝██║ ╚═╝ ██║███████╗██║  ██║                             
- ╚════╝  ╚═════╝  ╚═════╝ ╚═╝     ╚═╝╚══════╝╚═╝  ╚═╝                             
-                                                                                  
- █████╗ ██████╗ ███╗   ███╗██╗███╗   ██╗    ██╗   ██╗██╗███████╗██╗    ██╗███████╗
-██╔══██╗██╔══██╗████╗ ████║██║████╗  ██║    ██║   ██║██║██╔════╝██║    ██║██╔════╝
-███████║██║  ██║██╔████╔██║██║██╔██╗ ██║    ██║   ██║██║█████╗  ██║ █╗ ██║███████╗
-██╔══██║██║  ██║██║╚██╔╝██║██║██║╚██╗██║    ╚██╗ ██╔╝██║██╔══╝  ██║███╗██║╚════██║
-██║  ██║██████╔╝██║ ╚═╝ ██║██║██║ ╚████║     ╚████╔╝ ██║███████╗╚███╔███╔╝███████║
-╚═╝  ╚═╝╚═════╝ ╚═╝     ╚═╝╚═╝╚═╝  ╚═══╝      ╚═══╝  ╚═╝╚══════╝ ╚══╝╚══╝ ╚══════╝
-```"];
+		$readme = [];
 
-		// default description of admin views
-		$readme[] = "\n### What are Joomla Admin Views?\nThe Joomla admin views provide a robust interface layer that assembles backend fields, and PHP logic, enabling seamless management of component data within Joomla Component Builder (JCB). Acting as the central hub for listing, editing, and persisting records, these views standardize how components interact with the database and ensure administrators enjoy a consistent, intuitive control panel across the entire JCB ecosystem.\n
-\n
-Whenever you need to update Admin Views in any JCB project, simply select the desired views and click the \"reset\" button. The selected views is synchronized with the original version stored in this repository, bringing the latest design tweaks, security fixes, and performance boosts.\n
-\n
-If your project calls for more distinctive Admin View, or component‑specific business logic. Simply fork the repository and point JCB to your copy. This lets you maintain and evolve Admin Views independently of the main JCB community while preserving the convenience of JCB’s one‑click update mechanism.\n
-\n
-\"We believe this approach empowers you to extend and customize JCB to fit your unique requirements, exemplifying the true spirit of freedom in software development. We trust you will find this capability both useful and aligned with the expectations of how open-source software should function.\"\n";
+		// Main heading
+		$readme[] = '# JCB! Admin Views';
+		$readme[] = '';
 
-		// get the readme body
-		$readme[] = $this->readmeBuilder($items);
+		// Description
+		$readme[] = '### What Are Admin Views?';
+		$readme[] = <<<MD
+**Admin Views** form the foundational interface layer of every JCB-built Joomla component.
 
-		// yes you can remove this, but why?
-		$readme[] = "\n---\n```
-     ██╗ ██████╗  ██████╗ ███╗   ███╗██╗      █████╗
-     ██║██╔═══██╗██╔═══██╗████╗ ████║██║     ██╔══██╗
-     ██║██║   ██║██║   ██║██╔████╔██║██║     ███████║
-██   ██║██║   ██║██║   ██║██║╚██╔╝██║██║     ██╔══██║
-╚█████╔╝╚██████╔╝╚██████╔╝██║ ╚═╝ ██║███████╗██║  ██║
- ╚════╝  ╚═════╝  ╚═════╝ ╚═╝     ╚═╝╚══════╝╚═╝  ╚═╝
- ██████╗ ██████╗ ███╗   ███╗██████╗  ██████╗ ███╗   ██╗███████╗███╗   ██╗████████╗
-██╔════╝██╔═══██╗████╗ ████║██╔══██╗██╔═══██╗████╗  ██║██╔════╝████╗  ██║╚══██╔══╝
-██║     ██║   ██║██╔████╔██║██████╔╝██║   ██║██╔██╗ ██║█████╗  ██╔██╗ ██║   ██║
-██║     ██║   ██║██║╚██╔╝██║██╔═══╝ ██║   ██║██║╚██╗██║██╔══╝  ██║╚██╗██║   ██║
-╚██████╗╚██████╔╝██║ ╚═╝ ██║██║     ╚██████╔╝██║ ╚████║███████╗██║ ╚████║   ██║
- ╚═════╝ ╚═════╝ ╚═╝     ╚═╝╚═╝      ╚═════╝ ╚═╝  ╚═══╝╚══════╝╚═╝  ╚═══╝   ╚═╝
-██████╗ ██╗   ██╗██╗██╗     ██████╗ ███████╗██████╗
-██╔══██╗██║   ██║██║██║     ██╔══██╗██╔════╝██╔══██╗
-██████╔╝██║   ██║██║██║     ██║  ██║█████╗  ██████╔╝
-██╔══██╗██║   ██║██║██║     ██║  ██║██╔══╝  ██╔══██╗
-██████╔╝╚██████╔╝██║███████╗██████╔╝███████╗██║  ██║
-╚═════╝  ╚═════╝ ╚═╝╚══════╝╚═════╝ ╚══════╝╚═╝  ╚═╝
-```\n> Build with [Joomla Component Builder](https://git.vdm.dev/joomla/Component-Builder)\n\n";
+Each Admin View is tightly bound to a database table and automatically generates all required:
+- **Forms**
+- **Models**
+- **Controllers**
+- **List and Edit Views**
+- **Permission handling** (ACL)
+- **Field validation and access control**
+
+Admin Views are mandatory. Every JCB component must include at least one Admin View  
+to be valid and compile correctly. This ensures that your component manages data  
+within Joomla's native MVC architecture — offering full CRUD capabilities out-of-the-box.
+
+---
+MD;
+
+		// Functional Overview
+		$readme[] = '### Why Are Admin Views Important?';
+		$readme[] = <<<MD
+Admin Views serve as the **data anchor** for the component:
+
+- Link directly to Joomla database tables
+- Automatically attach multiple fields and manage field visibility/edit permissions
+- Enable subforms (linking to other Admin Views) for nested data structures
+- Respect Joomla's ACL per view and field
+- Reusable across multiple components — compile-safe with namespace awareness
+
+This makes Admin Views the heart of every component, defining its schema, edit experience,  
+and administrative backbone. Unlike Custom Admin Views or Site Views (which focus more on layout or data rendering),  
+Admin Views define the **structural data definition** and baseline logic.
+
+---
+MD;
+
+		// Sync/Fork Logic
+		$readme[] = '### Versioning and Sharing';
+		$readme[] = <<<MD
+When you need to update Admin Views in any JCB project:
+
+- Select the views to update
+- Click **"Reset"** to pull the latest version from this repository
+- Or **Fork** this repository and point your JCB instance to your fork
+
+This ensures maintainability while still allowing total customization per project.
+
+>Admin Views are the schema-defining force in JCB — not just a UI pattern, but a declaration of how your component should structure and manage its data. We recommend exploring the shipped demo component to see Admin Views in action.
+
+---
+MD;
+
+		// Index
+		$readme[] = '### Index of Admin Views';
+		$readme[] = '';
+
+		// Add the dynamic index
+		$readme[] = $this->getIndex($items);
+		$readme[] = '';
+
+		$readme[] = <<<MD
+### All used in [Joomla Component Builder](https://www.joomlacomponentbuilder.com) - [Source](https://git.vdm.dev/joomla/Component-Builder) - [Mirror](https://github.com/vdm-io/Joomla-Component-Builder) - [Download](https://git.vdm.dev/joomla/pkg-component-builder/releases)
+
+---
+[![Joomla Volunteer Portal](https://img.shields.io/badge/-Joomla-gold?logo=joomla)](https://volunteers.joomla.org/joomlers/1396-llewellyn-van-der-merwe "Join Llewellyn on the Joomla Volunteer Portal: Shaping the Future Together!") [![Octoleo](https://img.shields.io/badge/-Octoleo-black?logo=linux)](https://git.vdm.dev/octoleo "--quiet") [![Llewellyn](https://img.shields.io/badge/-Llewellyn-ffffff?logo=gitea)](https://git.vdm.dev/Llewellyn "Collaborate and Innovate with Llewellyn on Git: Building a Better Code Future!") [![Telegram](https://img.shields.io/badge/-Telegram-blue?logo=telegram)](https://t.me/Joomla_component_builder "Join Llewellyn and the Community on Telegram: Building Joomla Components Together!") [![Mastodon](https://img.shields.io/badge/-Mastodon-9e9eec?logo=mastodon)](https://joomla.social/@llewellyn "Connect and Engage with Llewellyn on Joomla Social: Empowering Communities, One Post at a Time!") [![X (Twitter)](https://img.shields.io/badge/-X-black?logo=x)](https://x.com/llewellynvdm "Join the Conversation with Llewellyn on X: Where Ideas Take Flight!") [![GitHub](https://img.shields.io/badge/-GitHub-181717?logo=github)](https://github.com/Llewellynvdm "Build, Innovate, and Thrive with Llewellyn on GitHub: Turning Ideas into Impact!") [![YouTube](https://img.shields.io/badge/-YouTube-ff0000?logo=youtube)](https://www.youtube.com/@OctoYou "Explore, Learn, and Create with Llewellyn on YouTube: Your Gateway to Inspiration!") [![n8n](https://img.shields.io/badge/-n8n-black?logo=n8n)](https://n8n.io/creators/octoleo "Effortless Automation and Impactful Workflows with Llewellyn on n8n!") [![Docker Hub](https://img.shields.io/badge/-Docker-grey?logo=docker)](https://hub.docker.com/u/llewellyn "Llewellyn on Docker: Containerize Your Creativity!") [![Open Collective](https://img.shields.io/badge/-Donate-green?logo=opencollective)](https://opencollective.com/joomla-component-builder "Donate towards JCB: Help Llewellyn financially so he can continue developing this great tool!") [![GPG Key](https://img.shields.io/badge/-GPG-blue?logo=gnupg)](https://git.vdm.dev/Llewellyn/gpg "Unlock Trust and Security with Llewellyn's GPG Key: Your Gateway to Verified Connections!")
+MD;
 
 		return implode("\n", $readme);
 	}
 
-	/**
-	 * The readme builder
-	 *
-	 * @param array    $classes  The powers.
-	 *
-	 * @return string
-	 * @since 3.2.0
-	 */
-	private function readmeBuilder(array &$items): string
-	{
-		$classes = [];
-		foreach ($items as $guid => $power)
-		{
-			// add to the sort bucket
-			$classes[] = [
-				'name' => $power['name'],
-				'link' => $this->indexLinkPower($power)
-			];
-		}
-
-		return $this->readmeModel($classes);
-	}
-
-	/**
-	 * Sort and model the readme classes
-	 *
-	 * @param array $classes The powers.
-	 *
-	 * @return string
-	 * @since 3.2.0
-	 */
-	private function readmeModel(array &$classes): string
-	{
-		$this->sortClasses($classes);
-
-		return $this->generateIndex($classes);
-	}
-
-	/**
-	 * Generate the index string for classes
-	 *
-	 * @param array $classes The sorted classes
-	 *
-	 * @return string The index string
-	 */
-	private function generateIndex(array &$classes): string
-	{
-		$result = "# Index of Joomla! Field Types\n";
-
-		foreach ($classes as $class)
-		{
-			// Add the class details
-			$result .= "\n - " . $class['link'];
-		}
-
-		return $result;
-	}
-
-	/**
-	 * Sort the flattened array using a single sorting function
-	 *
-	 * @param array $classes The classes to sort
-	 *
-	 * @since 3.2.0
-	 */
-	private function sortClasses(array &$classes): void
-	{
-		usort($classes, function ($a, $b) {
-			return $this->compareName($a, $b);
-		});
-	}
-
-	/**
-	 * Compare the name of two classes
-	 *
-	 * @param array $a First class
-	 * @param array $b Second class
-	 *
-	 * @return int Comparison result
-	 * @since 3.2.0
-	 */
-	private function compareName(array $a, array $b): int
-	{
-		return strcmp($a['name'], $b['name']);
-	}
-
-	/**
-	 * Build the Link to the power in this repository
-	 *
-	 * @param array  $power  The power details.
-	 *
-	 * @return string
-	 * @since 3.2.0
-	 */
-	private function indexLinkPower(array &$power): string
-	{
-		$name = $power['name'] ?? 'error';
-		return '**' . $name . "** | "
-			. $this->linkPowerRepo($power) . ' | '
-			. $this->linkPowerSettings($power) . ' | '
-			. $this->linkPowerDesc($power);
-	}
-
-	/**
-	 * Build the Link to the power in this repository
-	 *
-	 * @param array  $power  The power details.
-	 *
-	 * @return string
-	 * @since 3.2.0
-	 */
-	private function linkPowerRepo(array &$power): string
-	{
-		$path = $power['path'] ?? 'error';
-		return '[Details](' . $path . ')';
-	}
-
-	/**
-	 * Build the Link to the power settings in this repository
-	 *
-	 * @param array  $power  The power details.
-	 *
-	 * @return string
-	 * @since 3.2.0
-	 */
-	private function linkPowerSettings(array &$power): string
-	{
-		$settings = $power['settings'] ?? 'error';
-		return '[Settings](' . $settings . ')';
-	}
-
-	/**
-	 * Get the short description
-	 *
-	 * @param array  $power  The power details.
-	 *
-	 * @return string
-	 * @since 3.2.0
-	 */
-	private function linkPowerDesc(array &$power): string
-	{
-		$jpk = $power['desc'] ?? '';
-		return $jpk;
-	}
 }
 

@@ -65,78 +65,66 @@ final class Grep extends ExtendingGrep implements GrepInterface
 	}
 
 	/**
-	 * Get a remote joomla power
+	 * Get a remote field type object from a repository.
 	 *
-	 * @param object    $path    The repository path details
-	 * @param string    $guid    The global unique id of the power
+	 * @param object $path  The repository path details
+	 * @param string $guid  The global unique ID of the power
 	 *
 	 * @return object|null
-	 * @since  5.0.3
+	 * @since  5.1.1
 	 */
 	protected function getRemote(object $path, string $guid): ?object
 	{
-		$power = null;
-		if (empty($path->index->{$guid}->path))
+		$relative_path = $path->index[$this->entity]->{$guid}->path ?? null;
+		if (empty($relative_path))
 		{
-			return $power;
+			return null;
 		}
 
-		// get the branch name
-		$branch = $this->getBranchName($path);
+		$branch         = $this->getBranchName($path);
+		$guid_field     = $this->getGuidField();
+		$settings_name  = $this->getSettingsName();
+		$readme_enabled = $this->hasItemReadme();
 
-		// get the guid_field key
-		$guid_field = $this->getGuidField();
-
-		// get the settings path
-		$settings_path = $this->getSettingsPath();
+		// set the target system
+		$target = $path->target ?? 'gitea';
+		$this->contents->setTarget($target);
 
 		// load the base and token if set
-		$this->loadApi($this->contents, $path->base ?? null, $path->token ?? null);
+		$this->loadApi(
+			$this->contents,
+			$target === 'gitea' ? ($path->base ?? null) : null,
+			$path->token ?? null
+		);
 
-		// get the settings
-		if (($power = $this->loadRemoteFile($path->organisation, $path->repository, $path->index->{$guid}->path . '/' . $settings_path, $branch)) !== null &&
-			isset($power->{$guid_field}))
+		$power = $this->loadRemoteFile(
+			$path->organisation,
+			$path->repository,
+			"{$relative_path}/{$settings_name}",
+			$branch
+		);
+
+		if ($power === null || !isset($power->{$guid_field}))
 		{
-			// set the git details in params
-			$path_guid = $path->guid ?? null;
-			if ($path_guid !== null)
+			$this->contents->reset_();
+			return null;
+		}
+
+		$path_guid = $path->guid ?? null;
+
+		$branch_field = $this->getBranchField();
+
+		if ($branch_field === 'write_branch' && $path_guid !== null)
+		{
+			$this->setRepoItemSha($power, $path, "{$relative_path}/{$settings_name}", $branch, "{$path_guid}-settings");
+
+			if ($readme_enabled)
 			{
-				// get the Settings meta
-				if (($meta = $this->contents->metadata($path->organisation, $path->repository, $path->index->{$guid}->path . '/' . $settings_path, $branch)) !== null &&
-					isset($meta->sha))
-				{
-					if (isset($power->params) && is_object($power->params) &&
-						isset($power->params->source) && is_array($power->params->source))
-					{
-						$power->params->source[$path_guid . '-settings'] = $meta->sha;
-					}
-					else
-					{
-						$power->params = (object) [
-							'source' => [$path_guid . '-settings' => $meta->sha]
-						];
-					}
-				}
-				// get the README meta
-				if (($meta = $this->contents->metadata($path->organisation, $path->repository, $path->index->{$guid}->path . '/README.md', $branch)) !== null &&
-					isset($meta->sha))
-				{
-					if (isset($power->params) && is_object($power->params) &&
-						isset($power->params->source) && is_array($power->params->source))
-					{
-						$power->params->source[$path_guid . '-readme'] = $meta->sha;
-					}
-					else
-					{
-						$power->params = (object) [
-							'source' => [$path_guid . '-readme' => $meta->sha]
-						];
-					}
-				}
+				$readme_name = $this->getItemReadmeName();
+				$this->setRepoItemSha($power, $path, "{$relative_path}/{$readme_name}", $branch, "{$path_guid}-readme");
 			}
 		}
 
-		// reset back to the global base and token
 		$this->contents->reset_();
 
 		return $power;

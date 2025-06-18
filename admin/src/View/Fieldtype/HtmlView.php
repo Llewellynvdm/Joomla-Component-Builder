@@ -182,7 +182,7 @@ class HtmlView extends BaseHtmlView
 		}
 
 		// Get Linked view data
-		$this->vxlfields = $this->get('Vxlfields');
+		$this->vxifields = $this->get('Vxifields');
 
 		// Set the toolbar
 		if ($this->getLayout() !== 'modal')

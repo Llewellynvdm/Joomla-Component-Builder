@@ -96,29 +96,29 @@ abstract class Base implements BaseInterface
 	}
 
 	/**
-	 * Set the settings path
+	 * Set the settings file name
 	 *
-	 * @param string    $settingsPath    The repository settings path
+	 * @param string    $settingsName    The repository settings name
 	 *
 	 * @return self
 	 * @since 3.2.2
 	 */
-	public function setSettingsPath(string $settingsPath): self
+	public function setSettingsName(string $settingsName): self
 	{
-		$this->config->setSettingsPath($settingsPath);
+		$this->config->setSettingsName($settingsName);
 
 		return $this;
 	}
 
 	/**
-	 * Get the settings path
+	 * Get the settings file name
 	 *
 	 * @return string
 	 * @since 3.2.2
 	 */
-	public function getSettingsPath(): string
+	public function getSettingsName(): string
 	{
-		return $this->config->getSettingsPath();
+		return $this->config->getSettingsName();
 	}
 
 	/**
@@ -190,6 +190,28 @@ abstract class Base implements BaseInterface
 	}
 
 	/**
+	 * Get the field names of the files in the entity
+	 *
+	 * @return array
+	 * @since  5.1.1
+	 */
+	public function getFiles(): array
+	{
+		return $this->config->getFiles();
+	}
+
+	/**
+	 * Get the field names of the folders in the entity
+	 *
+	 * @return array
+	 * @since  5.1.1
+	 */
+	public function getFolders(): array
+	{
+		return $this->config->getFolders();
+	}
+
+	/**
 	 * Get map
 	 *
 	 * @return array
@@ -198,6 +220,17 @@ abstract class Base implements BaseInterface
 	public function getMap(): array
 	{
 		return $this->config->getMap();
+	}
+
+	/**
+	 * Get the [direct] entities/children of this entity
+	 *
+	 * @return array
+	 * @since  5.1.1
+	 */
+	public function getChildren(): array
+	{
+		return $this->config->getChildren();
 	}
 
 	/**
@@ -231,6 +264,39 @@ abstract class Base implements BaseInterface
 	public function getMainReadmePath(): string
 	{
 		return $this->config->getMainReadmePath();
+	}
+
+	/**
+	 * Has main readme
+	 *
+	 * @return bool
+	 * @since  5.1.1
+	 */
+	public function hasMainReadme(): bool
+	{
+		return $this->config->hasMainReadme();
+	}
+
+	/**
+	 * Get item readme path
+	 *
+	 * @return string
+	 * @since  5.1.1
+	 */
+	public function getItemReadmeName(): string
+	{
+		return $this->config->getItemReadmeName();
+	}
+
+	/**
+	 * Has item readme
+	 *
+	 * @return bool
+	 * @since  5.1.1
+	 */
+	public function hasItemReadme(): bool
+	{
+		return $this->config->hasItemReadme();
 	}
 
 	/**
@@ -274,7 +340,7 @@ abstract class Base implements BaseInterface
 			{
 				$this->{$methodName}($item, $power);
 			}
-			else
+			elseif (!isset($power[$key]))
 			{
 				$power[$key] = $item->{$map} ?? null;
 			}
@@ -350,12 +416,12 @@ abstract class Base implements BaseInterface
 	 */
 	protected function index_map_IndexSettingsPath(object $item): string
 	{
-		$src_path = $this->getSrcPath();
-		$settings_path = $this->getSettingsPath();
+		$index_path = $this->index_map_IndexPath($item);
+		$settings_name = $this->getSettingsName();
 
-		$key = $this->index_map_IndexGUID($item);
-
-		return "{$src_path}/{$key}/{$settings_path}";
+		return !empty($settings_name)
+			? "{$index_path}/{$settings_name}"
+			: $index_path;
 	}
 
 	/**
@@ -369,10 +435,26 @@ abstract class Base implements BaseInterface
 	protected function index_map_IndexPath(object $item): string
 	{
 		$src_path = $this->getSrcPath();
-
 		$key = $this->index_map_IndexGUID($item);
-
 		return "{$src_path}/{$key}";
+	}
+
+	/**
+	 * Get the item readme path for the index values
+	 *
+	 * @param object $item
+	 *
+	 * @return string
+	 * @since  5.1.1
+	 */
+	protected function index_map_IndexReadmePath(object $item): string
+	{
+		$index_path = $this->index_map_IndexPath($item);
+		$readme = $this->getItemReadmeName();
+
+		return !empty($readme)
+			? "{$index_path}/{$readme}"
+			: "{$index_path}.md";
 	}
 
 	/**
@@ -387,7 +469,6 @@ abstract class Base implements BaseInterface
 	{
 		$prefix_key = $this->getPrefixKey();
 		$suffix_key = $this->getSuffixKey();
-
 		$key = $this->index_map_IndexGUID($item);
 		$key = str_replace('-', '_', $key);
 
@@ -405,7 +486,8 @@ abstract class Base implements BaseInterface
 	protected function index_map_IndexGUID(object $item): string
 	{
 		$guid_field = $this->getGuidField();
-		return  $item->{$guid_field} ?? 'error';
+
+		return  $item->{$guid_field} ?? $item->guid ?? 'missing-guid';
 	}
 }
 

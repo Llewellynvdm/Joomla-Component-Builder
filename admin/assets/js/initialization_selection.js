@@ -162,6 +162,16 @@ class InitializationManager {
 		}
 	}
 
+	_getInitFunctionName(area) {
+		const powers = [
+			'Joomla.Fieldtype',
+			'Joomla.Power',
+			'Power'
+		];
+
+		return powers.includes(area) ? 'initSelectedPowers' : 'initSelectedPackages';
+	}
+
 	async _handleRepoClick(event) {
 		const button = event.currentTarget;
 		const repo = button?.dataset?.repo;
@@ -186,12 +196,17 @@ class InitializationManager {
 
 			if (data.success && data.index && this.#buildTable) {
 				const repoData = data.index[0];
+				const {
+					path = 'joomla/super-powers',
+					read_branch = 'master',
+					target,
+					base = 'https://git.vdm.dev'
+				} = repoData;
 
-				const repoBase = repoData.base || 'https://git.vdm.dev';
-				const repoPath = repoData.path || 'joomla/super-powers';
-				const repoBranch = repoData.read_branch || 'master';
+				const repo_base = (target === 'github') ? 'https://github.com' : base;
+				const repo_path = (target === 'github') ? 'tree' : 'src/branch';
 
-				window.targetPowerRepoUrl = `${repoBase}/${repoPath}/src/branch/${repoBranch}/`;
+				window.targetPowerRepoUrl = `${repo_base}/${path}/${repo_path}/${read_branch}/`;
 
 				this.#buildTable(repoData.index);
 
@@ -228,6 +243,8 @@ class InitializationManager {
 		const area = this.currentArea || 'error';
 		const repo = this.currentRepo || 'error';
 
+		const func = this._getInitFunctionName(area);
+
 		try {
 			// Convert selected items to form data
 			const formData = new FormData();
@@ -239,7 +256,7 @@ class InitializationManager {
 			formData.append('area', area);
 			formData.append('repo', repo);
 
-			const response = await fetch(`${UrlAjax}initSelectedPowers`, {
+			const response = await fetch(`${UrlAjax}${func}`, {
 				method: 'POST',
 				body: formData
 			});

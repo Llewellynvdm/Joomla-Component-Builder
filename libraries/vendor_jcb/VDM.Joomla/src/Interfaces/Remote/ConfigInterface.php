@@ -20,6 +20,14 @@ namespace VDM\Joomla\Interfaces\Remote;
 interface ConfigInterface
 {
 	/**
+	 * Get core placeholders
+	 *
+	 * @return  array
+	 * @since   5.1.1
+	 */
+	public function getPlaceholders(): array;
+
+	/**
 	 * Set the current active table
 	 *
 	 * @param string $table The table that should be active
@@ -56,22 +64,22 @@ interface ConfigInterface
 	public function getArea(): ?string;
 
 	/**
-	 * Set the settings path
+	 * Set the settings file name
 	 *
-	 * @param string    $settingsPath    The repository settings path
+	 * @param string    $settingsName   The repository settings file name
 	 *
 	 * @return self
 	 * @since 3.2.2
 	 */
-	public function setSettingsPath(string $settingsPath): self;
+	public function setSettingsName(string $settingsName): self;
 
 	/**
-	 * Get the settings path
+	 * Get the settings file name
 	 *
 	 * @return string
 	 * @since 3.2.2
 	 */
-	public function getSettingsPath(): string;
+	public function getSettingsName(): string;
 
 	/**
 	 * Set the index path
@@ -90,14 +98,6 @@ interface ConfigInterface
 	 * @since 3.2.2
 	 */
 	public function getIndexPath(): string;
-
-	/**
-	 * Get core placeholders
-	 *
-	 * @return  array
-	 * @since   5.1.1
-	 */
-	public function getPlaceholders(): array;
 
 	/**
 	 * Get index map
@@ -132,12 +132,63 @@ interface ConfigInterface
 	public function getMainReadmePath(): string;
 
 	/**
-	 * Get map
+	 * Has main readme
+	 *
+	 * @return bool
+	 * @since  5.1.1
+	 */
+	public function hasMainReadme(): bool;
+
+	/**
+	 * Get item readme path
+	 *
+	 * @return string
+	 * @since  5.1.1
+	 */
+	public function getItemReadmeName(): string;
+
+	/**
+	 * Has item readme
+	 *
+	 * @return bool
+	 * @since  5.1.1
+	 */
+	public function hasItemReadme(): bool;
+
+	/**
+	 * Get the field names of the files in the entity
 	 *
 	 * @return array
 	 * @since  5.1.1
 	 */
+	public function getFiles(): array;
+
+	/**
+	 * Get the field names of the folders in the entity
+	 *
+	 * @return array
+	 * @since  5.1.1
+	 */
+	public function getFolders(): array;
+
+	/**
+	 * Get map
+	 *
+	 * Builds (and caches) an associative map of the table’s field names,
+	 * automatically removing any fields defined in $this->ignore.
+	 *
+	 * @return  array  Associative array in the form ['field' => 'field']
+	 * @since   5.1.1
+	 */
 	public function getMap(): array;
+
+	/**
+	 * Get the direct entities/children of this entity
+	 *
+	 * @return array
+	 * @since  5.1.1
+	 */
+	public function getChildren(): array;
 
 	/**
 	 * Get the table title name field

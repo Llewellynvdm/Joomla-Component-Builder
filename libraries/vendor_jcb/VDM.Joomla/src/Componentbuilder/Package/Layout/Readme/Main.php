@@ -13,6 +13,7 @@ namespace VDM\Joomla\Componentbuilder\Package\Layout\Readme;
 
 
 use VDM\Joomla\Interfaces\Readme\MainInterface;
+use VDM\Joomla\Componentbuilder\Package\Readme\Main as ExtendingMain;
 
 
 /**
@@ -20,217 +21,99 @@ use VDM\Joomla\Interfaces\Readme\MainInterface;
  * 
  * @since  5.1.1
  */
-final class Main implements MainInterface
+final class Main extends ExtendingMain implements MainInterface
 {
 	/**
-	 * Get Main Readme
+	 * Generate the main README for the JCB Layouts repository in Markdown format.
 	 *
-	 * @param array    $items  All items of this repository.
+	 * Layouts provide a modular templating system for rendering reusable HTML views
+	 * inside Joomla components, managed through JCB's GUI. This README outlines
+	 * what Layouts are, how they work, and how they're managed via repositories.
 	 *
-	 * @return string
-	 * @since 3.2.0
+	 * @param  array  $items  All layouts currently stored in the repository.
+	 *
+	 * @return string  The full generated Markdown README.
+	 * @since  5.1.1
 	 */
 	public function get(array $items): string
 	{
-		// build readme
-		$readme = ["```
-     ██╗ ██████╗  ██████╗ ███╗   ███╗██╗      █████╗        
-     ██║██╔═══██╗██╔═══██╗████╗ ████║██║     ██╔══██╗       
-     ██║██║   ██║██║   ██║██╔████╔██║██║     ███████║       
-██   ██║██║   ██║██║   ██║██║╚██╔╝██║██║     ██╔══██║       
-╚█████╔╝╚██████╔╝╚██████╔╝██║ ╚═╝ ██║███████╗██║  ██║       
- ╚════╝  ╚═════╝  ╚═════╝ ╚═╝     ╚═╝╚══════╝╚═╝  ╚═╝       
-                                                            
-██╗      █████╗ ██╗   ██╗ ██████╗ ██╗   ██╗████████╗███████╗
-██║     ██╔══██╗╚██╗ ██╔╝██╔═══██╗██║   ██║╚══██╔══╝██╔════╝
-██║     ███████║ ╚████╔╝ ██║   ██║██║   ██║   ██║   ███████╗
-██║     ██╔══██║  ╚██╔╝  ██║   ██║██║   ██║   ██║   ╚════██║
-███████╗██║  ██║   ██║   ╚██████╔╝╚██████╔╝   ██║   ███████║
-╚══════╝╚═╝  ╚═╝   ╚═╝    ╚═════╝  ╚═════╝    ╚═╝   ╚══════╝
-```"];
+		$readme = [];
 
-		// default description of super powers
-		$readme[] = "\n### What is Joomla Layouts?\n
-\n
-Joomla layouts provide a powerful way to structure and render reusable sections of code across components, enabling seamless integration with Joomla Component Builder (JCB). This repository serves as a centralized system for maintaining, updating, and distributing these layouts throughout the JCB ecosystem.\n
-\n
-When you need to update any layout in JCB, simply select the desired layout and click the "reset" button. This action will automatically sync the selected layout with its corresponding version hosted in our core repository, ensuring you always benefit from the latest enhancements and fixes.\n
-\n
-Moreover, if you wish to tailor the layouts to suit your specific component designs, you can fork the repository and point your JCB instance to your fork. This allows you to maintain and update layouts independently from the main JCB community, offering the flexibility that is central to the open-source philosophy.\n
-\n
-This flexible approach embraces JCB’s open-source model, giving you the freedom to adapt your components to your exact needs while staying connected to a powerful and community-driven ecosystem.\n";
+		// Header
+		$readme[] = '# JCB! Layouts';
+		$readme[] = '';
 
-		// get the readme body
-		$readme[] = $this->readmeBuilder($items);
+		// What is it?
+		$readme[] = '### What Are JCB Layouts?';
+		$readme[] = <<<MD
+JCB Layouts are **modular Joomla layout files** managed via the [JCB](https://www.joomlacomponentbuilder.com) GUI.  
+They are equivalent to Joomla's native layout override files (`/layouts`) and follow the same design principles.
 
-		// yes you can remove this, but why?
-		$readme[] = "\n---\n```
-     ██╗ ██████╗  ██████╗ ███╗   ███╗██╗      █████╗
-     ██║██╔═══██╗██╔═══██╗████╗ ████║██║     ██╔══██╗
-     ██║██║   ██║██║   ██║██╔████╔██║██║     ███████║
-██   ██║██║   ██║██║   ██║██║╚██╔╝██║██║     ██╔══██║
-╚█████╔╝╚██████╔╝╚██████╔╝██║ ╚═╝ ██║███████╗██║  ██║
- ╚════╝  ╚═════╝  ╚═════╝ ╚═╝     ╚═╝╚══════╝╚═╝  ╚═╝
- ██████╗ ██████╗ ███╗   ███╗██████╗  ██████╗ ███╗   ██╗███████╗███╗   ██╗████████╗
-██╔════╝██╔═══██╗████╗ ████║██╔══██╗██╔═══██╗████╗  ██║██╔════╝████╗  ██║╚══██╔══╝
-██║     ██║   ██║██╔████╔██║██████╔╝██║   ██║██╔██╗ ██║█████╗  ██╔██╗ ██║   ██║
-██║     ██║   ██║██║╚██╔╝██║██╔═══╝ ██║   ██║██║╚██╗██║██╔══╝  ██║╚██╗██║   ██║
-╚██████╗╚██████╔╝██║ ╚═╝ ██║██║     ╚██████╔╝██║ ╚████║███████╗██║ ╚████║   ██║
- ╚═════╝ ╚═════╝ ╚═╝     ╚═╝╚═╝      ╚═════╝ ╚═╝  ╚═══╝╚══════╝╚═╝  ╚═══╝   ╚═╝
-██████╗ ██╗   ██╗██╗██╗     ██████╗ ███████╗██████╗
-██╔══██╗██║   ██║██║██║     ██╔══██╗██╔════╝██╔══██╗
-██████╔╝██║   ██║██║██║     ██║  ██║█████╗  ██████╔╝
-██╔══██╗██║   ██║██║██║     ██║  ██║██╔══╝  ██╔══██╗
-██████╔╝╚██████╔╝██║███████╗██████╔╝███████╗██║  ██║
-╚═════╝  ╚═════╝ ╚═╝╚══════╝╚═════╝ ╚══════╝╚═╝  ╚═╝
-```\n> Build with [Joomla Component Builder](https://git.vdm.dev/joomla/Component-Builder)\n\n";
+With JCB Layouts, you can define reusable, customizable HTML+PHP views:
+
+- Rendered from anywhere in your component (admin or site)
+- Encapsulated in clean, template-driven blocks
+- Fully namespace-aware and overridable like native Joomla layouts
+
+This allows your components to remain **cleaner, more maintainable, and DRY** (Don't Repeat Yourself).
+
+---
+MD;
+
+		$readme[] = '### Why Use Layouts in JCB?';
+		$readme[] = <<<MD
+JCB Layouts help you:
+
+- Extract reusable markup from views, fields, and modules
+- Maintain structural consistency across your component
+- Simplify changes by editing one file instead of many
+- Allow for override support via Joomla templates
+
+They're ideal for:
+- Form row rendering
+- Repeated output (like items in a loop)
+- Conditionals and dynamic display logic
+
+---
+MD;
+
+		$readme[] = '### How Do You Manage Layouts in JCB?';
+		$readme[] = <<<MD
+All Layouts are version-controlled and managed inside JCB's GUI under the **Layouts** tab.
+
+To use a layout from a repository:
+
+1. Click the **Init** button inside the Layouts area.
+2. Choose a repository to load Layouts from.
+3. Select the specific Layout(s) you want to import.
+4. The Layout will now be available in your JCB project.
+
+You can:
+
+- **Reset** a Layout to sync with its upstream version
+- **Push** your custom Layouts if you have write access
+- Or **Fork** this repository to manage your own Layout collection
+
+> This lets you integrate upstream improvements while maintaining your own customization workflow.
+
+---
+MD;
+
+		$readme[] = '### Index of JCB Layouts';
+		$readme[] = '';
+
+		// Layout listing
+		$readme[] = $this->getIndex($items);
+		$readme[] = '';
+
+		$readme[] = <<<MD
+### All used in [Joomla Component Builder](https://www.joomlacomponentbuilder.com) - [Source](https://git.vdm.dev/joomla/Component-Builder) - [Mirror](https://github.com/vdm-io/Joomla-Component-Builder) - [Download](https://git.vdm.dev/joomla/pkg-component-builder/releases)
+
+---
+[![Joomla Volunteer Portal](https://img.shields.io/badge/-Joomla-gold?logo=joomla)](https://volunteers.joomla.org/joomlers/1396-llewellyn-van-der-merwe "Join Llewellyn on the Joomla Volunteer Portal: Shaping the Future Together!") [![Octoleo](https://img.shields.io/badge/-Octoleo-black?logo=linux)](https://git.vdm.dev/octoleo "--quiet") [![Llewellyn](https://img.shields.io/badge/-Llewellyn-ffffff?logo=gitea)](https://git.vdm.dev/Llewellyn "Collaborate and Innovate with Llewellyn on Git: Building a Better Code Future!") [![Telegram](https://img.shields.io/badge/-Telegram-blue?logo=telegram)](https://t.me/Joomla_component_builder "Join Llewellyn and the Community on Telegram: Building Joomla Components Together!") [![Mastodon](https://img.shields.io/badge/-Mastodon-9e9eec?logo=mastodon)](https://joomla.social/@llewellyn "Connect and Engage with Llewellyn on Joomla Social: Empowering Communities, One Post at a Time!") [![X (Twitter)](https://img.shields.io/badge/-X-black?logo=x)](https://x.com/llewellynvdm "Join the Conversation with Llewellyn on X: Where Ideas Take Flight!") [![GitHub](https://img.shields.io/badge/-GitHub-181717?logo=github)](https://github.com/Llewellynvdm "Build, Innovate, and Thrive with Llewellyn on GitHub: Turning Ideas into Impact!") [![YouTube](https://img.shields.io/badge/-YouTube-ff0000?logo=youtube)](https://www.youtube.com/@OctoYou "Explore, Learn, and Create with Llewellyn on YouTube: Your Gateway to Inspiration!") [![n8n](https://img.shields.io/badge/-n8n-black?logo=n8n)](https://n8n.io/creators/octoleo "Effortless Automation and Impactful Workflows with Llewellyn on n8n!") [![Docker Hub](https://img.shields.io/badge/-Docker-grey?logo=docker)](https://hub.docker.com/u/llewellyn "Llewellyn on Docker: Containerize Your Creativity!") [![Open Collective](https://img.shields.io/badge/-Donate-green?logo=opencollective)](https://opencollective.com/joomla-component-builder "Donate towards JCB: Help Llewellyn financially so he can continue developing this great tool!") [![GPG Key](https://img.shields.io/badge/-GPG-blue?logo=gnupg)](https://git.vdm.dev/Llewellyn/gpg "Unlock Trust and Security with Llewellyn's GPG Key: Your Gateway to Verified Connections!")
+MD;
 
 		return implode("\n", $readme);
-	}
-
-	/**
-	 * The readme builder
-	 *
-	 * @param array    $classes  The powers.
-	 *
-	 * @return string
-	 * @since 3.2.0
-	 */
-	private function readmeBuilder(array &$items): string
-	{
-		$classes = [];
-		foreach ($items as $guid => $power)
-		{
-			// add to the sort bucket
-			$classes[] = [
-				'name' => $power['name'],
-				'link' => $this->indexLinkPower($power)
-			];
-		}
-
-		return $this->readmeModel($classes);
-	}
-
-	/**
-	 * Sort and model the readme classes
-	 *
-	 * @param array $classes The powers.
-	 *
-	 * @return string
-	 * @since 3.2.0
-	 */
-	private function readmeModel(array &$classes): string
-	{
-		$this->sortClasses($classes);
-
-		return $this->generateIndex($classes);
-	}
-
-	/**
-	 * Generate the index string for classes
-	 *
-	 * @param array $classes The sorted classes
-	 *
-	 * @return string The index string
-	 */
-	private function generateIndex(array &$classes): string
-	{
-		$result = "# Index of Joomla! Field Types\n";
-
-		foreach ($classes as $class)
-		{
-			// Add the class details
-			$result .= "\n - " . $class['link'];
-		}
-
-		return $result;
-	}
-
-	/**
-	 * Sort the flattened array using a single sorting function
-	 *
-	 * @param array $classes The classes to sort
-	 *
-	 * @since 3.2.0
-	 */
-	private function sortClasses(array &$classes): void
-	{
-		usort($classes, function ($a, $b) {
-			return $this->compareName($a, $b);
-		});
-	}
-
-	/**
-	 * Compare the name of two classes
-	 *
-	 * @param array $a First class
-	 * @param array $b Second class
-	 *
-	 * @return int Comparison result
-	 * @since 3.2.0
-	 */
-	private function compareName(array $a, array $b): int
-	{
-		return strcmp($a['name'], $b['name']);
-	}
-
-	/**
-	 * Build the Link to the power in this repository
-	 *
-	 * @param array  $power  The power details.
-	 *
-	 * @return string
-	 * @since 3.2.0
-	 */
-	private function indexLinkPower(array &$power): string
-	{
-		$name = $power['name'] ?? 'error';
-		return '**' . $name . "** | "
-			. $this->linkPowerRepo($power) . ' | '
-			. $this->linkPowerSettings($power) . ' | '
-			. $this->linkPowerDesc($power);
-	}
-
-	/**
-	 * Build the Link to the power in this repository
-	 *
-	 * @param array  $power  The power details.
-	 *
-	 * @return string
-	 * @since 3.2.0
-	 */
-	private function linkPowerRepo(array &$power): string
-	{
-		$path = $power['path'] ?? 'error';
-		return '[Details](' . $path . ')';
-	}
-
-	/**
-	 * Build the Link to the power settings in this repository
-	 *
-	 * @param array  $power  The power details.
-	 *
-	 * @return string
-	 * @since 3.2.0
-	 */
-	private function linkPowerSettings(array &$power): string
-	{
-		$settings = $power['settings'] ?? 'error';
-		return '[Settings](' . $settings . ')';
-	}
-
-	/**
-	 * Get the short description
-	 *
-	 * @param array  $power  The power details.
-	 *
-	 * @return string
-	 * @since 3.2.0
-	 */
-	private function linkPowerDesc(array &$power): string
-	{
-		$jpk = $power['desc'] ?? '';
-		return $jpk;
 	}
 }
 

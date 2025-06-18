@@ -16,6 +16,8 @@ use Joomla\DI\Container;
 use Joomla\DI\ServiceProviderInterface;
 use VDM\Joomla\Componentbuilder\Compiler\Power as Powers;
 use VDM\Joomla\Componentbuilder\Power\Table;
+use VDM\Joomla\Componentbuilder\Package\Dependency\Tracker;
+use VDM\Joomla\Componentbuilder\Package\MessageBus;
 use VDM\Joomla\Componentbuilder\Power\Remote\Config;
 use VDM\Joomla\Componentbuilder\Power\Remote\Get;
 use VDM\Joomla\Componentbuilder\Power\Grep;
@@ -52,6 +54,12 @@ class Power implements ServiceProviderInterface
 
 		$container->alias(Table::class, 'Power.Table')
 			->share('Power.Table', [$this, 'getPowerTable'], true);
+
+		$container->alias(Tracker::class, 'Power.Tracker')
+			->share('Power.Tracker', [$this, 'getPowerTracker'], true);
+
+		$container->alias(MessageBus::class, 'Power.Message')
+			->share('Power.Message', [$this, 'getMessageBus'], true);
 
 		$container->alias(Config::class, 'Power.Remote.Config')
 			->share('Power.Remote.Config', [$this, 'getRemoteConfig'], true);
@@ -123,6 +131,32 @@ class Power implements ServiceProviderInterface
 	}
 
 	/**
+	 * Get The Tracker Class.
+	 *
+	 * @param   Container  $container  The DI container.
+	 *
+	 * @return  Tracker
+	 * @since 5.1.1
+	 */
+	public function getPowerTracker(Container $container): Tracker
+	{
+		return new Tracker();
+	}
+
+	/**
+	 * Get The Message Bus Class.
+	 *
+	 * @param   Container  $container  The DI container.
+	 *
+	 * @return  MessageBus
+	 * @since 5.1.1
+	 */
+	public function getMessageBus(Container $container): MessageBus
+	{
+		return new MessageBus();
+	}
+
+	/**
 	 * Get The Remote Config Class.
 	 *
 	 * @param   Container  $container  The DI container.
@@ -150,7 +184,9 @@ class Power implements ServiceProviderInterface
 		return new Get(
 			$container->get('Power.Remote.Config'),
 			$container->get('Power.Grep'),
-			$container->get('Data.Item')
+			$container->get('Data.Item'),
+			$container->get('Power.Tracker'),
+			$container->get('Power.Message')
 		);
 	}
 
@@ -166,8 +202,9 @@ class Power implements ServiceProviderInterface
 	{
 		return new Grep(
 			$container->get('Power.Remote.Config'),
-			$container->get('Gitea.Repository.Contents'),
+			$container->get('Git.Repository.Contents'),
 			$container->get('Network.Resolve'),
+			$container->get('Power.Tracker'),
 			$container->get('Config')->approved_paths,
 			$container->get('Config')->local_powers_repository_path
 		);

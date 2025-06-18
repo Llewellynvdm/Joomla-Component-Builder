@@ -13,8 +13,10 @@ namespace VDM\Joomla\Componentbuilder\Package\Dependency;
 
 
 use VDM\Joomla\Interfaces\Remote\ConfigInterface as Config;
+use VDM\Joomla\Componentbuilder\Utilities\Normalize;
 use VDM\Joomla\Interfaces\Registryinterface as Tracker;
 use VDM\Joomla\Componentbuilder\Power\Interfaces\TableInterface as Table;
+use VDM\Joomla\Interfaces\Database\LoadInterface as Load;
 use VDM\Joomla\Utilities\GetHelper;
 use VDM\Joomla\Utilities\StringHelper;
 use VDM\Joomla\Utilities\ArrayHelper;
@@ -24,23 +26,31 @@ use VDM\Joomla\Interfaces\Remote\Dependency\ResolverInterface;
 /**
  * Package Dependency Resolver
  * 
- * @since 5.2.1
+ * @since 5.1.1
  */
 final class Resolver implements ResolverInterface
 {
 	/**
-	 * The ConfigInterface Class.
+	 * The Config Class.
 	 *
 	 * @var   Config
-	 * @since 5.2.1
+	 * @since 5.1.1
 	 */
 	protected Config $config;
+
+	/**
+	 * The Normalize Class.
+	 *
+	 * @var   Normalize
+	 * @since 5.1.1
+	 */
+	protected Normalize $normalize;
 
 	/**
 	 * The Tracker Class.
 	 *
 	 * @var   Tracker
-	 * @since 5.2.1
+	 * @since 5.1.1
 	 */
 	protected Tracker $tracker;
 
@@ -48,39 +58,79 @@ final class Resolver implements ResolverInterface
 	 * The Table Class.
 	 *
 	 * @var   Table
-	 * @since 5.2.1
+	 * @since 5.1.1
 	 */
 	protected Table $table;
 
 	/**
-	 * The linked fields.
+	 * The Load Class.
 	 *
-	 * @var   array
-	 * @since 5.2.1
+	 * @var   Load
+	 * @since 5.1.1
 	 */
-	protected array $linked;
+	protected Load $load;
 
 	/**
-	 * The dependencies.
+	 * The parents fields.
 	 *
 	 * @var   array
-	 * @since 5.2.1
+	 * @since 5.1.1
 	 */
-	protected array $dependencies;
+	protected array $parents;
+
+	/**
+	 * The children dependencies.
+	 *
+	 * @var   array
+	 * @since 5.1.1
+	 */
+	protected array $children;
 
 	/**
 	 * The code search.
 	 *
 	 * @var   array
-	 * @since 5.2.1
+	 * @since 5.1.1
 	 */
 	protected array $code;
+
+	/**
+	 * The file field names of this entity.
+	 *
+	 * @var   array
+	 * @since 5.1.1
+	 */
+	protected array $files;
+
+	/**
+	 * The switch to see if this entity has files
+	 *
+	 * @var   bool
+	 * @since 5.1.1
+	 */
+	protected bool $hasFiles;
+
+	/**
+	 * The folder field names of this entity.
+	 *
+	 * @var   array
+	 * @since 5.1.1
+	 */
+	protected array $folders;
+
+	/**
+	 * The switch to see if this entity has folders
+	 *
+	 * @var   bool
+	 * @since 5.1.1
+	 */
+	protected bool $hasFolders;
 
 	/**
 	 * The placeholders search.
 	 *
 	 * @var   array
-	 * @since 5.2.1
+	 * @since 5.1.1
 	 */
 	protected array $placeholders;
 
@@ -88,29 +138,39 @@ final class Resolver implements ResolverInterface
 	 * The template and layout alias map.
 	 *
 	 * @var   array
-	 * @since 5.2.1
+	 * @since 5.1.1
 	 */
-	protected array $alias_map;
+	protected array $alias_map = [];
+
+	/**
+	 * The current item dependencies map.
+	 *
+	 * @var   array
+	 * @since 5.1.1
+	 */
+	protected array $dependencies;
 
 	/**
 	 * Constructor.
 	 *
-	 * @param Config    $config    The ConfigInterface Class.
+	 * @param Config    $config    The Config Class.
+	 * @param Normalize $normalize The Normalize Class.
 	 * @param Tracker   $tracker   The Tracker Class.
 	 * @param Table     $table     The Table Class.
+	 * @param Load      $load      The Load Class.
 	 *
-	 * @since 5.2.1
+	 * @since 5.1.1
 	 */
-	public function __construct(Config $config, Tracker $tracker, Table $table)
+	public function __construct(Config $config, Normalize $normalize,
+		Tracker $tracker, Table $table, Load $load)
 	{
 		$this->config = $config;
+		$this->normalize = $normalize;
 		$this->tracker = $tracker;
 		$this->table = $table;
+		$this->load = $load;
 
-		$this->setTableLinkedFields();
-		$this->setTableDependencies();
-		$this->setTableSearch();
-		$this->setAliasMap();
+		$this->init();
 	}
 
 	/**
@@ -120,85 +180,42 @@ final class Resolver implements ResolverInterface
 	 *
 	 * @param   object  $item  The data item to inspect.
 	 *
-	 * @return  void
-	 * @since   5.2.1
+	 * @return  array|null  The extracted dependencies.
+	 * @since   5.1.1
 	 */
-	public function extract(object $item): void
+	public function extract(object $item): ?array
 	{
-		$this->extractLinkedFields($item);
-		$this->extractDependencies($item);
+		$this->dependencies = [];
+
+		// Collect dependencies data
+		$this->extractParents($item);
+		$this->extractChildren($item);
 		$this->extractDynamicContent($item);
+		$this->extractSubformFields($item);
+		$this->extractFiles($item);
+		$this->extractFolders($item);
+
+		// return the dependencies
+		return $this->getDependencies();
 	}
 
 	/**
-	 * Set all the linked fields of this table
+	 * Return the relationships/dependencies of this given item object
 	 *
-	 * @return  void
-	 * @since   5.2.1
-	 */
-	protected function setTableLinkedFields(): void
-	{
-		$this->linked = $this->table->linked($this->config->getTable());
-	}
-
-	/**
-	 * Set all the dependencies of this table
+	 * These relationships are used internally and are not part of the database schema.
+	 * They are returned under the special '@dependencies' key to avoid accidental persistence.
 	 *
-	 * @return  void
-	 * @since   5.2.1
+	 * @return  array|null   The relationships attached to this item or null.
+	 * @since   5.1.1
 	 */
-	protected function setTableDependencies(): void
+	protected function getDependencies(): ?array
 	{
-		$this->dependencies = $this->table->dependencies($this->config->getTable());
-	}
-
-	/**
-	 * Set all the related table search fields
-	 *
-	 * @return  void
-	 * @since   5.2.1
-	 */
-	protected function setTableSearch(): void
-	{
-		$this->code = $this->table->search($this->config->getTable(), 'code');
-		$this->placeholders = $this->table->search($this->config->getTable(), 'placeholders');
-	}
-
-	/**
-	 * Load all alias and GUID's of template and layout tables
-	 *
-	 * @return  void
-	 * @since   5.2.1
-	 */
-	protected function setAliasMap(): void
-	{
-		// now check if key is found
-		foreach(['template', 'layout'] as $table)
+		if (empty($this->dependencies))
 		{
-			// Create a new query object.
-			$query = $this->db->getQuery(true);
-			$query->select(array('a.guid', 'a.alias'));
-			$query->from('#__componentbuilder_' . $table . ' AS a');
-			$this->db->setQuery($query);
-			$items = $this->db->loadObjectList();
-
-			// check if we have an array
-			if (ArrayHelper::check($items))
-			{
-				$this->alias_map[$table] = [];
-				foreach ($items as $item)
-				{
-					// build the key
-					$k_ey = StringHelper::safe($item->alias);
-					$key  = preg_replace("/[^A-Za-z]/", '', (string) $k_ey);
-
-					// set the keys
-					$this->alias_map[$table][$item->alias] = $item->guid;
-					$this->alias_map[$table][$k_ey] = $item->guid;
-					$this->alias_map[$table][$key] = $item->guid;
-				}
-			}
+			return null;
 		}
+
+		return ['@dependencies' => array_values($this->dependencies)];
 	}
 
 	/**
@@ -207,14 +224,14 @@ final class Resolver implements ResolverInterface
 	 * Handles both plain fields and sub-form paths (denoted by “|”).  Any value
 	 * encountered is normalised to one-dimensional strings before recording.
 	 *
-	 * @param   object  $item  The data item containing potential linked field values.
+	 * @param   object  $item  The data item containing potential parent field values.
 	 *
 	 * @return  void
-	 * @since   5.2.1
+	 * @since   5.1.1
 	 */
-	protected function extractLinkedFields(object $item): void
+	protected function extractParents(object $item): void
 	{
-		foreach ($this->linked as $fieldName => $link)
+		foreach ($this->parents as $fieldName => $link)
 		{
 			// Decide which normaliser to employ
 			$values = (strpos($fieldName, '|') === false)
@@ -232,14 +249,14 @@ final class Resolver implements ResolverInterface
 	/**
 	 * Extracts entities that depend on this item (incoming links)
 	 *
-	 * @param   object  $item  The data item containing potential linked field values.
+	 * @param   object  $item  The data item containing potential child field values.
 	 *
 	 * @return void
-	 * @since   5.2.1
+	 * @since  5.1.1
 	 */
-	protected function extractDependencies(object $item): void
+	protected function extractChildren(object $item): void
 	{
-		foreach ($this->dependencies as $fieldName => $tables)
+		foreach ($this->children as $fieldName => $tables)
 		{
 			$values = $this->normalizeToStringArray($item->{$fieldName} ?? null);
 
@@ -256,10 +273,10 @@ final class Resolver implements ResolverInterface
 	/**
 	 * Inspects all fields for dynamic linking content.
 	 *
-	 * @param   object  $item  The data item containing potential linked field values.
+	 * @param   object  $item  The data item containing potential dynamic field values.
 	 *
 	 * @return  void
-	 * @since   5.2.1
+	 * @since   5.1.1
 	 */
 	protected function extractDynamicContent(object $item): void
 	{
@@ -269,9 +286,9 @@ final class Resolver implements ResolverInterface
 
 			if (!empty($value))
 			{
-				$this->processCustomCode($value);
-				$this->processTemplates($value);
-				$this->processLayouts($value);
+				$this->extractCustomCode($value);
+				$this->extractTemplates($value);
+				$this->extractLayouts($value);
 			}
 		}
 
@@ -281,7 +298,128 @@ final class Resolver implements ResolverInterface
 
 			if (!empty($value))
 			{
-				$this->processPlaceholders($value);
+				$this->extractPlaceholders($value);
+			}
+		}
+	}
+
+	/**
+	 * Extract subform field dependencies from an item.
+	 *
+	 * This method checks if the item is a subform field and, if so,
+	 * extracts the referenced field GUIDs from its XML definition.
+	 * Each valid field reference is recorded as a parent dependency.
+	 *
+	 * @param  object  $item  The field item to inspect.
+	 *
+	 * @return void
+	 * @since  5.1.1
+	 */
+	protected function extractSubformFields(object $item): void
+	{
+		// Only continue if we are on the field table and this is a subform field
+		if (
+			$this->config->getTable() !== 'field' ||
+			$item->fieldtype !== '7139f2c8-a70a-46a6-bbe3-4eefe54ca515'
+		) {
+			return;
+		}
+
+		// Attempt to extract the `fields` attribute value from XML
+		$rawFields = GetHelper::between($item->xml, 'fields="', '"');
+
+		if (empty($rawFields))
+		{
+			return;
+		}
+
+		// Split the list and trim all values
+		$fieldList = array_map('trim', explode(',', $rawFields));
+
+		foreach ($fieldList as $field)
+		{
+			// If numeric, convert ID to GUID
+			if (is_numeric($field))
+			{
+				$field = $this->load->value(['guid'], ['field'], ['id' => $field]);
+			}
+
+			$this->record(
+				'parent',
+				'guid',
+				$field,
+				'#__componentbuilder_field',
+				'field'
+			);
+		}
+	}
+
+	/**
+	 * Extract files from entity
+	 *
+	 * This method checks if the item has files, if so,
+	 * extracts the files from the entity based on the config details.
+	 *
+	 * @param  object  $item  The field item to inspect.
+	 *
+	 * @return  void
+	 * @since   5.1.1
+	 */
+	protected function extractFiles(object $item): void
+	{
+		// Only continue if we have
+		// files in these kind of entities
+		if (!$this->hasFiles)
+		{
+			return;
+		}
+
+		foreach ($this->files as $fieldName => $target)
+		{
+			// Decide which normaliser to employ
+			$values = (strpos($fieldName, '|') === false)
+				? $this->normalizeToStringArray($item->{$fieldName} ?? null)
+				: $this->normalizeToSubformArray($fieldName, $item);
+
+			// Persist every resolved value
+			foreach ($values as $value)
+			{
+				$this->recordFile($value, $target);
+			}
+		}
+	}
+
+	/**
+	 * Extract folders from entity
+	 *
+	 * This method checks if the item has folders, if so,
+	 * extracts the folders from the entity based on the config details.
+	 *
+	 * @param  object  $item  The field item to inspect.
+	 *
+	 * @return  void
+	 * @since   5.1.1
+	 */
+	protected function extractFolders(object $item): void
+	{
+		// Only continue if we have
+		// folders in these kind of entities
+		if (!$this->hasFolders)
+		{
+			return;
+		}
+
+		foreach ($this->folders as $fieldName => $target)
+		{
+			// Decide which normaliser to employ
+			$values = (strpos($fieldName, '|') === false)
+				? $this->normalizeToStringArray($item->{$fieldName} ?? null)
+				: $this->normalizeToSubformArray($fieldName, $item);
+
+			// Persist every resolved value
+			foreach ($values as $value)
+			{
+				$this->recordFolder($value, $target);
 			}
 		}
 	}
@@ -292,9 +430,9 @@ final class Resolver implements ResolverInterface
 	 * @param   string  $value  The input string to scan.
 	 *
 	 * @return  void
-	 * @since   5.2.1
+	 * @since   5.1.1
 	 */
-	private function processCustomCode(string $value): void
+	protected function extractCustomCode(string $value): void
 	{
 		$function_names = $this->getCustomCode($value);
 
@@ -316,9 +454,9 @@ final class Resolver implements ResolverInterface
 	 * @param   string  $value  The input string to scan.
 	 *
 	 * @return  void
-	 * @since   5.2.1
+	 * @since   5.1.1
 	 */
-	private function processTemplates(string $value): void
+	protected function extractTemplates(string $value): void
 	{
 		$guids = $this->getTemplates($value);
 
@@ -340,9 +478,9 @@ final class Resolver implements ResolverInterface
 	 * @param   string  $value  The input string to scan.
 	 *
 	 * @return  void
-	 * @since   5.2.1
+	 * @since   5.1.1
 	 */
-	private function processLayouts(string $value): void
+	protected function extractLayouts(string $value): void
 	{
 		$guids = $this->getLayouts($value);
 
@@ -364,9 +502,9 @@ final class Resolver implements ResolverInterface
 	 * @param   string  $value  The input string to scan.
 	 *
 	 * @return  void
-	 * @since   5.2.1
+	 * @since   5.1.1
 	 */
-	private function processPlaceholders(string $value): void
+	protected function extractPlaceholders(string $value): void
 	{
 		foreach ($this->getPlaceholders($value) as $target)
 		{
@@ -383,9 +521,9 @@ final class Resolver implements ResolverInterface
 	 * @param   string  $value
 	 *
 	 * @return  array
-	 * @since   5.2.1
+	 * @since   5.1.1
 	 */
-	private function getCustomCode(string $value): array
+	protected function getCustomCode(string $value): array
 	{
 		if (strpos($value, '[CUSTO' . 'MCODE=') === false)
 		{
@@ -432,9 +570,9 @@ final class Resolver implements ResolverInterface
 	 * @param   string  $value
 	 *
 	 * @return  array
-	 * @since   5.2.1
+	 * @since   5.1.1
 	 */
-	private function getTemplates(string $value): array
+	protected function getTemplates(string $value): array
 	{
 		$templates = [];
 
@@ -469,15 +607,15 @@ final class Resolver implements ResolverInterface
 	 * @param   string  $value
 	 *
 	 * @return  array
-	 * @since   5.2.1
+	 * @since   5.1.1
 	 */
-	private function getLayouts(string $value): array
+	protected function getLayouts(string $value): array
 	{
 		$layouts = [];
 
 		$patterns = [
 			["Layout" . "Helper::render('", "',"],
-			['Layout" . "Helper::render("', '",'],
+			['Layout' . 'Helper::render("', '",'],
 			["Joomla__" . "_7ab82272_0b3d_4bb1_af35_e63a096cfe0b___Power::render('", "',"],
 			['Joomla__' . '_7ab82272_0b3d_4bb1_af35_e63a096cfe0b___Power::render("', '",'],
 		];
@@ -509,11 +647,19 @@ final class Resolver implements ResolverInterface
 	 * @param   string  $value
 	 *
 	 * @return  array
-	 * @since   5.2.1
+	 * @since   5.1.1
 	 */
-	private function getPlaceholders(string $value): array
+	protected function getPlaceholders(string $value): array
 	{
-		return GetHelper::allBetween($value, '[[[', ']]]') ?? [];
+		$placeholders = GetHelper::allBetween($value, '[[[', ']]]') ?? [];
+		foreach ($placeholders as $key => $placeholder)
+		{
+			if (!$this->load->value(['id'], ['placeholder'], ['target' => "[[[{$placeholder}]]]"]))
+			{
+				unset($placeholders[$key]);
+			}
+		}
+		return $placeholders;
 	}
 
 	/**
@@ -525,14 +671,14 @@ final class Resolver implements ResolverInterface
 	 * @param   mixed  $raw  The raw value from the item field.
 	 *
 	 * @return  string[]  A list of clean, non-empty string values.
-	 * @since   5.2.1
+	 * @since   5.1.1
 	 */
-	private function normalizeToStringArray(mixed $raw): array
+	protected function normalizeToStringArray(mixed $raw): array
 	{
 		return array_values(array_filter(match (true) {
 			is_string($raw)               => [$raw],
 			is_array($raw)                => $raw,
-			$raw instanceof Traversable   => iterator_to_array($raw),
+			$raw instanceof \Traversable   => iterator_to_array($raw),
 			default                       => [],
 		}, static fn($v) => is_string($v) && trim($v) !== ''));
 	}
@@ -549,9 +695,9 @@ final class Resolver implements ResolverInterface
 	 * @param   object  $item       Source data object (row returned from Joomla DB).
 	 *
 	 * @return  string[]  One-dimensional list of normalised values.
-	 * @since   5.2.1
+	 * @since   5.1.1
 	 */
-	private function normalizeToSubformArray(string $fieldPath, object $item): array
+	protected function normalizeToSubformArray(string $fieldPath, object $item): array
 	{
 		$parts     = explode('|', $fieldPath);
 		$coreField = array_shift($parts);
@@ -559,13 +705,13 @@ final class Resolver implements ResolverInterface
 		$subData = $item->{$coreField} ?? null;
 
 		// If the core field is missing or isn’t an array, nothing to do
-		if (!is_array($subData))
+		if (!is_array($subData) && !is_object($subData))
 		{
 			return [];
 		}
 
 		// Collect every leaf value along the remaining path
-		$rawValues = $this->collectSubformValues($subData, $parts);
+		$rawValues = $this->collectSubformValues((array) $subData, $parts);
 
 		// Flatten, normalise, de-duplicate
 		$result = [];
@@ -587,9 +733,9 @@ final class Resolver implements ResolverInterface
 	 * @param   string[] $path  Remaining segments to traverse.
 	 *
 	 * @return  array  Collected raw values (may still be arrays/scalars at this point).
-	 * @since   5.2.1
+	 * @since   5.1.1
 	 */
-	private function collectSubformValues(mixed $data, array $path): array
+	protected function collectSubformValues(mixed $data, array $path): array
 	{
 		if ($data === null)
 		{
@@ -652,24 +798,331 @@ final class Resolver implements ResolverInterface
 	 * Records a  child/parent in the tracker.
 	 *
 	 * @param   string  $target  The name of the target direction (child/parent).
-	 * @param   string  $entity  The name of the linked entity.
+	 * @param   string  $entity  The name of the related entity.
 	 * @param   string  $value   The string value representing the link.
 	 * @param   string  $table   The table name where the link originates.
 	 * @param   string  $key     The key in the target table the link refers to.
 	 *
 	 * @return  void
-	 * @since   5.2.1
+	 * @since   5.1.1
 	 */
-	private function record(string $target, string $entity, string $value, string $table, string $key): void
+	protected function record(string $target, string $entity, string $value, string $table, string $key): void
 	{
-		$this->tracker->set("{$target}.{$entity}.{$key}.{$value}",
-			[
-				'key'   => $key,
-				'value' => $value,
-				'entity' => $entity,
-				'table' => $table
-			]
-		);
+		/**
+		 * (all parents) dependencies must be tracked/recorded for export/import of this entity
+		 *    parent: dependencies are those entities that [this entity] needs/depends on
+		 *
+		 * But only (direct children) should be tracked/recorded for export/import of this entity
+		 *    children: dependencies are those entities that need/depends on [this entity]
+		 *    direct-children: dependencies are those entities that [this entity] ALSO needs/depends on :)
+		 */
+		if (($target === 'child' && !$this->vaildDirectChild($entity, $value, $table, $key)) || !$this->validValue($value, $key))
+		{
+			return;
+		}
+
+		$record = [
+			'key'   => $key,
+			'value' => $value,
+			'entity' => $entity,
+			'table' => $table,
+			'direction' => $target === 'child' ? 'in' : 'out'
+		];
+
+		// add to the current item (for recovery loading)
+		$this->dependencies["{$entity}|{$key}|{$value}"] = $record;
+
+		// check if it has been loaded
+		if (!$this->tracker->exists("save.{$entity}.{$key}|{$value}"))
+		{
+			// all dependencies is added to the
+			// global tracker (for later loading)
+			$this->tracker->set("set.{$entity}.{$key}|{$value}", $record);
+		}
+	}
+
+	/**
+	 * Records a file in the tracker.
+	 *
+	 * @param   string  $filePath    The file path.
+	 * @param   string  $type    The file target.
+	 *
+	 * @return  void
+	 * @since   5.1.1
+	 */
+	protected function recordFile(string $filePath, string $target): void
+	{
+		$file = $this->normalize->path($filePath, $target);
+		if (!is_array($file) || empty($file['key']) || empty($file['path']) || empty($file['full']))
+		{
+			return;
+		}
+
+		['key' => $key, 'path' => $path, 'full' => $full] = $file;
+
+		$pointer = str_replace('.', '--', $key);
+
+		/**
+		 * (all files) files must be tracker/recorded for export/import of this entity
+		 *    file: dependencies are those files that [this entity] needs/depends on
+		 */
+		$record = [
+			'key' => $key,
+			'pointer' => $pointer,
+			'value' => $path,
+			'entity' => 'file',
+			'table' => 'file_system',
+			'target' => $target
+		];
+
+		// add to the current item
+		// for recovery loading
+		$this->dependencies["file|{$pointer}"] = $record;
+
+		if (!$this->tracker->exists("file.save.{$pointer}"))
+		{
+			// all dependencies is added to the
+			// global tracker for later loading
+			$record['full'] = $full;
+			$this->tracker->set("file.set.{$pointer}", $record);
+		}
+	}
+
+	/**
+	 * Records a folder in the tracker.
+	 *
+	 * @param   string  $type    The folder target.
+	 * @param   string  $path    The folder path.
+	 *
+	 * @return  void
+	 * @since   5.1.1
+	 */
+	protected function recordFolder(string $folderPath, string $target): void
+	{
+		$folder = $this->normalize->path($folderPath, $target);
+		if (!is_array($folder) || empty($folder['key']) || empty($folder['path']) || empty($folder['full']))
+		{
+			return;
+		}
+
+		['key' => $key, 'path' => $path, 'full' => $full] = $folder;
+
+		$pointer = str_replace('.', '--', $key);
+
+		/**
+		 * (all folders) folders must be tracker/recorded for export/import of this entity
+		 *    folder: dependencies are those folders that [this entity] needs/depends on
+		 */
+		$record = [
+			'key' => $key,
+			'pointer' => $pointer,
+			'value' => $path,
+			'entity' => 'folder',
+			'table' => 'file_system',
+			'target' => $target
+		];
+
+		// add to the current item
+		// for recovery loading
+		$this->dependencies["folder|{$pointer}"] = $record;
+
+		if (!$this->tracker->exists("folder.save.{$pointer}"))
+		{
+			// all dependencies is added to the
+			// global tracker for later loading
+			$record['full'] = $full;
+			$this->tracker->set("folder.set.{$pointer}", $record);
+		}
+	}
+
+	/**
+	 * Check if this is a valid direct child dependencies
+	 *
+	 * @param   string  $entity  The name of the related entity.
+	 * @param   string  $value   The string value representing the link.
+	 * @param   string  $table   The table name where the link originates.
+	 * @param   string  $key     The key in the target table the link refers to.
+	 *
+	 * @return  bool   true when this is a valid child
+	 * @since   5.1.1
+	 */
+	protected function vaildDirectChild(string $entity, string $value, string $table, string $key): bool
+	{
+		// should be part of the children listed
+		if (in_array($entity, $this->config->getChildren(), true))
+		{
+			// confirm the child exist
+			return $this->load->value([$key], [$table], [$key => $value]) !== null;
+		}
+
+		return false;
+	}
+
+	/**
+	 * Check if the given value is a valid entity key value.
+	 *
+	 * @param string    $value  The value to validate.
+	 * @param   string  $key    The key in the target table the link refers to.
+	 *
+	 * @return bool True if valid, false otherwise.
+	 * @since  5.1.1
+	 */
+	protected function validValue(string $value, string $key): bool
+	{
+		if ($key === 'guid')
+		{
+			return $this->validGuid($value);
+		}
+
+		if (is_numeric($value))
+		{
+			return (int) $value > 0;
+		}
+
+		return strlen(trim($value)) > 3;
+	}
+
+	/**
+	 * Validate the Globally Unique Identifier
+	 *
+	 * @param string $guid
+	 *
+	 * @return bool
+	 * @since  5.1.1
+	 */
+	protected static function validGuid($guid)
+	{
+		// check if we have a string
+		if (!empty($guid) && is_string($guid))
+		{
+			return preg_match("/^(\{)?[a-f\d]{8}(-[a-f\d]{4}){4}[a-f\d]{8}(?(1)\})$/i", $guid);
+		}
+		return false;
+	}
+
+	/**
+	 * Initialize the resolver
+	 *
+	 * @return  void
+	 * @since   5.1.1
+	 */
+	private function init(): void
+	{
+		$this->setAliasMap();
+		$this->setEntityParents();
+		$this->setEntityChildren();
+		$this->setEntitySearchAreas();
+		$this->setEntityFiles();
+		$this->setEntityFolders();
+	}
+
+	/**
+	 * Set all the linked fields (parents) of this table
+	 *
+	 * @return  void
+	 * @since   5.1.1
+	 */
+	private function setEntityParents(): void
+	{
+		$this->parents = $this->table->parents($this->config->getTable());
+	}
+
+	/**
+	 * Set all the dependencies (children) of this entity
+	 *
+	 * @return  void
+	 * @since   5.1.1
+	 */
+	private function setEntityChildren(): void
+	{
+		$this->children = $this->table->children($this->config->getTable(), $this->config->getChildren());
+	}
+
+	/**
+	 * Set all the related table search fields
+	 *
+	 * @return  void
+	 * @since   5.1.1
+	 */
+	private function setEntitySearchAreas(): void
+	{
+		$table = $this->config->getTable();
+		$this->code = $this->table->search($table, 'code');
+
+		// Only continue if we are not targeting a placeholder table
+		if ($table === 'placeholder' || $table === 'component_placeholders')
+		{
+			$this->placeholders = [];
+			return;
+		}
+
+		$this->placeholders = $this->table->search($table, 'placeholders');
+	}
+
+	/**
+	 * Set all the related table files field names
+	 *
+	 * @return  void
+	 * @since   5.1.1
+	 */
+	private function setEntityFiles(): void
+	{
+		$this->files = $this->config->getFiles();
+		if ($this->files === [])
+		{
+			$this->hasFiles = false;
+			return;
+		}
+
+		$this->hasFiles = true;
+	}
+
+	/**
+	 * Set all the related table folders field names
+	 *
+	 * @return  void
+	 * @since   5.1.1
+	 */
+	private function setEntityFolders(): void
+	{
+		$this->folders = $this->config->getFolders();
+		if ($this->folders === [])
+		{
+			$this->hasFolders = false;
+			return;
+		}
+
+		$this->hasFolders = true;
+	}
+
+	/**
+	 * Load all alias and GUID's of template and layout tables
+	 *
+	 * @return  void
+	 * @since   5.1.1
+	 */
+	private function setAliasMap(): void
+	{
+		// now check if key is found
+		foreach(['template', 'layout'] as $table)
+		{
+			$items = $this->load->items(['guid', 'alias'], [$table]);
+			if ($items !== null)
+			{
+				$this->alias_map[$table] = [];
+				foreach ($items as $item)
+				{
+					// build the key
+					$k_ey = StringHelper::safe($item->alias);
+					$key  = preg_replace("/[^A-Za-z]/", '', (string) $k_ey);
+
+					// set the keys
+					$this->alias_map[$table][$item->alias] = $item->guid;
+					$this->alias_map[$table][$k_ey] = $item->guid;
+					$this->alias_map[$table][$key] = $item->guid;
+				}
+			}
+		}
 	}
 }
 

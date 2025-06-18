@@ -19,7 +19,9 @@ use VDM\Joomla\Interfaces\Data\ItemsInterface as Items;
 use VDM\Joomla\Interfaces\Readme\ItemInterface as ItemReadme;
 use VDM\Joomla\Interfaces\Readme\MainInterface as MainReadme;
 use VDM\Joomla\Interfaces\Git\Repository\ContentsInterface as Git;
+use VDM\Joomla\Componentbuilder\Package\Dependency\Tracker;
 use VDM\Joomla\Componentbuilder\Package\MessageBus;
+use VDM\Joomla\Interfaces\Remote\Dependency\ResolverInterface as Resolver;
 use VDM\Joomla\Utilities\ObjectHelper;
 use VDM\Joomla\Interfaces\Remote\SetInterface;
 use VDM\Joomla\Abstraction\Remote\Base;
@@ -73,12 +75,31 @@ abstract class Set extends Base implements SetInterface
 	protected Git $git;
 
 	/**
+	 * The Tracker Class.
+	 *
+	 * @var   Tracker
+	 * @since 5.1.1
+	 */
+	protected Tracker $tracker;
+
+	/**
 	 * The Message Bus Class.
 	 *
 	 * @var   MessageBus
-	 * @since 5.2.1
+	 * @since 5.1.1
 	 */
 	protected MessageBus $messages;
+
+	/**
+	 * The Resolver Class
+	 *
+	 *   Only set in some child classes
+	 *      that has dependencies
+	 *
+	 * @var   Resolver
+	 * @since 5.1.1
+	 */
+	protected ?Resolver $resolver = null;
 
 	/**
 	 * All active repos
@@ -94,7 +115,7 @@ abstract class Set extends Base implements SetInterface
 	 * @var   array
 	 * @since 3.2.2
 	 */
-	protected array $settings;
+	protected array $settings = [];
 
 	/**
 	 * Repo Placeholders
@@ -113,17 +134,18 @@ abstract class Set extends Base implements SetInterface
 	 * @param ItemReadme   $itemReadme          The Item Readme Class.
 	 * @param MainReadme   $mainReadme          The Main Readme Class.
 	 * @param Git          $git                 The Contents Class.
+	 * @param Tracker      $tracker             The Tracker Class.
 	 * @param MessageBus   $messages            The MessageBus Class.
 	 * @param array        $repos               The active repos.
 	 * @param string|null  $table               The table name.
-	 * @param string|null  $settingsPath        The settings path.
+	 * @param string|null  $settingsName        The settings name.
 	 * @param string|null  $indexPath           The index path.
 	 *
 	 * @since 3.2.2
 	 */
 	public function __construct(Config $config, Grep $grep, Items $items, ItemReadme $itemReadme,
-		MainReadme $mainReadme, Git $git, MessageBus $messages, array $repos, ?string $table = null,
-		?string $settingsPath = null, ?string $indexPath = null)
+		MainReadme $mainReadme, Git $git, Tracker $tracker, MessageBus $messages,
+		array $repos, ?string $table = null, ?string $settingsName = null, ?string $indexPath = null)
 	{
 		parent::__construct($config);
 
@@ -132,6 +154,7 @@ abstract class Set extends Base implements SetInterface
 		$this->itemReadme = $itemReadme;
 		$this->mainReadme = $mainReadme;
 		$this->git = $git;
+		$this->tracker = $tracker;
 		$this->messages = $messages;
 		$this->repos = $repos;
 
@@ -140,9 +163,9 @@ abstract class Set extends Base implements SetInterface
 			$this->table($table);
 		}
 
-		if ($settingsPath !== null)
+		if ($settingsName !== null)
 		{
-			$this->setSettingsPath($settingsPath);
+			$this->setSettingsName($settingsName);
 		}
 
 		if ($indexPath !== null)
@@ -155,7 +178,6 @@ abstract class Set extends Base implements SetInterface
 			$this->area(ucfirst(str_replace('_', ' ', $this->getTable())));
 		}
 
-		// set the branch to writing
 		$this->grep->setBranchField('write_branch');
 	}
 
@@ -165,22 +187,30 @@ abstract class Set extends Base implements SetInterface
 	 * @param array   $guids    The global unique id of the item
 	 *
 	 * @return bool
-	 * @throws \Exception
 	 * @since 3.2.2
 	 */
 	public function items(array $guids): bool
 	{
-		if (!$this->canWrite())
+		if (empty($guids))
 		{
-			throw new \Exception("At least one [{$this->getArea()}] content repository must be configured with a [Write Branch] value in the repositories area for the push function to operate correctly.");
+			return false;
 		}
 
-		// we reset the index settings
-		$this->settings = [];
+		$this->grep->setBranchField('write_branch');
+		$area = $this->getArea();
+		$table = $this->getTable();
+
+		if (!$this->canWrite())
+		{
+			$target_network = $this->grep->getNetworkTarget() ?? $this->getArea();
+			$this->messages->add('error', Text::sprintf('COM_COMPONENTBUILDER_AT_LEAST_ONE_S_CONTENT_REPOSITORY_MUST_BE_CONFIGURED_WITH_A_WRITE_BRANCH_VALUE_IN_THE_REPOSITORIES_AREA_FOR_THE_PUSH_FUNCTION_TO_OPERATE_CORRECTLY', $target_network));
+			return false;
+		}
 
 		if (($items = $this->getLocalItems($guids)) === null)
 		{
-			throw new \Exception("At least one valid local [{$this->getArea()}] must exist for the push function to operate correctly.");
+			$this->messages->add('warning', Text::sprintf('COM_COMPONENTBUILDER_THE_S_ITEMS_COULD_NOT_BE_FOUND', strtolower($area)));
+			return false;
 		}
 
 		$counter = 0;
@@ -199,6 +229,14 @@ abstract class Set extends Base implements SetInterface
 			{
 				$this->saveRepoMainSettings($repo);
 			}
+		}
+
+		// add a message per area once
+		if ($counter > 0 && !$this->tracker->exists("message.{$table}"))
+		{
+			$this->tracker->set("message.{$table}", true);
+			$item_name = $counter == 1 ? 'item has' : 'items have';
+			$this->messages->add('success', Text::sprintf('COM_COMPONENTBUILDER_S_S_BEEN_PUSHED_SUCCESSFULLY', $area, $item_name));
 		}
 
 		return $counter === count($items);
@@ -276,31 +314,42 @@ abstract class Set extends Base implements SetInterface
 
 		$settings = $this->mergeIndexSettings($repoGuid, $settings);
 
-		$this->grep->loadApi($this->git, $repo->base ?? null, $repo->token ?? null);
+		// set the target system
+		$target = $repo->target ?? 'gitea';
+		$this->git->setTarget($target);
 
-		$indexPath = $this->getIndexPath();
-		if (!empty($indexPath))
-		{
-			$this->setMainRepoFile(
-				$repo,
-				$indexPath,
-				json_encode($settings, JSON_PRETTY_PRINT),
-				'Update main index file', 'Create main index file'
-			);
+		// load the base and token if set
+		$this->grep->loadApi(
+			$this->git,
+			$target === 'gitea' ? ($repo->base ?? null) : null,
+			$repo->token ?? null
+		);
+
+		try {
+			$indexPath = $this->getIndexPath();
+			if (!empty($indexPath))
+			{
+				$this->setMainRepoFile(
+					$repo,
+					$indexPath,
+					json_encode($settings, JSON_PRETTY_PRINT),
+					'Update main index file', 'Create main index file'
+				);
+			}
+			if ($this->hasMainReadme())
+			{
+				$this->setMainRepoFile(
+					$repo,
+					$this->getMainReadmePath(),
+					$this->mainReadme->get($settings),
+					'Update main readme file', 'Create main readme file'
+				);
+			}
+		} catch (\Throwable $e) {
+			$this->messages->add('error',  $e->getMessage());
+		} finally {
+			$this->git->reset_();
 		}
-
-		$mainReadmePath = $this->getMainReadmePath();
-		if (!empty($mainReadmePath))
-		{
-			$this->setMainRepoFile(
-				$repo,
-				$mainReadmePath,
-				$this->mainReadme->get($settings),
-				'Update main readme file', 'Create main readme file'
-			);
-		}
-
-		$this->git->reset_();
 	}
 
 	/**
@@ -364,12 +413,16 @@ abstract class Set extends Base implements SetInterface
 	protected function setMainRepoFile(object $repo, string $path,
 		string $content, string $updateMessage, string $createMessage): void
 	{
-		$meta = $this->git->metadata(
-			$repo->organisation,
-			$repo->repository,
-			$path,
-			$repo->write_branch
-		);
+		try {
+			$meta = $this->git->metadata(
+				$repo->organisation,
+				$repo->repository,
+				$path,
+				$repo->write_branch
+			);
+		} catch (\Throwable $e) {
+			$meta = null;
+		}
 
 		if ($meta !== null && isset($meta->sha))
 		{
@@ -382,26 +435,38 @@ abstract class Set extends Base implements SetInterface
 				return;
 			}
 
-			$this->git->update(
-				$repo->organisation, // The owner name.
-				$repo->repository, // The repository name.
-				$path, // The file path.
-				$content, // The file content.
-				$updateMessage, // The commit message.
-				$meta->sha, // The previous sha value.
-				$repo->write_branch // The branch name.
-			);
+			try {
+				$this->git->update(
+					$repo->organisation, // The owner name.
+					$repo->repository, // The repository name.
+					$path, // The file path.
+					$content, // The file content.
+					$updateMessage, // The commit message.
+					$meta->sha, // The previous sha value.
+					$repo->write_branch, // The branch name.
+					$repo->author_name, // The author name.
+					$repo->author_email // The author name.
+				);
+			} catch (\Throwable $e) {
+				$this->messages->add('error',  $e->getMessage());
+			}
 		}
 		else
 		{
-			$this->git->create(
-				$repo->organisation, // The owner name.
-				$repo->repository, // The repository name.
-				$path, // The file path.
-				$content, // The file content.
-				$createMessage, // The commit message.
-				$repo->write_branch // The branch name.
-			);
+			try {
+				$this->git->create(
+					$repo->organisation, // The owner name.
+					$repo->repository, // The repository name.
+					$path, // The file path.
+					$content, // The file content.
+					$createMessage, // The commit message.
+					$repo->write_branch, // The branch name.
+					$repo->author_name, // The author name.
+					$repo->author_email // The author name.
+				);
+			} catch (\Throwable $e) {
+				$this->messages->add('error',  $e->getMessage());
+			}
 		}
 	}
 
@@ -441,9 +506,24 @@ abstract class Set extends Base implements SetInterface
 			$this->messages->add('error', Text::sprintf('COM_COMPONENTBUILDER_S_ITEM_S_ID_S_MISSING_THE_S_KEY_VALUE', $area, $item_name, $item_id, $guid_field));
 			return false;
 		}
+		$table = $this->getTable();
+		$guid = $item->{$guid_field};
 
-		// pass item to the inspector to set all dependencies
-		// $item = $this->model->setItem($item);
+		// check if we have saved this entity already
+		if ($this->tracker->exists("save.{$table}.{$guid_field}|{$guid}"))
+		{
+			return $this->tracker->get("save.{$table}.{$guid_field}|{$guid}");
+		}
+
+		// pass item to the inspector/resolver to get all dependencies
+		$dependencies = $this->getDependencies($item);
+		if ($dependencies !== null)
+		{
+			foreach ($dependencies as $key => $dependency)
+			{
+				$item->{$key} = $dependency;
+			}
+		}
 
 		$at_least_once = false;
 		$not_approved = true;
@@ -457,46 +537,67 @@ abstract class Set extends Base implements SetInterface
 
 			$this->setRepoPlaceholders($repo);
 
-			$this->grep->loadApi($this->git, $repo->base ?? null, $repo->token ?? null);
+			// set the target system
+			$target_system = $repo->target ?? 'gitea';
+			$this->git->setTarget($target_system);
 
-			if (($existing = $this->grep->get($item->{$guid_field}, ['remote'], $repo)) !== null)
-			{
-				if ($this->updateItem($item, $existing, $repo))
+			// load the base and token if set
+			$this->grep->loadApi(
+				$this->git,
+				$target_system === 'gitea' ? ($repo->base ?? null) : null,
+				$repo->token ?? null
+			);
+
+			try {
+				if (($existing = $this->grep->get($guid, ['remote'], $repo)) !== null)
 				{
-					$this->updateItemReadme($item, $existing, $repo);
-					$at_least_once = true;
+					if ($this->updateItem($item, $existing, $repo))
+					{
+						$this->updateItemReadme($item, $existing, $repo);
+						$at_least_once = true;
+					}
 				}
-			}
-			elseif ($this->createItem($item, $repo))
-			{
-				$this->createItemReadme($item, $repo);
-
-				$index_item ??= $this->getIndexItem($item);
-
-				$at_least_once = true;
-
-				if (!isset($this->settings[$key]))
+				elseif ($this->createItem($item, $repo))
 				{
-					$this->settings[$key] = ['repo' => $repo, 'items' => [$item->{$guid_field} => $index_item]];
+					$this->createItemReadme($item, $repo);
+
+					$index_item ??= $this->getIndexItem($item);
+
+					$at_least_once = true;
+
+					if (!isset($this->settings[$key]))
+					{
+						$this->settings[$key] = ['repo' => $repo, 'items' => [$guid => $index_item]];
+					}
+					else
+					{
+						$this->settings[$key]['items'][$guid] = $index_item;
+						$this->settings[$key]['repo'] = $repo;
+					}
 				}
 				else
 				{
-					$this->settings[$key]['items'][$item->{$guid_field}] = $index_item;
+					$repo_name = $this->getRepoName($repo);
+					$this->messages->add('error',
+						Text::sprintf('COM_COMPONENTBUILDER_S_ITEM_S_ID_S_COULD_NOT_BE_CREATED_OR_FOUND_IN_REPOS',
+							$area, $item_name, $item_id, $repo_name));
 				}
-			}
-			else
-			{
+			} catch (\Throwable $e) {
 				$repo_name = $this->getRepoName($repo);
-				$this->messages->add('error', Text::sprintf('COM_COMPONENTBUILDER_S_ITEM_S_ID_S_COULD_NOT_BE_CREATED_OR_FOUND_IN_REPOS', $area, $item_name, $item_id, $repo_name));
+				$this->messages->add('error',
+					Text::sprintf('COM_COMPONENTBUILDER_S_ITEM_S_ID_S_ENCOUNTERED_AN_ERROR_IN_REPOSBRERROR_MESSAGEBRS',
+						$area, $item_name, $item_id, $repo_name, $e->getMessage()));
+			} finally {
+				$this->git->reset_();
 			}
-
-			$this->git->reset_();
 		}
 
 		if (!$at_least_once && $not_approved)
 		{
 			$this->messages->add('warning', Text::sprintf('COM_COMPONENTBUILDER_S_ITEM_S_ID_S_IS_NOT_APPROVED_AND_THEREFORE_NOT_LINKED_TO_ANY_REPOSITORY', $area, $item_name, $item_id));
 		}
+
+		$this->tracker->set("save.{$table}.{$guid_field}|{$guid}", $at_least_once);
 
 		return $at_least_once;
 	}
@@ -519,6 +620,23 @@ abstract class Set extends Base implements SetInterface
 				$this->repoPlaceholders[$key] = $value;
 			}
 		}
+	}
+
+	/**
+	 * Get the dependencies of this item
+	 *
+	 * @param  object   $item    The item to resolve the dependencies
+	 *
+	 * @return array|null  The array of relationships or null for none
+	 * @since 3.2.2
+	 */
+	protected function getDependencies($item): ?array
+	{
+		if ($this->resolver instanceof Resolver)
+		{
+			return $this->resolver->extract($item);
+		}
+		return null;
 	}
 
 	/**
@@ -577,7 +695,7 @@ abstract class Set extends Base implements SetInterface
 	 * @param object  $repo  The current repo
 	 *
 	 * @return string
-	 * @since  5.2.1
+	 * @since  5.1.1
 	 */
 	protected function getRepoName(object $repo): string
 	{
@@ -604,7 +722,7 @@ abstract class Set extends Base implements SetInterface
 	 */
 	protected function areObjectsEqual(?object $obj1, ?object $obj2): bool
 	{
-		return ObjectHelper::equal($obj1, $obj2); // basic comparison
+		return ObjectHelper::equal($obj1, $obj2, ['@dependencies']); // basic comparison
 	}
 }
 

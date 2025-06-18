@@ -105,7 +105,9 @@ class JoomlaPower implements ServiceProviderInterface
 		return new Get(
 			$container->get('Joomla.Power.Remote.Config'),
 			$container->get('Joomla.Power.Grep'),
-			$container->get('Data.Item')
+			$container->get('Data.Item'),
+			$container->get('Power.Tracker'),
+			$container->get('Power.Message')
 		);
 	}
 
@@ -121,8 +123,9 @@ class JoomlaPower implements ServiceProviderInterface
 	{
 		return new Grep(
 			$container->get('Joomla.Power.Remote.Config'),
-			$container->get('Gitea.Repository.Contents'),
+			$container->get('Git.Repository.Contents'),
 			$container->get('Network.Resolve'),
+			$container->get('Power.Tracker'),
 			$container->get('Config')->approved_joomla_paths
 		);
 	}

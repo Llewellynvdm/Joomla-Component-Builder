@@ -19,7 +19,7 @@ use VDM\Joomla\Componentbuilder\Compiler\Builder\ContentMulti;
 /**
  * Compiler Field Modal Select
  * 
- * @since 5.2.1
+ * @since 5.1.1
  */
 final class ModalSelect
 {
@@ -27,7 +27,7 @@ final class ModalSelect
 	 * The Structure Class.
 	 *
 	 * @var   Structure
-	 * @since 5.2.1
+	 * @since 5.1.1
 	 */
 	protected Structure $structure;
 
@@ -35,7 +35,7 @@ final class ModalSelect
 	 * The ContentMulti Class.
 	 *
 	 * @var   ContentMulti
-	 * @since 5.2.1
+	 * @since 5.1.1
 	 */
 	protected ContentMulti $contentmulti;
 
@@ -43,7 +43,7 @@ final class ModalSelect
 	 * The switch to ensure the fix is just added once
 	 *
 	 * @var    bool
-	 * @since 5.2.1
+	 * @since 5.1.1
 	 */
 	protected bool $addedFix = false;
 
@@ -53,7 +53,7 @@ final class ModalSelect
 	 * @param Structure      $structure      The Structure Class.
 	 * @param ContentMulti   $contentmulti   The ContentMulti Class.
 	 *
-	 * @since 5.2.1
+	 * @since 5.1.1
 	 */
 	public function __construct(Structure $structure, ContentMulti $contentmulti)
 	{

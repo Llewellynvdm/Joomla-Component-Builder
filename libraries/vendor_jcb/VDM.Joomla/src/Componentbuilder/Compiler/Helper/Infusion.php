@@ -13,8 +13,8 @@ namespace VDM\Joomla\Componentbuilder\Compiler\Helper;
 
 
 use Joomla\CMS\Factory;
-use Joomla\CMS\Filesystem\File;
-use Joomla\CMS\Filesystem\Folder;
+use Joomla\Filesystem\File;
+use Joomla\Filesystem\Folder;
 use Joomla\Filter\OutputFilter;
 use VDM\Component\Componentbuilder\Administrator\Helper\ComponentbuilderHelper;
 use VDM\Joomla\Utilities\StringHelper;
@@ -2524,7 +2524,7 @@ class Infusion extends Interpretation
 						// build the path to place the lang file
 						$path = CFactory::_('Utilities.Paths')->component_path . '/' . $p . '/language/'
 							. $tag . '/';
-						if (!Folder::exists($path))
+						if (!is_dir($path))
 						{
 							Folder::create($path);
 							// count the folder created

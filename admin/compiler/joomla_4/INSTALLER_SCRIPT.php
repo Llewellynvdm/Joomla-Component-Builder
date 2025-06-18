@@ -16,12 +16,12 @@ defined('_JCB_TEMPLATE') or die;
 
 use Joomla\CMS\Factory;
 use Joomla\CMS\Language\Text;
-use Joomla\CMS\Filesystem\File;
 use Joomla\CMS\Installer\InstallerAdapter;
 use Joomla\CMS\Installer\InstallerScriptInterface;
 use Joomla\CMS\Log\Log;
 use Joomla\CMS\Version;
 use Joomla\CMS\HTML\HTMLHelper as Html;
+use Joomla\Filesystem\File;
 use Joomla\Filesystem\Folder;
 use Joomla\Database\DatabaseInterface;
 

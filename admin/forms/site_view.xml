@@ -143,16 +143,28 @@
 			message="COM_COMPONENTBUILDER_SITE_VIEW_DESCRIPTION_MESSAGE"
 			hint="COM_COMPONENTBUILDER_SITE_VIEW_DESCRIPTION_HINT"
 		/>
-		<!-- Main_get Field. Type: Maingets. (custom) -->
+		<!-- Main_get Field. Type: Modalselect. (custom) -->
 		<field
-			type="maingets"
+			type="ModalSelect"
 			name="main_get"
 			label="COM_COMPONENTBUILDER_SITE_VIEW_MAIN_GET_LABEL"
-			description="COM_COMPONENTBUILDER_SITE_VIEW_MAIN_GET_DESCRIPTION"
-			layout="joomla.form.field.list-fancy-select"
-			multiple="false"
+			sql_title_table="#__componentbuilder_dynamic_get"
+			sql_title_column="name"
+			data-key-name="guid"
+			sql_title_key="guid"
+			urlSelect="index.php?option=com_componentbuilder&amp;view=dynamic_gets&amp;layout=modal&amp;tmpl=component&amp;titleKey=guid&amp;filter[getgroup]=main"
+			urlNew="index.php?option=com_componentbuilder&amp;task=dynamic_get.add&amp;layout=modal&amp;tmpl=component"
+			urlEdit="index.php?option=com_componentbuilder&amp;task=dynamic_get.edit&amp;guid={id}&amp;layout=modal&amp;tmpl=component&amp;titleKey=guid"
+			titleSelect="COM_COMPONENTBUILDER_SITE_VIEW_MAIN_GET_TITLESELECT"
+			titleEdit="COM_COMPONENTBUILDER_SITE_VIEW_MAIN_GET_TITLEEDIT"
+			iconSelect="icon-copy"
+			select="true"
+			new="false"
+			edit="true"
+			clear="true"
 			required="true"
-			button="true"
+			class="input-large"
+			description="COM_COMPONENTBUILDER_SITE_VIEW_MAIN_GET_DESCRIPTION"
 		/>
 		<!-- Add_php_jview_display Field. Type: Radio. (joomla) -->
 		<field

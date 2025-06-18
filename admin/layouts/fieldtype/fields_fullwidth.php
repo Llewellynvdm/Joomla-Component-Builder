@@ -21,7 +21,7 @@ use Joomla\CMS\User\UserFactoryInterface;
 defined('_JEXEC') or die;
 
 // set the defaults
-$items = $displayData->vxlfields;
+$items = $displayData->vxifields;
 $user = Factory::getApplication()->getIdentity();
 $id = $displayData->item->id;
 // set the edit URL

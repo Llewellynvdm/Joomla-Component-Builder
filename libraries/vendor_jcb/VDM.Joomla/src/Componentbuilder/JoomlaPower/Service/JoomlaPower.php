@@ -15,8 +15,6 @@ namespace VDM\Joomla\Componentbuilder\JoomlaPower\Service;
 use Joomla\DI\Container;
 use Joomla\DI\ServiceProviderInterface;
 use VDM\Joomla\Componentbuilder\JoomlaPower\Config;
-use VDM\Joomla\Componentbuilder\Power\Table;
-use VDM\Joomla\Componentbuilder\Package\MessageBus;
 use VDM\Joomla\Componentbuilder\JoomlaPower\Grep;
 use VDM\Joomla\Componentbuilder\JoomlaPower\Remote\Config as RemoteConfig;
 use VDM\Joomla\Componentbuilder\Power\Remote\Get;
@@ -42,14 +40,8 @@ class JoomlaPower implements ServiceProviderInterface
 	 */
 	public function register(Container $container)
 	{
-		$container->alias(Config::class, 'Config')
-			->share('Config', [$this, 'getConfig'], true);
-
-		$container->alias(Table::class, 'Power.Table')->alias('Table', 'Power.Table')
-			->share('Power.Table', [$this, 'getPowerTable'], true);
-
-		$container->alias(MessageBus::class, 'Power.Message')
-			->share('Power.Message', [$this, 'getMessageBus'], true);
+		$container->alias(Config::class, 'Joomla.Power.Config')->alias('Config', 'Joomla.Power.Config')
+			->share('Joomla.Power.Config', [$this, 'getConfig'], true);
 
 		$container->alias(Grep::class, 'Joomla.Power.Grep')
 			->share('Joomla.Power.Grep', [$this, 'getGrep'], true);
@@ -84,32 +76,6 @@ class JoomlaPower implements ServiceProviderInterface
 	}
 
 	/**
-	 * Get The Power Table Class.
-	 *
-	 * @param   Container  $container  The DI container.
-	 *
-	 * @return  Table
-	 * @since   5.1.1
-	 */
-	public function getPowerTable(Container $container): Table
-	{
-		return new Table();
-	}
-
-	/**
-	 * Get The Message Bus Class.
-	 *
-	 * @param   Container  $container  The DI container.
-	 *
-	 * @return  MessageBus
-	 * @since   5.2.1
-	 */
-	public function getMessageBus(Container $container): MessageBus
-	{
-		return new MessageBus();
-	}
-
-	/**
 	 * Get The Grep Class.
 	 *
 	 * @param   Container  $container  The DI container.
@@ -121,9 +87,10 @@ class JoomlaPower implements ServiceProviderInterface
 	{
 		return new Grep(
 			$container->get('Joomla.Power.Remote.Config'),
-			$container->get('Gitea.Repository.Contents'),
+			$container->get('Git.Repository.Contents'),
 			$container->get('Network.Resolve'),
-			$container->get('Config')->approved_joomla_paths
+			$container->get('Power.Tracker'),
+			$container->get('Joomla.Power.Config')->approved_joomla_paths
 		);
 	}
 
@@ -155,7 +122,9 @@ class JoomlaPower implements ServiceProviderInterface
 		return new Get(
 			$container->get('Joomla.Power.Remote.Config'),
 			$container->get('Joomla.Power.Grep'),
-			$container->get('Data.Item')
+			$container->get('Data.Item'),
+			$container->get('Power.Tracker'),
+			$container->get('Power.Message')
 		);
 	}
 
@@ -175,9 +144,10 @@ class JoomlaPower implements ServiceProviderInterface
 			$container->get('Data.Items'),
 			$container->get('Joomla.Power.Readme.Item'),
 			$container->get('Joomla.Power.Readme.Main'),
-			$container->get('Gitea.Repository.Contents'),
+			$container->get('Git.Repository.Contents'),
+			$container->get('Power.Tracker'),
 			$container->get('Power.Message'),
-			$container->get('Config')->approved_joomla_paths
+			$container->get('Joomla.Power.Config')->approved_joomla_paths
 		);
 	}
 

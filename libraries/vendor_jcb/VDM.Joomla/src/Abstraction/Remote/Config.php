@@ -19,7 +19,7 @@ use VDM\Joomla\Interfaces\Remote\ConfigInterface;
 /**
  * Remote Base Config Shared by get and set methods
  * 
- * @since 5.2.1
+ * @since 5.1.1
  */
 abstract class Config implements ConfigInterface
 {
@@ -27,7 +27,7 @@ abstract class Config implements ConfigInterface
 	 * The Table Class.
 	 *
 	 * @var   Table
-	 * @since 5.2.1
+	 * @since 5.1.1
 	 */
 	protected Table $core;
 
@@ -53,7 +53,7 @@ abstract class Config implements ConfigInterface
 	 * @var    string
 	 * @since 3.2.2
 	 */
-	protected string $prefix_key = 'Super---';
+	protected string $prefix_key = '';
 
 	/**
 	 * Suffix Key
@@ -61,15 +61,23 @@ abstract class Config implements ConfigInterface
 	 * @var    string
 	 * @since 3.2.2
 	 */
-	protected string $suffix_key = '---Power';
+	protected string $suffix_key = '';
 
 	/**
 	 * The main readme file path
 	 *
 	 * @var    string
-	 * @since  5.2.1
+	 * @since  5.1.1
 	 */
 	protected string $main_readme_path = 'README.md';
+
+	/**
+	 * The item readme file name
+	 *
+	 * @var    string
+	 * @since  5.1.1
+	 */
+	protected string $item_readme_name = 'README.md';
 
 	/**
 	 * The index file path (index of all items)
@@ -83,23 +91,23 @@ abstract class Config implements ConfigInterface
 	 * The item (files) source path
 	 *
 	 * @var    string
-	 * @since  5.2.1
+	 * @since  5.1.1
 	 */
 	protected string $src_path = 'src';
 
 	/**
-	 * The item settings file path (item data)
+	 * The item settings file name (item data)
 	 *
 	 * @var   string
 	 * @since 3.2.2
 	 */
-	protected string $settings_path = 'item.json';
+	protected string $settings_name = 'item.json';
 
 	/**
 	 * The item guid=unique field
 	 *
 	 * @var    string
-	 * @since  5.2.1
+	 * @since  5.1.1
 	 */
 	protected string $guid_field = 'guid';
 
@@ -107,9 +115,33 @@ abstract class Config implements ConfigInterface
 	 * The ignore fields
 	 *
 	 * @var   array
-	 * @since  5.2.1
+	 * @since  5.1.1
 	 */
-	protected array $ignore = [];
+	protected array $ignore = ['access'];
+
+	/**
+	 * The files (to map target files to move in an entity)
+	 *
+	 *   Use a pipe in the name to denote
+	 *   subform location of the value
+	 *      format: [field_name, field_name|subfrom_key]
+	 *
+	 * @var   array
+	 * @since  5.1.1
+	 */
+	protected array $files = [];
+
+	/**
+	 * The folders (to map target folders to move in an entity)
+	 *
+	 *   Use a pipe in the name to denote
+	 *   subform location of the value
+	 *      format: [field_name, field_name|subfrom_key]
+	 *
+	 * @var   array
+	 * @since  5.1.1
+	 */
+	protected array $folders = [];
 
 	/**
 	 * The item map
@@ -120,33 +152,44 @@ abstract class Config implements ConfigInterface
 	protected array $map = [];
 
 	/**
+	 * The direct entities/children of this entity
+	 *
+	 * @var    array
+	 * @since  5.1.1
+	 */
+	protected array $children = [];
+
+	/**
 	 * The index map
-	 *    must always have: [name,path,guid]
+	 *    must always have: [name,path,settings,guid]
 	 *    you can add more
 	 *
-	 * @var   array
-	 * @since 5.0.3
+	 * @var    array
+	 * @since  5.0.3
 	 */
 	protected array $index_map = [
 		'name' => 'index_map_IndexName',
 		'path' => 'index_map_IndexPath',
+		'settings' => 'index_map_IndexSettingsPath',
 		'guid' => 'index_map_IndexGUID'
 	];
 
 	/**
 	 * The index header
 	 *    mapping the index map to a table
-	 *    must always have: [name,path,guid,local]
+	 *    must always have: [name,path,settings,guid,local]
 	 *    with [name] always first
-	 *    with [path,guid,local] always last
+	 *    with [path,settings,guid,local] always last
 	 *    you can add more in between
 	 *
 	 * @var    array
-	 * @since  5.2.1
+	 * @since  5.1.1
 	 */
 	protected array $index_header = [
 		'name',
+		// from here you can add more
 		'path',
+		'settings',
 		'guid',
 		'local'
 	];
@@ -157,19 +200,14 @@ abstract class Config implements ConfigInterface
 	 * @var    array
 	 * @since  5.0.3
 	 */
-	protected array $placeholders = [
-		'[['.'[NamespacePrefix]]]' => 'VDM',
-		'[['.'[ComponentNamespace]]]' => 'Componentbuilder',
-		'[['.'[Component]]]' => 'Componentbuilder', 
-		'[['.'[component]]]' => 'componentbuilder'
-	];
+	protected array $placeholders = [];
 
 	/**
 	 * Constructor.
 	 *
 	 * @param Table   $core   The Core Table Class.
 	 *
-	 * @since 5.2.1
+	 * @since 5.1.1
 	 */
 	public function __construct(Table $core)
 	{
@@ -180,7 +218,7 @@ abstract class Config implements ConfigInterface
 	 * Get core placeholders
 	 *
 	 * @return  array
-	 * @since   5.2.1
+	 * @since   5.1.1
 	 */
 	public function getPlaceholders(): array
 	{
@@ -240,29 +278,29 @@ abstract class Config implements ConfigInterface
 	}
 
 	/**
-	 * Set the settings path
+	 * Set the settings file name
 	 *
-	 * @param string    $settingsPath    The repository settings path
+	 * @param string    $settingsName    The repository settings path
 	 *
 	 * @return self
 	 * @since 3.2.2
 	 */
-	public function setSettingsPath(string $settingsPath): self
+	public function setSettingsName(string $settingsName): self
 	{
-		$this->settings_path = $settingsPath;
+		$this->settings_name = $settingsName;
 
 		return $this;
 	}
 
 	/**
-	 * Get the settings path
+	 * Get the settings file name
 	 *
 	 * @return string
 	 * @since 3.2.2
 	 */
-	public function getSettingsPath(): string
+	public function getSettingsName(): string
 	{
-		return $this->settings_path;
+		return $this->settings_name;
 	}
 
 	/**
@@ -293,7 +331,7 @@ abstract class Config implements ConfigInterface
 	 * Get index map
 	 *
 	 * @return array
-	 * @since  5.2.1
+	 * @since  5.1.1
 	 */
 	public function getIndexMap(): array
 	{
@@ -304,7 +342,7 @@ abstract class Config implements ConfigInterface
 	 * Get index header
 	 *
 	 * @return array
-	 * @since  5.2.1
+	 * @since  5.1.1
 	 */
 	public function getIndexHeader(): array
 	{
@@ -315,7 +353,7 @@ abstract class Config implements ConfigInterface
 	 * Get src path
 	 *
 	 * @return string
-	 * @since  5.2.1
+	 * @since  5.1.1
 	 */
 	public function getSrcPath(): string
 	{
@@ -326,11 +364,66 @@ abstract class Config implements ConfigInterface
 	 * Get main readme path
 	 *
 	 * @return string
-	 * @since  5.2.1
+	 * @since  5.1.1
 	 */
 	public function getMainReadmePath(): string
 	{
 		return $this->main_readme_path;
+	}
+
+	/**
+	 * Has main readme
+	 *
+	 * @return bool
+	 * @since  5.1.1
+	 */
+	public function hasMainReadme(): bool
+	{
+		return !empty($this->main_readme_path);
+	}
+
+	/**
+	 * Get item readme path
+	 *
+	 * @return string
+	 * @since  5.1.1
+	 */
+	public function getItemReadmeName(): string
+	{
+		return $this->item_readme_name;
+	}
+
+	/**
+	 * Has item readme
+	 *
+	 * @return bool
+	 * @since  5.1.1
+	 */
+	public function hasItemReadme(): bool
+	{
+		return !empty($this->item_readme_name);
+	}
+
+	/**
+	 * Get the field names of the files in the entity
+	 *
+	 * @return array
+	 * @since  5.1.1
+	 */
+	public function getFiles(): array
+	{
+		return $this->files;
+	}
+
+	/**
+	 * Get the field names of the folders in the entity
+	 *
+	 * @return array
+	 * @since  5.1.1
+	 */
+	public function getFolders(): array
+	{
+		return $this->folders;
 	}
 
 	/**
@@ -340,7 +433,7 @@ abstract class Config implements ConfigInterface
 	 * automatically removing any fields defined in $this->ignore.
 	 *
 	 * @return  array  Associative array in the form ['field' => 'field']
-	 * @since   5.2.1
+	 * @since   5.1.1
 	 */
 	public function getMap(): array
 	{
@@ -371,10 +464,21 @@ abstract class Config implements ConfigInterface
 	}
 
 	/**
+	 * Get the direct entities/children of this entity
+	 *
+	 * @return array
+	 * @since  5.1.1
+	 */
+	public function getChildren(): array
+	{
+		return $this->children;
+	}
+
+	/**
 	 * Get the table title name field
 	 *
 	 * @return string
-	 * @since  5.2.1
+	 * @since  5.1.1
 	 */
 	public function getTitleName(): string
 	{
@@ -385,7 +489,7 @@ abstract class Config implements ConfigInterface
 	 * Get GUID field
 	 *
 	 * @return string
-	 * @since  5.2.1
+	 * @since  5.1.1
 	 */
 	public function getGuidField(): string
 	{
@@ -396,7 +500,7 @@ abstract class Config implements ConfigInterface
 	 * Get Prefix Key
 	 *
 	 * @return string
-	 * @since  5.2.1
+	 * @since  5.1.1
 	 */
 	public function getPrefixKey(): string
 	{
@@ -407,7 +511,7 @@ abstract class Config implements ConfigInterface
 	 * Get Suffix Key
 	 *
 	 * @return string
-	 * @since  5.2.1
+	 * @since  5.1.1
 	 */
 	public function getSuffixKey(): string
 	{

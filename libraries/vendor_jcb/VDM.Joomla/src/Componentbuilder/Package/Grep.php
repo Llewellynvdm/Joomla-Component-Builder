@@ -25,7 +25,7 @@ use VDM\Joomla\Abstraction\Grep as ExtendingGrep;
  *    Super Powers of JCB. All searches are performed according the [algorithm:cascading]
  *    See documentation for more details: https://git.vdm.dev/joomla/super-powers/wiki
  * 
- * @since 5.2.1
+ * @since 5.1.1
  */
 final class Grep extends ExtendingGrep implements GrepInterface
 {
@@ -33,7 +33,7 @@ final class Grep extends ExtendingGrep implements GrepInterface
 	 * The Grep target [network]
 	 *
 	 * @var    string
-	 * @since  5.2.1
+	 * @since  5.1.1
 	 **/
 	protected ?string $target = 'package';
 
@@ -41,7 +41,7 @@ final class Grep extends ExtendingGrep implements GrepInterface
 	 * Order of global search
 	 *
 	 * @var    array
-	 * @since 5.2.1
+	 * @since 5.1.1
 	 **/
 	protected array $order = ['remote'];
 
@@ -51,7 +51,7 @@ final class Grep extends ExtendingGrep implements GrepInterface
 	 * @param string    $guid    The global unique id of the item
 	 *
 	 * @return object|null
-	 * @since  5.2.1
+	 * @since  5.1.1
 	 */
 	protected function searchRemote(string $guid): ?object
 	{
@@ -65,81 +65,119 @@ final class Grep extends ExtendingGrep implements GrepInterface
 	}
 
 	/**
-	 * Get a remote joomla power
+	 * Get a remote package (item) object from a repository.
 	 *
-	 * @param object    $path    The repository path details
-	 * @param string    $guid    The global unique id of the power
+	 * @param object $path  The repository path details
+	 * @param string $guid  The global unique ID of the power
 	 *
 	 * @return object|null
-	 * @since  5.2.1
+	 * @since  5.1.1
 	 */
 	protected function getRemote(object $path, string $guid): ?object
 	{
-		$power = null;
-		if (empty($path->index->{$guid}->path))
+		$relative_path = $path->index[$this->entity]->{$guid}->path ?? null;
+		if (empty($relative_path))
 		{
-			return $power;
+			return null;
 		}
 
-		// get the branch name
-		$branch = $this->getBranchName($path);
+		$branch         = $this->getBranchName($path);
+		$guid_field     = $this->getGuidField();
+		$settings_name  = $this->getSettingsName();
+		$readme_enabled = $this->hasItemReadme();
 
-		// get the guid_field key
-		$guid_field = $this->getGuidField();
-
-		// get the settings path
-		$settings_path = $this->getSettingsPath();
+		// set the target system
+		$target = $path->target ?? 'gitea';
+		$this->contents->setTarget($target);
 
 		// load the base and token if set
-		$this->loadApi($this->contents, $path->base ?? null, $path->token ?? null);
+		$this->loadApi(
+			$this->contents,
+			$target === 'gitea' ? ($path->base ?? null) : null,
+			$path->token ?? null
+		);
 
-		// get the settings
-		if (($power = $this->loadRemoteFile($path->organisation, $path->repository, $path->index->{$guid}->path . '/' . $settings_path, $branch)) !== null &&
-			isset($power->{$guid_field}))
+		$power = $this->loadRemoteFile(
+			$path->organisation,
+			$path->repository,
+			"{$relative_path}/{$settings_name}",
+			$branch
+		);
+
+		if ($power === null || !isset($power->{$guid_field}))
 		{
-			// set the git details in params
-			$path_guid = $path->guid ?? null;
-			if ($path_guid !== null)
+			$this->contents->reset_();
+			return null;
+		}
+
+		$path_guid = $path->guid ?? null;
+
+		$branch_field = $this->getBranchField();
+
+		if ($branch_field === 'write_branch' && $path_guid !== null)
+		{
+			$this->setRepoItemSha($power, $path, "{$relative_path}/{$settings_name}", $branch, "{$path_guid}-settings");
+
+			if ($readme_enabled)
 			{
-				// get the Settings meta
-				if (($meta = $this->contents->metadata($path->organisation, $path->repository, $path->index->{$guid}->path . '/' . $settings_path, $branch)) !== null &&
-					isset($meta->sha))
-				{
-					if (isset($power->params) && is_object($power->params) &&
-						isset($power->params->source) && is_array($power->params->source))
-					{
-						$power->params->source[$path_guid . '-settings'] = $meta->sha;
-					}
-					else
-					{
-						$power->params = (object) [
-							'source' => [$path_guid . '-settings' => $meta->sha]
-						];
-					}
-				}
-				// get the README meta
-				if (($meta = $this->contents->metadata($path->organisation, $path->repository, $path->index->{$guid}->path . '/README.md', $branch)) !== null &&
-					isset($meta->sha))
-				{
-					if (isset($power->params) && is_object($power->params) &&
-						isset($power->params->source) && is_array($power->params->source))
-					{
-						$power->params->source[$path_guid . '-readme'] = $meta->sha;
-					}
-					else
-					{
-						$power->params = (object) [
-							'source' => [$path_guid . '-readme' => $meta->sha]
-						];
-					}
-				}
+				$readme_name = $this->getItemReadmeName();
+				$this->setRepoItemSha($power, $path, "{$relative_path}/{$readme_name}", $branch, "{$path_guid}-readme");
 			}
 		}
 
-		// reset back to the global base and token
 		$this->contents->reset_();
 
+		$this->setDependencies($power);
+
 		return $power;
+	}
+
+	/**
+	 * Load dependency records into the tracker.
+	 *
+	 * This method supports each dependency item being either an object or an associative array.
+	 * It verifies the presence of the `key`, `value`, and `entity` properties before adding them to the tracker.
+	 *
+	 * @param object $power  The remote power object
+	 *
+	 * @return void
+	 * @since 5.1.1
+	 */
+	protected function setDependencies(object $power): void
+	{
+		$dependencies = $power->{"@dependencies"} ?? [];
+
+		if (empty($dependencies))
+		{
+			return;
+		}
+
+		foreach ($dependencies as $item)
+		{
+			// Support both object and array types
+			$key    = is_array($item) ? ($item['key'] ?? null)    : ($item->key    ?? null);
+			$value  = is_array($item) ? ($item['value'] ?? null)  : ($item->value  ?? null);
+			$entity = is_array($item) ? ($item['entity'] ?? null) : ($item->entity ?? null);
+			$table = is_array($item) ? ($item['table'] ?? null) : ($item->table ?? null);
+
+			if (empty($key) || empty($value) || empty($entity))
+			{
+				continue;
+			}
+
+			if ($table === 'file_system')
+			{
+				$pointer = str_replace('.', '--', $key);
+				if (!$this->tracker->exists("{$entity}.save.{$pointer}"))
+				{
+					$this->tracker->set("{$entity}.get.{$pointer}", $item);
+				}
+			}
+			elseif (!$this->tracker->exists("save.{$entity}.{$key}|{$value}"))
+			{
+				$this->tracker->set("get.{$entity}.{$key}|{$value}", $item);
+			}
+		}
 	}
 
 	/**
@@ -152,7 +190,7 @@ final class Grep extends ExtendingGrep implements GrepInterface
 	 * @param string|null  $base          Base URL
 	 *
 	 * @return void
-	 * @since  5.2.1
+	 * @since  5.1.1
 	 */
 	protected function setRemoteIndexMessage(string $message, string $path, string $repository, string $organisation, ?string $base): void
 	{

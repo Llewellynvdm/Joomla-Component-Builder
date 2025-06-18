@@ -22,19 +22,18 @@ defined('JPATH_BASE') or die;
 
 $table_id = $displayData['id'] ?? 'power_selection_table';
 $headers = $displayData['headers'] ?? ['error'];
-$default_items_number = 10;
+$default_items_number = 13;
 $unique_name = '';
 
 ?>
-<?php echo LayoutHelper::render(
-	'table',
+<?php echo LayoutHelper::render('table',
 	[
 		'id' => $table_id,
 		'table_class' => 'table table-striped',
 		'table_container_class' => 'power-selection-table-container',
 		'name' => Text::_('COM_COMPONENTBUILDER_MAKE_YOUR_SELECTION'),
 		'headers' => $headers,
-		'items' => 10,
+		'items' => [],
 		'default_items_number' => $default_items_number,
 		'init' => false
 	]
@@ -59,20 +58,39 @@ document.addEventListener("DOMContentLoaded", function() {
 		columnDefs: [
 			{ 'targets': [ -1 ], 'visible': false, 'searchable': false },
 			{ responsivePriority: 1, targets: 1 },
-			{ responsivePriority: 2, targets: -3 }
+			{ responsivePriority: 2, targets: -4 }
 		],
 		columns: [<?php foreach($headers as $header): ?><?php if ($header === 'path'): ?>
 			{
 				data: 'path',
 				render: function(data, type) {
-					if (type === 'display') {
-						return '<a href="' + targetPowerRepoUrl + data + '" target="_blank">' + data + '</a>'
+					if (data !== '' && type === 'display') {
+						return '<a href="' + targetPowerRepoUrl + encodePath(data) + '" target="_blank">' + data + '</a>'
+					} else  if (data === '' && type !== 'display') {
+						return 'zzzzzzzzzzzz';
+					}
+					return data;
+				}
+			},<?php elseif ($header === 'settings'): ?>
+			{
+				data: 'settings',
+				render: function(data, type) {
+					if (data !== '' && type === 'display') {
+						return '<a href="' + targetPowerRepoUrl + encodePath(data) + '" target="_blank">' + data + '</a>'
+					} else  if (data === '' && type !== 'display') {
+						return 'zzzzzzzzzzzz';
 					}
 					return data;
 				}
 			},<?php else: ?>
 			{
-				data: '<?php echo $header; ?>'
+				data: '<?php echo $header; ?>',
+				render: function(data, type) {
+					if (data === '' && type !== 'display') {
+						return 'zzzzzzzzzzzz';
+					}
+					return data;
+				}
 			},<?php endif; ?><?php endforeach; ?>
 		],
 		createdRow: function(row, data, dataIndex) {
@@ -121,11 +139,23 @@ function clearPowerSelectionTable<?php echo $unique_name; ?>() {
 
 function buildPowerSelectionTable<?php echo $unique_name; ?>(items) {
 	let table = new jQuery.fn.dataTable.Api('#<?php echo $table_id; ?>');
-	// clear the table
-	table.clear();
-	// load the new items
+	table.clear().draw(true);
 	table.rows.add(getArrayFormat(items));
-	// Draw the table
+	let emptyRow = <?php echo json_encode(array_map(function($value) { return ''; }, array_flip($headers))); ?>;
+	let currentRowCount = table.rows().count();
+	let emptyRowsNeeded = <?php echo (int) $default_items_number; ?> - currentRowCount;
+	if (emptyRowsNeeded > 0) {
+		for(let i = 0; i < emptyRowsNeeded; i++) {
+			table.row.add(emptyRow);
+		}
+	}
 	table.draw(true);
+}
+
+function encodePath<?php echo $unique_name; ?>(path) {
+	return path
+		.split('/')
+		.map(encodeURIComponent)
+		.join('/');
 }
 </script>

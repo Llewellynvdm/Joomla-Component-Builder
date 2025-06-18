@@ -24,6 +24,8 @@ use Joomla\CMS\Router\Route;
 use Joomla\CMS\Session\Session;
 use Joomla\CMS\Uri\Uri;
 use VDM\Component\Componentbuilder\Administrator\Helper\ComponentbuilderHelper;
+use VDM\Joomla\Utilities\GuidHelper;
+use VDM\Joomla\Componentbuilder\Package\Factory as PackageFactory;
 
 // No direct access to this file
 \defined('_JEXEC') or die;
@@ -80,6 +82,50 @@ class Dynamic_getController extends FormController
 
 
 	/**
+	 * Method to edit an existing record.
+	 *
+	 * @param   string  $key     The name of the primary key of the URL variable.
+	 * @param   string  $urlVar  The name of the URL variable if different from the primary key
+	 *                           (sometimes required to avoid router collisions).
+	 *
+	 * @return  boolean  True if access level check and checkout passes, false otherwise.
+	 *
+	 * @since   1.6
+	 */
+	public function edit($key = null, $urlVar = null)
+	{
+		// for modal title key selection (unique key to do mapping)
+		$titleKey = $this->input->get('titleKey', 'id', 'word');
+		$guid = null;
+		$value = null;
+
+ 		// Determine the name of the primary key for the data.
+		if (empty($key))
+		{
+			$model = $this->getModel();
+			$table = $model->getTable();
+			$key = $table->getKeyName();
+		}
+
+		if ($titleKey === 'guid')
+		{
+			$guid = $this->input->get('guid', null, 'string');
+		}
+
+		if ($guid !== null && GuidHelper::valid($guid))
+		{
+			$value = GuidHelper::item($guid, 'dynamic_get', 'a.' . $key, 'componentbuilder');
+		}
+
+		if ($value !== null)
+		{
+			$this->input->set($key, $value);
+		}
+
+		return parent::edit($key, $urlVar);
+	}
+
+	/**
 	 * Resets the specified Dynamic Get.
 	 *
 	 * This function performs several checks and operations:
@@ -92,6 +138,7 @@ class Dynamic_getController extends FormController
 	 * 7. It redirects the user to a specified URL with the result message and status.
 	 *
 	 * @return bool True on successful reset, false on failure.
+	 * @since  5.1.1
 	 */
 	public function resetPowers()
 	{
@@ -101,21 +148,92 @@ class Dynamic_getController extends FormController
 		// get Item posted
 		$item = $this->input->post->get('jform', array(), 'array');
 
+		// check if user has the right
+		$user = $this->app->getIdentity();
+
+		// set default error message
+		$message = '<h1>' . Text::_('COM_COMPONENTBUILDER_PERMISSION_DENIED') . '</h1>';
+		$message .= '<p>' . Text::_('COM_COMPONENTBUILDER_YOU_DO_NOT_HAVE_PERMISSION_TO_RESET_THIS_DYNAMIC_GET') . '</p>';
+		$status = 'error';
+		$success = false;
+		$has_error = false;
+
+		// get the guid field of this entity
+		$key_field = PackageFactory::_('DynamicGet.Remote.Get')->getGuidField();
+
 		// load the ID
 		$id = $item['id'] ?? null;
+		$guid = $item[$key_field] ?? null;
 
-		// set default in development message
-		$message = '<h1>' . Text::_('COM_COMPONENTBUILDER_STILL_IN_DEVELOPMENT') . '</h1>';
-		$message .= '<p>' . Text::_('COM_COMPONENTBUILDER_ONCE_COMPLETED_THIS_FEATURE_WILL_ALLOW_YOU_TO_RESET_BOTH_DEMO_AND_USERCREATED_DYNAMIC_GET_WITHIN_THIS_JCB_INSTANCE') . '</p>';
+		$message_bus = ['success', 'warning', 'error'];
+
+		// check if there is any selections
+		if ($id === null || $guid === null)
+		{
+			// set error message
+			$message = '<h1>' . Text::_('COM_COMPONENTBUILDER_NOT_RESET') . '</h1>';
+			$message .= '<p>' . Text::_('COM_COMPONENTBUILDER_YOU_MUST_FIRST_SAVE_THE_DYNAMIC_GET_BEFORE_YOU_CAN_USE_THIS_FEATURE') . '</p>';
+		}
+		elseif($user->authorise('dynamic_get.reset', 'com_componentbuilder'))
+		{
+			try {
+				PackageFactory::_('Package.Builder.Get')->reset('dynamic_get', [$guid]);
+
+				foreach ($message_bus as $message_key)
+				{
+					if (($messages = PackageFactory::_('Power.Message')->get($message_key, null)) !== null)
+					{
+						$messages = '<p>' . implode('<br>', $messages) . '</p>';
+						$this->app->enqueueMessage($messages, $message_key);
+
+						if (!$success && $message_key === 'success')
+						{
+							$success = true;
+						}
+
+						if (!$has_error && $message_key === 'error')
+						{
+							$has_error = true;
+						}
+					}
+				}
+
+				if ($success)
+				{
+					// set success message
+					$message = '<h1>' . Text::_('COM_COMPONENTBUILDER_SUCCESS') . '</h1>';
+					$message .= '<p>' . Text::_('COM_COMPONENTBUILDER_THE_DYNAMIC_GET_HAS_SUCCESSFULLY_BEEN_RESET') . '</p>';
+					$status = 'success';
+				}
+				elseif ($has_error)
+				{
+					// set error message
+					$message = '<h1>' . Text::_('COM_COMPONENTBUILDER_RESET_FAILED') . '</h1>';
+					$message .= '<p>' . Text::_('COM_COMPONENTBUILDER_THE_RESET_OF_THIS_DYNAMIC_GET_HAS_FAILED') . '</p>';
+					$status = 'error';
+				}
+				else
+				{
+					// set warning message
+					$message = '<h1>' . Text::_('COM_COMPONENTBUILDER_RESET_UNSUCCESSFUL') . '</h1>';
+					$message .= '<p>' . Text::_('COM_COMPONENTBUILDER_THE_RESET_OF_THIS_DYNAMIC_GET_HAS_NOT_BEEN_SUCCESSFUL') . '</p>';
+					$status = 'warning';
+				}
+			} catch (\Exception $e) {
+				$message = '<h1>' . Text::_('COM_COMPONENTBUILDER_RESET_FAILED') . '</h1>';
+				$message .= '<p>' . \htmlspecialchars($e->getMessage()) . '</p>';
+			}
+		}
 
 		// set redirect
 		$redirect_url = Route::_(
 			'index.php?option=com_componentbuilder&view=dynamic_get'
 			. $this->getRedirectToItemAppend($id), false
 		);
-		$this->setRedirect($redirect_url, $message, 'success');
 
-		return true;
+		$this->setRedirect($redirect_url, $message, $status);
+
+		return $success;
 	}
 
 	 /**
@@ -131,6 +249,7 @@ class Dynamic_getController extends FormController
 	 * 7. It redirects the user to a specified URL with the result message and status.
 	 *
 	 * @return bool True on successful push, false on failure.
+	 * @since  5.1.1
 	 */
 	public function pushPowers()
 	{
@@ -140,21 +259,92 @@ class Dynamic_getController extends FormController
 		// get Item posted
 		$item = $this->input->post->get('jform', array(), 'array');
 
+		// check if user has the right
+		$user = $this->app->getIdentity();
+
+		// set default error message
+		$message = '<h1>' . Text::_('COM_COMPONENTBUILDER_PERMISSION_DENIED') . '</h1>';
+		$message .= '<p>' . Text::_('COM_COMPONENTBUILDER_YOU_DO_NOT_HAVE_PERMISSION_TO_PUSH_THIS_DYNAMIC_GET') . '</p>';
+		$status = 'error';
+		$success = false;
+		$has_error = false;
+
+		// get the guid field of this entity
+		$key_field = PackageFactory::_('DynamicGet.Remote.Set')->getGuidField();
+
 		// load the ID
 		$id = $item['id'] ?? null;
+		$guid = $item[$key_field] ?? null;
 
-		// set default in development message
-		$message = '<h1>' . Text::_('COM_COMPONENTBUILDER_STILL_IN_DEVELOPMENT') . '</h1>';
-		$message .= '<p>' . Text::_('COM_COMPONENTBUILDER_ONCE_COMPLETED_THIS_FEATURE_WILL_ALLOW_YOU_TO_PUSH_USERCREATED_DYNAMIC_GET_FROM_THIS_JCB_INSTANCE_TO_YOUR_CONFIGURED_REPOSITORIES') . '</p>';
+		$message_bus = ['success', 'warning', 'error'];
+
+		// check if there is any selections
+		if ($id === null || $guid === null)
+		{
+			// set error message
+			$message = '<h1>' . Text::_('COM_COMPONENTBUILDER_NOT_PUSHED') . '</h1>';
+			$message .= '<p>' . Text::_('COM_COMPONENTBUILDER_YOU_MUST_FIRST_SAVE_THE_DYNAMIC_GET_BEFORE_YOU_CAN_USE_THIS_FEATURE') . '</p>';
+		}
+		elseif($user->authorise('dynamic_get.push', 'com_componentbuilder'))
+		{
+			try {
+				PackageFactory::_('Package.Builder.Set')->items('dynamic_get', [$guid]);
+
+				foreach ($message_bus as $message_key)
+				{
+					if (($messages = PackageFactory::_('Power.Message')->get($message_key, null)) !== null)
+					{
+						$messages = '<p>' . implode('<br>', $messages) . '</p>';
+						$this->app->enqueueMessage($messages, $message_key);
+
+						if (!$success && $message_key === 'success')
+						{
+							$success = true;
+						}
+
+						if (!$has_error && $message_key === 'error')
+						{
+							$has_error = true;
+						}
+					}
+				}
+
+				if ($success)
+				{
+					// set success message
+					$message = '<h1>' . Text::_('COM_COMPONENTBUILDER_SUCCESS') . '</h1>';
+					$message .= '<p>' . Text::_('COM_COMPONENTBUILDER_THE_DYNAMIC_GET_HAS_SUCCESSFULLY_BEEN_PUSHED') . '</p>';
+					$status = 'success';
+				}
+				elseif ($has_error)
+				{
+					// Initialize base values
+					$message = '<h1>' . Text::_('COM_COMPONENTBUILDER_PUSH_FAILED') . '</h1>';
+					$message .= '<p>' . Text::_('COM_COMPONENTBUILDER_THE_PUSH_OF_THIS_DYNAMIC_GET_HAS_FAILED') . '</p>';
+					$status = 'error';
+				}
+				else
+				{
+					// Initialize base values
+					$message = '<h1>' . Text::_('COM_COMPONENTBUILDER_PUSH_UNSUCCESSFUL') . '</h1>';
+					$message .= '<p>' . Text::_('COM_COMPONENTBUILDER_THE_PUSH_OF_THIS_DYNAMIC_GET_HAS_NOT_BEEN_SUCCESSFUL') . '</p>';
+					$status = 'warning';
+				}
+			} catch (\Exception $e) {
+				$message = '<h1>' . Text::_('COM_COMPONENTBUILDER_PUSH_FAILED') . '</h1>';
+				$message .= '<p>' . \htmlspecialchars($e->getMessage()) . '</p>';
+			}
+		}
 
 		// set redirect
 		$redirect_url = Route::_(
 			'index.php?option=com_componentbuilder&view=dynamic_get'
 			. $this->getRedirectToItemAppend($id), false
 		);
-		$this->setRedirect($redirect_url, $message, 'success');
 
-		return true;
+		$this->setRedirect($redirect_url, $message, $status);
+
+		return $success;
 	}
 
 	/**

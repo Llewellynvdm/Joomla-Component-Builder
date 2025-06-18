@@ -56,67 +56,27 @@ final class Config extends ExtendingConfig implements ConfigInterface
 	protected string $suffix_key = '';
 
 	/**
-	 * The main readme file path
+	 * The ignore fields
 	 *
-	 * @var    string
+	 * @var   array
 	 * @since  5.1.1
 	 */
-	// [DEFAULT] protected string $main_readme_path = 'README.md';
-
-	/**
-	 * The index file path (index of all items)
-	 *
-	 * @var    string
-	 * @since 3.2.2
-	 */
-	// [DEFAULT] protected string $index_path = 'index.json';
-
-	/**
-	 * The item (files) source path
-	 *
-	 * @var    string
-	 * @since  5.1.1
-	 */
-	// [DEFAULT] protected string $src_path = 'src';
-
-	/**
-	 * The item settings file path
-	 *
-	 * @var   string
-	 * @since 3.2.2
-	 */
-	// [DEFAULT] protected string $settings_path = 'item.json';
-
-	/**
-	 * The item guid=unique field
-	 *
-	 * @var    string
-	 * @since  5.1.1
-	 */
-	// [DEFAULT] protected string $guid_field = 'guid';
-
-	/**
-	 * The item map
-	 *
-	 * @var    array
-	 * @since 5.0.3
-	protected array $map = [];
-	[DEFAULT] */
+	protected array $ignore = ['catid', 'access'];
 
 	/**
 	 * The index map
-	 *    must always have: [name,path,guid]
+	 *    must always have: [name,path,settings,guid]
 	 *    you can add more
 	 *
-	 * @var   array
-	 * @since 5.0.3
+	 * @var    array
+	 * @since  5.0.3
 	 */
 	protected array $index_map = [
 		'name' => 'index_map_IndexName',
-		'desc' => 'index_map_ShortDescription',
-		'settings' => 'index_map_IndexSettingsPath',
 		'path' => 'index_map_IndexPath',
-		'guid' => 'index_map_IndexGUID'
+		'settings' => 'index_map_IndexSettingsPath',
+		'guid' => 'index_map_IndexGUID',
+		'desc' => 'index_map_ShortDescription'
 	];
 
 	/**
@@ -134,21 +94,9 @@ final class Config extends ExtendingConfig implements ConfigInterface
 		'name',
 		'desc',
 		'path',
+		'settings',
 		'guid',
 		'local'
 	];
-
-	/**
-	 * Core Placeholders
-	 *
-	 * @var    array
-	 * @since  5.0.3
-	protected array $placeholders = [
-		'[['.'[NamespacePrefix]]]' => 'VDM',
-		'[['.'[ComponentNamespace]]]' => 'Componentbuilder',
-		'[['.'[Component]]]' => 'Componentbuilder', 
-		'[['.'[component]]]' => 'componentbuilder'
-	];
-	[DEFAULT] */
 }
 

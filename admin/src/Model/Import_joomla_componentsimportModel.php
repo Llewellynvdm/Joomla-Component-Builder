@@ -14,7 +14,7 @@ use Joomla\CMS\Factory;
 use Joomla\CMS\Language\Text;
 use Joomla\Filesystem\File;
 use Joomla\Filesystem\Folder;
-use Joomla\CMS\Filesystem\Path;
+use Joomla\Filesystem\Path;
 use Joomla\CMS\Filter\OutputFilter;
 use Joomla\CMS\Installer\InstallerHelper;
 use Joomla\CMS\MVC\Model\BaseDatabaseModel;
@@ -25,7 +25,6 @@ use VDM\Component\Componentbuilder\Administrator\Helper\ComponentbuilderHelper;
 use VDM\Joomla\Utilities\StringHelper as UtilitiesStringHelper;
 use VDM\Joomla\Utilities\FileHelper;
 use VDM\Joomla\Utilities\ArrayHelper as UtilitiesArrayHelper;
-use Joomla\CMS\Filesystem\Folder as FilesystemFolder;
 
 // No direct access to this file
 \defined('_JEXEC') or die;
@@ -940,7 +939,7 @@ class Import_joomla_componentsimportModel extends BaseDatabaseModel
 		if (is_dir($customDir))
 		{
 			// great we have some custom stuff lets move it
-			if (!FilesystemFolder::copy($customDir, $customPath,'',true))
+			if (!Folder::copy($customDir, $customPath,'',true))
 			{
 				$this->app->enqueueMessage(Text::_('COM_COMPONENTBUILDER_BCUSTOM_FILESB_NOT_MOVED_TO_CORRECT_LOCATION'), 'error');
 				$success = false;
@@ -956,7 +955,7 @@ class Import_joomla_componentsimportModel extends BaseDatabaseModel
 		if (is_dir($imageDir))
 		{
 			// great we have some images lets move them
-			if (!FilesystemFolder::copy($imageDir, $imagesPath,'',true))
+			if (!Folder::copy($imageDir, $imagesPath,'',true))
 			{
 				$this->app->enqueueMessage(Text::_('COM_COMPONENTBUILDER_BIMAGESB_NOT_MOVED_TO_CORRECT_LOCATION'), 'error');
 				$success = false;
@@ -972,7 +971,7 @@ class Import_joomla_componentsimportModel extends BaseDatabaseModel
 		if (is_dir($dynamicDir))
 		{
 			// get a list of folders
-			$folders = FilesystemFolder::folders($dynamicDir);
+			$folders = Folder::folders($dynamicDir);
 			// check if we have files
 			if(UtilitiesArrayHelper::check($folders))
 			{
@@ -980,7 +979,7 @@ class Import_joomla_componentsimportModel extends BaseDatabaseModel
 				{
 					$destination = $this->setDynamicPath($folder);
 					$fullPath = str_replace('//', '/', $dynamicDir . '/' . $folder);
-					if (!is_dir($fullPath) || !FilesystemFolder::copy($fullPath, $destination,'',true))
+					if (!is_dir($fullPath) || !Folder::copy($fullPath, $destination,'',true))
 					{
 						$this->app->enqueueMessage(Text::sprintf('COM_COMPONENTBUILDER_FOLDER_BSB_WAS_NOT_MOVED_TO_BSB', $folder, $destination), 'error');
 						$success = false;
@@ -993,7 +992,7 @@ class Import_joomla_componentsimportModel extends BaseDatabaseModel
 				}
 			}
 			// get a list of files
-			$files = FilesystemFolder::files($dynamicDir);
+			$files = Folder::files($dynamicDir);
 			// check if we have files
 			if(UtilitiesArrayHelper::check($files))
 			{
@@ -1056,7 +1055,7 @@ class Import_joomla_componentsimportModel extends BaseDatabaseModel
 		// we are changing the working directory to the tmp path (important)
 		chdir($tmpPath);
 		// get a list of files in the current directory tree (all)
-		$files = FilesystemFolder::files('.', '.', true, true);
+		$files = Folder::files('.', '.', true, true);
 		// read in the file content
 		foreach ($files as $file)
 		{

@@ -19,6 +19,7 @@ use VDM\Joomla\Interfaces\Data\ItemsInterface as Items;
 use VDM\Joomla\Interfaces\Readme\ItemInterface as ItemReadme;
 use VDM\Joomla\Interfaces\Readme\MainInterface as MainReadme;
 use VDM\Joomla\Interfaces\Git\Repository\ContentsInterface as Git;
+use VDM\Joomla\Componentbuilder\Package\Dependency\Tracker;
 use VDM\Joomla\Componentbuilder\Package\MessageBus;
 use VDM\Joomla\Componentbuilder\Power\Parser;
 use VDM\Joomla\Utilities\String\NamespaceHelper;
@@ -54,6 +55,7 @@ final class Set extends ExtendingSet implements SetInterface
 	 * @param ItemReadme   $itemReadme          The Item Readme Class.
 	 * @param MainReadme   $mainReadme          The Main Readme Class.
 	 * @param Git          $git                 The Contents Class.
+	 * @param Tracker      $tracker             The Tracker Class.
 	 * @param MessageBus   $messages            The MessageBus Class.
 	 * @param Parser       $parser              The Parser Class.
 	 * @param array        $repos               The active repos.
@@ -64,11 +66,11 @@ final class Set extends ExtendingSet implements SetInterface
 	 * @since 3.2.2
 	 */
 	public function __construct(Config $config, Grep $grep, Items $items, ItemReadme $itemReadme,
-		MainReadme $mainReadme, Git $git, MessageBus $messages, Parser $parser, array $repos,
-		?string $table = null, ?string $settingsPath = null, ?string $indexPath = null)
+		MainReadme $mainReadme, Git $git, Tracker $tracker, MessageBus $messages, Parser $parser,
+		array $repos, ?string $table = null, ?string $settingsPath = null, ?string $indexPath = null)
 	{
 		parent::__construct($config, $grep, $items, $itemReadme, $mainReadme,
-			$git, $messages, $repos, $table, $settingsPath, $indexPath);
+			$git, $tracker, $messages, $repos, $table, $settingsPath, $indexPath);
 
 		$this->parser = $parser;
 	}
@@ -349,7 +351,9 @@ final class Set extends ExtendingSet implements SetInterface
 				json_encode($settings_item, JSON_PRETTY_PRINT), // The file content.
 				'Update ' . $item->system_name . ' settings', // The commit message.
 				$sha, // The blob SHA of the old file.
-				$repo->write_branch // The branch name.
+				$repo->write_branch, // The branch name.
+				$repo->author_name, // The author name.
+				$repo->author_email // The author email.
 			);
 		}
 
@@ -402,7 +406,9 @@ final class Set extends ExtendingSet implements SetInterface
 			$power, // The file content.
 			'Update ' . $item->system_name . ' code', // The commit message.
 			$sha, // The blob SHA of the old file.
-			$repo->write_branch // The branch name.
+			$repo->write_branch, // The branch name.
+			$repo->author_name, // The author name.
+			$repo->author_email // The author email.
 		);
 
 		return is_object($result);
@@ -430,7 +436,9 @@ final class Set extends ExtendingSet implements SetInterface
 			$this->index_map_IndexSettingsPath($item), // The file path.
 			json_encode($settings_item, JSON_PRETTY_PRINT), // The file content.
 			'Create ' . $item->system_name . ' settings', // The commit message.
-			$repo->write_branch // The branch name.
+			$repo->write_branch, // The branch name.
+			$repo->author_name, // The author name.
+			$repo->author_email // The author email.
 		);
 
 		return $this->createPower($item, $repo) && is_object($result);
@@ -453,7 +461,9 @@ final class Set extends ExtendingSet implements SetInterface
 			$this->index_map_PowerPath($item), // The file path.
 			$item->main_class_code, // The file content.
 			'Create ' . $item->system_name . ' code', // The commit message.
-			$repo->write_branch // The branch name.
+			$repo->write_branch, // The branch name.
+			$repo->author_name, // The author name.
+			$repo->author_email // The author email.
 		);
 
 		return is_object($result);
@@ -501,7 +511,9 @@ final class Set extends ExtendingSet implements SetInterface
 			$readme, // The file content.
 			'Update ' . $item->system_name . ' readme file', // The commit message.
 			$sha, // The blob SHA of the old file.
-			$repo->write_branch // The branch name.
+			$repo->write_branch, // The branch name.
+			$repo->author_name, // The author name.
+			$repo->author_email // The author email.
 		);
 	}
 
@@ -529,7 +541,9 @@ final class Set extends ExtendingSet implements SetInterface
 			$this->index_map_IndexPath($item) . '/README.md', // The file path.
 			$this->itemReadme->get($item), // The file content.
 			'Create ' . $item->system_name . ' readme file', // The commit message.
-			$repo->write_branch // The branch name.
+			$repo->write_branch, // The branch name.
+			$repo->author_name, // The author name.
+			$repo->author_email // The author email.
 		);
 	}
 

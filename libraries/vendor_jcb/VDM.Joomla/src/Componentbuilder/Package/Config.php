@@ -29,7 +29,7 @@ use VDM\Joomla\Componentbuilder\Abstraction\ComponentConfig;
  * 	All values once called are cached, yet can be updated directly:
  * 	example: $this->component_code_name = 'new_code_name'; // be warned!
  * 
- * @since  5.2.1
+ * @since  5.1.1
  */
 class Config extends ComponentConfig
 {
@@ -37,7 +37,7 @@ class Config extends ComponentConfig
 	 * The Global Joomla Configuration
 	 *
 	 * @var     JoomlaRegistry
-	 * @since  5.2.1
+	 * @since  5.1.1
 	 */
 	protected JoomlaRegistry $config;
 
@@ -49,7 +49,7 @@ class Config extends ComponentConfig
 	 * @param Registry|null     $config     The Joomla configuration
 	 *
 	 * @throws \Exception
-	 * @since  5.2.1
+	 * @since  5.1.1
 	 */
 	public function __construct(?Input $input = null, ?JoomlaRegistry $params = null, ?JoomlaRegistry $config = null)
 	{
@@ -62,7 +62,7 @@ class Config extends ComponentConfig
 	 * get Gitea Username
 	 *
 	 * @return  string  the access token
-	 * @since  5.2.1
+	 * @since  5.1.1
 	 */
 	protected function getGiteausername(): ?string
 	{
@@ -73,7 +73,7 @@ class Config extends ComponentConfig
 	 * get Gitea Access Token
 	 *
 	 * @return  string  the access token
-	 * @since  5.2.1
+	 * @since  5.1.1
 	 */
 	protected function getGiteatoken(): ?string
 	{
@@ -84,7 +84,7 @@ class Config extends ComponentConfig
 	 * Get template core organisation
 	 *
 	 * @return  string   The template core organisation
-	 * @since  5.2.1
+	 * @since  5.1.1
 	 */
 	protected function getPackagecoreorganisation(): string
 	{
@@ -98,7 +98,7 @@ class Config extends ComponentConfig
 	 * Get Template init repos
 	 *
 	 * @return  array The init repositories on Gitea
-	 * @since  5.2.1
+	 * @since  5.1.1
 	 */
 	protected function getPackageinitrepos(): array
 	{
@@ -118,7 +118,7 @@ class Config extends ComponentConfig
 	 * Get joomla template approved paths
 	 *
 	 * @return  array The approved paths to the repositories on Gitea
-	 * @since  5.2.1
+	 * @since  5.1.1
 	 */
 	protected function getApprovedpackagepaths(): array
 	{
@@ -126,7 +126,6 @@ class Config extends ComponentConfig
 		$approved = $this->package_init_repos;
 
 		$paths = RepoHelper::get(4); // JCB Packages = 4
-
 
 		if ($paths !== null)
 		{

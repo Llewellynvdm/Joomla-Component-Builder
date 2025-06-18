@@ -15,8 +15,6 @@ namespace VDM\Joomla\Componentbuilder\Fieldtype\Service;
 use Joomla\DI\Container;
 use Joomla\DI\ServiceProviderInterface;
 use VDM\Joomla\Componentbuilder\Fieldtype\Config;
-use VDM\Joomla\Componentbuilder\Power\Table;
-use VDM\Joomla\Componentbuilder\Package\MessageBus;
 use VDM\Joomla\Componentbuilder\Fieldtype\Grep;
 use VDM\Joomla\Componentbuilder\Fieldtype\Remote\Config as RemoteConfig;
 use VDM\Joomla\Componentbuilder\Power\Remote\Get;
@@ -42,14 +40,8 @@ class Fieldtype implements ServiceProviderInterface
 	 */
 	public function register(Container $container)
 	{
-		$container->alias(Config::class, 'Config')
-			->share('Config', [$this, 'getConfig'], true);
-
-		$container->alias(Table::class, 'Power.Table')->alias('Table', 'Power.Table')
-			->share('Power.Table', [$this, 'getPowerTable'], true);
-
-		$container->alias(MessageBus::class, 'Power.Message')
-			->share('Power.Message', [$this, 'getMessageBus'], true);
+		$container->alias(Config::class, 'Joomla.Fieldtype.Config')->alias('Config', 'Joomla.Fieldtype.Config')
+			->share('Joomla.Fieldtype.Config', [$this, 'getConfig'], true);
 
 		$container->alias(Grep::class, 'Joomla.Fieldtype.Grep')
 			->share('Joomla.Fieldtype.Grep', [$this, 'getGrep'], true);
@@ -89,7 +81,7 @@ class Fieldtype implements ServiceProviderInterface
 	 * @param   Container  $container  The DI container.
 	 *
 	 * @return  Table
-	 * @since   5.2.1
+	 * @since   5.1.1
 	 */
 	public function getPowerTable(Container $container): Table
 	{
@@ -102,7 +94,7 @@ class Fieldtype implements ServiceProviderInterface
 	 * @param   Container  $container  The DI container.
 	 *
 	 * @return  MessageBus
-	 * @since   5.2.1
+	 * @since   5.1.1
 	 */
 	public function getMessageBus(Container $container): MessageBus
 	{
@@ -121,9 +113,10 @@ class Fieldtype implements ServiceProviderInterface
 	{
 		return new Grep(
 			$container->get('Joomla.Fieldtype.Remote.Config'),
-			$container->get('Gitea.Repository.Contents'),
+			$container->get('Git.Repository.Contents'),
 			$container->get('Network.Resolve'),
-			$container->get('Config')->approved_joomla_paths
+			$container->get('Power.Tracker'),
+			$container->get('Joomla.Fieldtype.Config')->approved_joomla_paths
 		);
 	}
 
@@ -133,7 +126,7 @@ class Fieldtype implements ServiceProviderInterface
 	 * @param   Container  $container  The DI container.
 	 *
 	 * @return  RemoteConfig
-	 * @since  5.2.1
+	 * @since  5.1.1
 	 */
 	public function getRemoteConfig(Container $container): RemoteConfig
 	{
@@ -155,7 +148,9 @@ class Fieldtype implements ServiceProviderInterface
 		return new Get(
 			$container->get('Joomla.Fieldtype.Remote.Config'),
 			$container->get('Joomla.Fieldtype.Grep'),
-			$container->get('Data.Item')
+			$container->get('Data.Item'),
+			$container->get('Power.Tracker'),
+			$container->get('Power.Message')
 		);
 	}
 
@@ -175,9 +170,10 @@ class Fieldtype implements ServiceProviderInterface
 			$container->get('Data.Items'),
 			$container->get('Joomla.Fieldtype.Readme.Item'),
 			$container->get('Joomla.Fieldtype.Readme.Main'),
-			$container->get('Gitea.Repository.Contents'),
+			$container->get('Git.Repository.Contents'),
+			$container->get('Power.Tracker'),
 			$container->get('Power.Message'),
-			$container->get('Config')->approved_joomla_paths
+			$container->get('Joomla.Fieldtype.Config')->approved_joomla_paths
 		);
 	}
 

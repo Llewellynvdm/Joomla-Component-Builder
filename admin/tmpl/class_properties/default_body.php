@@ -98,10 +98,9 @@ $edit = "index.php?option=com_componentbuilder&view=class_properties&task=class_
 			<?php echo Text::_($item->visibility); ?>
 		</td>
 		<td class="hidden-phone">
-			<div><?php if (isset($item->joomla_plugin_group) && StringHelper::check($item->joomla_plugin_group)): ?>
+			<div><?php if (isset($item->{2580}) && StringHelper::check($item->{2580})): ?>
 	
-			<?php echo Text::_($item->extension_type); ?> <?php echo Text::_('COM_COMPONENTBUILDER_GROUP'); ?>: <b>
-			<?php echo $this->escape($item->joomla_plugin_group_name); ?></b>
+			<?php echo Text::_($item->extension_type); ?> <?php echo Text::_('COM_COMPONENTBUILDER_GROUP'); ?>: <b>[field=2580]</b>
 <?php else: ?>
 	
 			<?php echo Text::_($item->extension_type); ?>

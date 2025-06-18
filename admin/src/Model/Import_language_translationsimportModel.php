@@ -14,7 +14,7 @@ use Joomla\CMS\Factory;
 use Joomla\CMS\Language\Text;
 use Joomla\Filesystem\File;
 use Joomla\Filesystem\Folder;
-use Joomla\CMS\Filesystem\Path;
+use Joomla\Filesystem\Path;
 use Joomla\CMS\Filter\OutputFilter;
 use Joomla\CMS\Installer\InstallerHelper;
 use Joomla\CMS\MVC\Model\BaseDatabaseModel;

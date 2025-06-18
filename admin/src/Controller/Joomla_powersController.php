@@ -17,7 +17,6 @@ use Joomla\Utilities\ArrayHelper;
 use Joomla\CMS\Router\Route;
 use Joomla\CMS\Session\Session;
 use VDM\Component\Componentbuilder\Administrator\Helper\ComponentbuilderHelper;
-use VDM\Joomla\Utilities\GetHelper;
 use VDM\Joomla\Componentbuilder\JoomlaPower\Factory as JoomlaPowerFactory;
 
 // No direct access to this file
@@ -59,6 +58,7 @@ class Joomla_powersController extends AdminController
 	 * Redirect the request to the Initialization selection page.
 	 *
 	 * @return bool True on successful initialization, false on failure.
+	 * @since  5.1.1
 	 */
 	public function initPowers()
 	{
@@ -109,6 +109,7 @@ class Joomla_powersController extends AdminController
 	 * 8. It redirects the user to a specified URL with the result message and status.
 	 *
 	 * @return bool True on successful reset, false on failure.
+	 * @since  5.1.1
 	 */
 	public function resetPowers()
 	{
@@ -140,7 +141,9 @@ class Joomla_powersController extends AdminController
 		$user = $this->app->getIdentity();
 		if($user->authorise('joomla_power.reset', 'com_componentbuilder'))
 		{
-			$guids = GetHelper::vars('joomla_power', $pks, 'id', 'guid');
+			// get the guid field of this entity
+			$key_field = JoomlaPowerFactory::_('Joomla.Power.Remote.Get')->getGuidField();
+			$guids = JoomlaPowerFactory::_('Load')->values([$key_field], ['joomla_power'], ['id' => ['value' => $pks, 'operator' => 'IN']]);
 
 			try {
 				if (JoomlaPowerFactory::_('Joomla.Power.Remote.Get')->reset($guids))
@@ -188,6 +191,7 @@ class Joomla_powersController extends AdminController
 	 * 8. It redirects the user to a specified URL with the result message and status.
 	 *
 	 * @return bool True on successful push, false on failure.
+	 * @since  5.1.1
 	 */
 	public function pushPowers()
 	{
@@ -220,7 +224,9 @@ class Joomla_powersController extends AdminController
 		$user = $this->app->getIdentity();
 		if($user->authorise('joomla_power.push', 'com_componentbuilder'))
 		{
-			$guids = GetHelper::vars('joomla_power', $pks, 'id', 'guid');
+			// get the guid field of this entity
+			$key_field = JoomlaPowerFactory::_('Joomla.Power.Remote.Set')->getGuidField();
+			$guids = JoomlaPowerFactory::_('Load')->values([$key_field], ['joomla_power'], ['id' => ['value' => $pks, 'operator' => 'IN']]);
 
 			try {
 				if (JoomlaPowerFactory::_('Joomla.Power.Remote.Set')->items($guids))

@@ -26,7 +26,7 @@ use VDM\Joomla\Componentbuilder\Package\SiteView\Readme\Main as MainReadme;
 /**
  * Site View Service Provider
  * 
- * @since 5.2.1
+ * @since 5.1.1
  */
 class SiteView implements ServiceProviderInterface
 {
@@ -36,30 +36,17 @@ class SiteView implements ServiceProviderInterface
 	 * @param   Container  $container  The DI container.
 	 *
 	 * @return  void
-	 * @since   5.2.1
+	 * @since   5.1.1
 	 */
 	public function register(Container $container)
 	{
-		$container->alias(Grep::class, 'SiteView.Grep')
-			->share('SiteView.Grep', [$this, 'getGrep'], true);
-
-		$container->alias(Config::class, 'SiteView.Remote.Config')
-			->share('SiteView.Remote.Config', [$this, 'getRemoteConfig'], true);
-
-		$container->alias(Resolver::class, 'SiteView.Resolver')
-			->share('SiteView.Resolver', [$this, 'getResolver'], true);
-
-		$container->alias(Get::class, 'SiteView.Remote.Get')
-			->share('SiteView.Remote.Get', [$this, 'getRemoteGet'], true);
-
-		$container->alias(Set::class, 'SiteView.Remote.Set')
-			->share('SiteView.Remote.Set', [$this, 'getRemoteSet'], true);
-
-		$container->alias(ItemReadme::class, 'SiteView.Readme.Item')
-			->share('SiteView.Readme.Item', [$this, 'getItemReadme'], true);
-
-		$container->alias(MainReadme::class, 'SiteView.Readme.Main')
-			->share('SiteView.Readme.Main', [$this, 'getMainReadme'], true);
+		$container->share('SiteView.Grep', [$this, 'getGrep'], true);
+		$container->share('SiteView.Remote.Config', [$this, 'getRemoteConfig'], true);
+		$container->share('SiteView.Resolver', [$this, 'getResolver'], true);
+		$container->share('SiteView.Remote.Get', [$this, 'getRemoteGet'], true);
+		$container->share('SiteView.Remote.Set', [$this, 'getRemoteSet'], true);
+		$container->share('SiteView.Readme.Item', [$this, 'getItemReadme'], true);
+		$container->share('SiteView.Readme.Main', [$this, 'getMainReadme'], true);
 	}
 
 	/**
@@ -68,14 +55,15 @@ class SiteView implements ServiceProviderInterface
 	 * @param   Container  $container  The DI container.
 	 *
 	 * @return  Grep
-	 * @since   5.2.1
+	 * @since   5.1.1
 	 */
 	public function getGrep(Container $container): Grep
 	{
 		return new Grep(
 			$container->get('SiteView.Remote.Config'),
-			$container->get('Gitea.Repository.Contents'),
+			$container->get('Git.Repository.Contents'),
 			$container->get('Network.Resolve'),
+			$container->get('Power.Tracker'),
 			$container->get('Config')->approved_package_paths
 		);
 	}
@@ -86,7 +74,7 @@ class SiteView implements ServiceProviderInterface
 	 * @param   Container  $container  The DI container.
 	 *
 	 * @return  Config
-	 * @since   5.2.1
+	 * @since   5.1.1
 	 */
 	public function getRemoteConfig(Container $container): Config
 	{
@@ -101,14 +89,16 @@ class SiteView implements ServiceProviderInterface
 	 * @param   Container  $container  The DI container.
 	 *
 	 * @return  Resolver
-	 * @since 5.2.1
+	 * @since 5.1.1
 	 */
 	public function getResolver(Container $container): Resolver
 	{
 		return new Resolver(
 			$container->get('SiteView.Remote.Config'),
+			$container->get('Utilities.Normalize'),
 			$container->get('Power.Tracker'),
-			$container->get('Power.Table')
+			$container->get('Power.Table'),
+			$container->get('Load')
 		);
 	}
 
@@ -118,14 +108,16 @@ class SiteView implements ServiceProviderInterface
 	 * @param   Container  $container  The DI container.
 	 *
 	 * @return  Get
-	 * @since   5.2.1
+	 * @since   5.1.1
 	 */
 	public function getRemoteGet(Container $container): Get
 	{
 		return new Get(
 			$container->get('SiteView.Remote.Config'),
 			$container->get('SiteView.Grep'),
-			$container->get('Data.Item')
+			$container->get('Data.Item'),
+			$container->get('Power.Tracker'),
+			$container->get('Power.Message')
 		);
 	}
 
@@ -135,18 +127,20 @@ class SiteView implements ServiceProviderInterface
 	 * @param   Container  $container  The DI container.
 	 *
 	 * @return  Set
-	 * @since   5.2.1
+	 * @since   5.1.1
 	 */
 	public function getRemoteSet(Container $container): Set
 	{
 		return new Set(
-			$container->get('SiteView.Remote.Config'),
+			$container->get('Power.Tracker'),
+			$container->get('Power.Message'),
 			$container->get('SiteView.Grep'),
-			$container->get('Data.Items'),
+			$container->get('SiteView.Resolver'),
+			$container->get('SiteView.Remote.Config'),
 			$container->get('SiteView.Readme.Item'),
 			$container->get('SiteView.Readme.Main'),
-			$container->get('Gitea.Repository.Contents'),
-			$container->get('Power.Message'),
+			$container->get('Git.Repository.Contents'),
+			$container->get('Data.Items'),
 			$container->get('Config')->approved_package_paths
 		);
 	}
@@ -157,7 +151,7 @@ class SiteView implements ServiceProviderInterface
 	 * @param   Container  $container  The DI container.
 	 *
 	 * @return  ItemReadme
-	 * @since   5.2.1
+	 * @since   5.1.1
 	 */
 	public function getItemReadme(Container $container): ItemReadme
 	{
@@ -170,7 +164,7 @@ class SiteView implements ServiceProviderInterface
 	 * @param   Container  $container  The DI container.
 	 *
 	 * @return  MainReadme
-	 * @since   5.2.1
+	 * @since   5.1.1
 	 */
 	public function getMainReadme(Container $container): MainReadme
 	{

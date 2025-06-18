@@ -45,7 +45,6 @@ use VDM\Joomla\Componentbuilder\Fieldtype\Factory as FieldtypeFactory;
 use VDM\Joomla\Componentbuilder\JoomlaPower\Factory as JoomlaPowerFactory;
 use VDM\Joomla\Componentbuilder\Power\Factory as PowerFactory;
 use VDM\Joomla\Componentbuilder\Snippet\Factory as SnippetFactory;
-use VDM\Joomla\Interfaces\Remote\GetInterface;
 use Joomla\CMS\Form\FormHelper as FormFormHelper;
 
 // No direct access to this file
@@ -4286,7 +4285,7 @@ class AjaxModel extends ListModel
 	 * @param   array  $libraries  The original list of library GUIDs.
 	 *
 	 * @return  array|false  Sanitized and validated list of libraries, or false.
-	 * @since   5.2.1
+	 * @since   5.1.1
 	 */
 	protected function expandAndValidateLibraries(array $libraries)
 	{
@@ -4315,7 +4314,7 @@ class AjaxModel extends ListModel
 				}
 				elseif (is_numeric($bundled))
 				{
-					$expanded[$bundled] = bundled;
+					$expanded[$bundled] = $bundled;
 				}
 			}
 			else
@@ -4405,7 +4404,7 @@ class AjaxModel extends ListModel
 	 * @param   mixed  $key  The value used to identify the snippet.
 	 *
 	 * @return  string|false  'guid', 'id', or false if invalid.
-	 * @since   5.2.1
+	 * @since   5.1.1
 	 */
 	protected function resolveSnippetKeyField($key)
 	{
@@ -5277,7 +5276,7 @@ class AjaxModel extends ListModel
 	 *
 	 * @return  string|null
 	 *
-	 * @since   5.2.1
+	 * @since   5.1.1
 	 */
 	protected function getTargetAreaPower($power): ?string
 	{
@@ -5291,7 +5290,7 @@ class AjaxModel extends ListModel
 	 * @param   string  $area  The target area
 	 *
 	 * @return  array
-	 * @since   5.2.1
+	 * @since   5.1.1
 	 */
 	public function getRepoIndex(string $repo, string $area): array
 	{
@@ -5318,8 +5317,17 @@ class AjaxModel extends ListModel
 			return ['success' => false, 'message' => $e->getMessage()];
 		}
 
-		if ($result !== null)
+		if (!empty($result))
 		{
+			foreach($result as &$values)
+			{
+				// ensure we don't leak the repo token
+				if (isset($values->token))
+				{
+					$values->token = '***redacted***';
+				}
+			}
+
 			return ['success' => true, 'index' => $result];
 		}
 
@@ -5334,7 +5342,7 @@ class AjaxModel extends ListModel
 	 * @param   array   $selected  The selected powers
 	 *
 	 * @return  array
-	 * @since   5.2.1
+	 * @since   5.1.1
 	 */
 	public function initSelectedPowers(string $repo, string $area, array $selected): array
 	{
@@ -5372,10 +5380,70 @@ class AjaxModel extends ListModel
 	}
 
 	/**
+	 * Method to initialize the selected packages
+	 *
+	 * @param   string  $repo      The repo to list index
+	 * @param   string  $area      The target area
+	 * @param   array   $selected  The selected powers
+	 *
+	 * @return  array
+	 * @since   5.1.1
+	 */
+	public function initSelectedPackages(string $repo, string $area, array $selected): array
+	{
+		if (!GuidHelper::valid($repo))
+		{
+			return ['success' => false, 'message' => Text::_('COM_COMPONENTBUILDER_INVALID_REPO_SELECTED')];
+		}
+
+		if (($Power = $this->getTargetAreaPower($area)) === null)
+		{
+			return ['success' => false, 'message' => Text::_('COM_COMPONENTBUILDER_INVALID_AREA_SELECTED')];
+		}
+
+		$result = [];
+		try
+		{
+			$class = $this->getPowerClass($Power, "Package.Builder.Get");
+			$entity = $this->getPowerClass($Power, "{$area}.Remote.Get");
+			if (!empty($selected) && $class !== null && $entity !== null)
+			{
+				$table = $entity->getTable();
+				$repo_path = $entity->path($repo);
+				$result = $class->init($table, $selected, $repo_path);
+			}
+		}
+		catch (\Exception $e)
+		{
+			return ['success' => false, 'message' => $e->getMessage()];
+		}
+
+		if ($this->hasIntResults($result))
+		{
+			return ['success' => true, 'result_log' => $result];
+		}
+
+		return ['success' => false, 'message' => Text::_('COM_COMPONENTBUILDER_THE_INITIALIZATION_FAILED_PLEASE_TRY_AGAIN')];
+	}
+
+	/**
+	 * Check if at least one key in the array has a non-empty value.
+	 *
+	 * @param array $data The result array (with 'local', 'not_found', 'added' keys)
+	 *
+	 * @return bool True if some values are non-empty; false if all are empty.
+	 * @since  5.1.1
+	 */
+	protected static function hasIntResults(array $data): bool
+	{
+		return (bool) array_filter($data);
+	}
+
+	/**
 	 * The powers that we can initialize
 	 *
 	 * @var    array
-	 * @since  5.2.1
+	 * @since  5.1.1
 	 */
 	protected array $powers = [
 		'AdminView' => 'PackageFactory',
@@ -5388,12 +5456,16 @@ class AjaxModel extends ListModel
 		'Joomla.Power' => 'JoomlaPowerFactory',
 		'Layout' => 'PackageFactory',
 		'Library' => 'PackageFactory',
-		'Module' => 'PackageFactory',
+		'JoomlaModule' => 'PackageFactory',
+		'JoomlaPlugin' => 'PackageFactory',
 		'Power' => 'PowerFactory',
-		'Plugin' => 'PackageFactory',
 		'SiteView' => 'PackageFactory',
 		'Snippet' => 'SnippetFactory',
-		'Template' => 'PackageFactory'
+		'Template' => 'PackageFactory',
+		'ClassExtends' => 'PackageFactory',
+		'ClassProperty' => 'PackageFactory',
+		'ClassMethod' => 'PackageFactory',
+		'Placeholder' => 'PackageFactory'
 	];
 
 	/**
@@ -5402,10 +5474,10 @@ class AjaxModel extends ListModel
 	 * @param   string  $factoryName  The factory name
 	 * @param   string  $getClass          The remote power class name
 	 *
-	 * @return  GetInterface|null
-	 * @since   5.2.1
+	 * @return  mixed
+	 * @since   5.1.1
 	 */
-	protected function getPowerClass(string $factoryName, string $getClass): ?GetInterface
+	protected function getPowerClass(string $factoryName, string $getClass)
 	{
 		return match ($factoryName) {
 			'PowerFactory' => PowerFactory::_($getClass),

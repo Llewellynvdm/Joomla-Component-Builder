@@ -33,6 +33,7 @@ use VDM\Joomla\Utilities\SessionHelper;
 use VDM\Joomla\Utilities\StringHelper as UtilitiesStringHelper;
 use VDM\Joomla\Utilities\ObjectHelper;
 use VDM\Joomla\Utilities\GuidHelper;
+use VDM\Joomla\Componentbuilder\Utilities\FilterHelper;
 use VDM\Joomla\Utilities\ArrayHelper as UtilitiesArrayHelper;
 use VDM\Joomla\Utilities\GetHelper;
 
@@ -298,7 +299,7 @@ class FieldtypeModel extends AdminModel
 	 *
 	 * @return mixed  An array of data items on success, false on failure.
 	 */
-	public function getVxlfields()
+	public function getVxifields()
 	{
 		// Get the user object.
 		$user = Factory::getApplication()->getIdentity();
@@ -322,7 +323,7 @@ class FieldtypeModel extends AdminModel
 		{
 			// column name, and id
 			$type_extension = explode('__', $filter_extension);
-			if (($guids = JCBFilterHelper::linked((string) $type_extension[1], (string) $type_extension[0])) !== null)
+			if (($guids = FilterHelper::linked((string) $type_extension[1], (string) $type_extension[0])) !== null)
 			{
 				$field_guids = $guids;
 			}
@@ -338,7 +339,7 @@ class FieldtypeModel extends AdminModel
 		$filter_admin_view = $this->state->get("filter.admin_view");
 		if ($get_ids && $filter_admin_view !== null && !empty($filter_admin_view))
 		{
-			if (($guids = JCBFilterHelper::linked((string) $filter_admin_view, 'admin_view')) !== null)
+			if (($guids = FilterHelper::linked((string) $filter_admin_view, 'admin_view')) !== null)
 			{
 				// view will return less fields, so we ignore the component
 				$field_guids = $guids;
@@ -436,13 +437,13 @@ class FieldtypeModel extends AdminModel
 				foreach ($items as $nr => &$item)
 				{
 					// convert datatype
-					$item->datatype = $this->selectionTranslationVxlfields($item->datatype, 'datatype');
+					$item->datatype = $this->selectionTranslationVxifields($item->datatype, 'datatype');
 					// convert indexes
-					$item->indexes = $this->selectionTranslationVxlfields($item->indexes, 'indexes');
+					$item->indexes = $this->selectionTranslationVxifields($item->indexes, 'indexes');
 					// convert null_switch
-					$item->null_switch = $this->selectionTranslationVxlfields($item->null_switch, 'null_switch');
+					$item->null_switch = $this->selectionTranslationVxifields($item->null_switch, 'null_switch');
 					// convert store
-					$item->store = $this->selectionTranslationVxlfields($item->store, 'store');
+					$item->store = $this->selectionTranslationVxifields($item->store, 'store');
 				}
 			}
 
@@ -456,7 +457,7 @@ class FieldtypeModel extends AdminModel
 	 *
 	 * @return  string   The translatable string.
 	 */
-	public function selectionTranslationVxlfields($value,$name)
+	public function selectionTranslationVxifields($value,$name)
 	{
 		// Array of datatype language strings
 		if ($name === 'datatype')

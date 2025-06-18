@@ -61,7 +61,7 @@ final class FieldDynamic implements Fielddynamicinterface
 	 * The ModalSelect Class.
 	 *
 	 * @var   ModalSelect
-	 * @since 5.2.1
+	 * @since 5.1.1
 	 */
 	protected ModalSelect $modalselect;
 

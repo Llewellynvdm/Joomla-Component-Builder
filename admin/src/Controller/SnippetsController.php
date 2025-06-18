@@ -17,6 +17,7 @@ use Joomla\Utilities\ArrayHelper;
 use Joomla\CMS\Router\Route;
 use Joomla\CMS\Session\Session;
 use VDM\Component\Componentbuilder\Administrator\Helper\ComponentbuilderHelper;
+use VDM\Joomla\Componentbuilder\Snippet\Factory as SnippetFactory;
 
 // No direct access to this file
 \defined('_JEXEC') or die;
@@ -57,20 +58,41 @@ class SnippetsController extends AdminController
 	 * Redirect the request to the Initialization selection page.
 	 *
 	 * @return bool True on successful initialization, false on failure.
+	 * @since  5.1.1
 	 */
 	public function initPowers()
 	{
 		// Check for request forgeries
 		Session::checkToken() or die(Text::_('JINVALID_TOKEN'));
 
-		// set default in development message
-		$message = '<h1>' . Text::_('COM_COMPONENTBUILDER_STILL_IN_DEVELOPMENT') . '</h1>';
-		$message .= '<p>' . Text::_('COM_COMPONENTBUILDER_ONCE_COMPLETED_THIS_FEATURE_WILL_ALLOW_YOU_TO_PULL_BOTH_DEMO_AND_USERCREATED_SNIPPETS_INTO_THIS_JCB_INSTANCE') . '</p>';
+		// check if user has the right
+		$user = $this->app->getIdentity();
 
-		$redirect_url = Route::_('index.php?option=com_componentbuilder&view=snippets', false);
-		$this->setRedirect($redirect_url, $message, 'success');
+		// set default error message
+		$message = '<h1>' . Text::_('COM_COMPONENTBUILDER_PERMISSION_DENIED') . '</h1>';
+		$message .= '<p>' . Text::_('COM_COMPONENTBUILDER_YOU_DO_NOT_HAVE_PERMISSION_TO_INITIALIZE_SNIPPETS') . '</p>';
+		$status = 'error';
+		$success = false;
 
-		return true;
+		if($user->authorise('snippet.init', 'com_componentbuilder'))
+		{
+			// set success message
+			$message = null;
+
+			$status = null;
+			$success = true;
+
+			// set redirect
+			$redirect_url = Route::_('index.php?option=com_componentbuilder&view=initialization_selection&power=Snippet&target=Snippets', false);
+		}
+		else
+		{
+			// set redirect
+			$redirect_url = Route::_('index.php?option=com_componentbuilder&view=snippets', false);
+		}
+		$this->setRedirect($redirect_url, $message, $status);
+
+		return $success;
 	}
 
 	/**
@@ -87,20 +109,103 @@ class SnippetsController extends AdminController
 	 * 8. It redirects the user to a specified URL with the result message and status.
 	 *
 	 * @return bool True on successful reset, false on failure.
+	 * @since  5.1.1
 	 */
 	public function resetPowers()
 	{
 		// Check for request forgeries
 		Session::checkToken() or die(Text::_('JINVALID_TOKEN'));
 
-		// set default in development message
-		$message = '<h1>' . Text::_('COM_COMPONENTBUILDER_STILL_IN_DEVELOPMENT') . '</h1>';
-		$message .= '<p>' . Text::_('COM_COMPONENTBUILDER_ONCE_COMPLETED_THIS_FEATURE_WILL_ALLOW_YOU_TO_RESET_BOTH_DEMO_AND_USERCREATED_SNIPPETS_WITHIN_THIS_JCB_INSTANCE') . '</p>';
+		// get IDS of the selected powers
+		$pks = $this->input->post->get('cid', [], 'array');
 
+		// Sanitize the input
+		ArrayHelper::toInteger($pks);
+
+		// check if there is any selections
+		if ($pks === [])
+		{
+			// set error message
+			$message = '<h1>' . Text::_('COM_COMPONENTBUILDER_NO_SELECTION_DETECTED') . '</h1>';
+			$message .= '<p>' . Text::_('COM_COMPONENTBUILDER_PLEASE_FIRST_MAKE_A_SELECTION_FROM_THE_LIST') . '</p>';
+			// set redirect
+			$redirect_url = Route::_('index.php?option=com_componentbuilder&view=snippets', false);
+			$this->setRedirect($redirect_url, $message, 'error');
+			return false;
+		}
+
+		$status = 'error';
+		$success = false;
+		$has_error = false;
+		$message_bus = ['success', 'warning', 'error'];
+
+		// check if user has the right
+		$user = $this->app->getIdentity();
+		if($user->authorise('snippet.reset', 'com_componentbuilder'))
+		{
+			// get the guid field of this entity
+			$key_field = SnippetFactory::_('Snippet.Remote.Get')->getGuidField();
+			$guids = SnippetFactory::_('Load')->values([$key_field], ['snippet'], ['id' => ['value' => $pks, 'operator' => 'IN']]);
+
+			try {
+				SnippetFactory::_('Package.Builder.Get')->reset('snippet', $guids);
+
+				foreach ($message_bus as $message_key)
+				{
+					if (($messages = SnippetFactory::_('Power.Message')->get($message_key, null)) !== null)
+					{
+						$messages = '<p>' . implode('<br>', $messages) . '</p>';
+						$this->app->enqueueMessage($messages, $message_key);
+
+						if (!$success && $message_key === 'success')
+						{
+							$success = true;
+						}
+
+						if (!$has_error && $message_key === 'error')
+						{
+							$has_error = true;
+						}
+					}
+				}
+
+				if ($success)
+				{
+					// set success message
+					$message = '<h1>' . Text::_('COM_COMPONENTBUILDER_SUCCESS') . '</h1>';
+					$message .= '<p>' . Text::_('COM_COMPONENTBUILDER_THESE_SNIPPETS_HAVE_SUCCESSFULLY_BEEN_RESET') . '</p>';
+					$status = 'success';
+				}
+				elseif ($has_error)
+				{
+					$message = '<h1>' . Text::_('COM_COMPONENTBUILDER_RESET_FAILED') . '</h1>';
+					$message .= '<p>' . Text::_('COM_COMPONENTBUILDER_THE_RESET_OF_THESE_SNIPPETS_HAS_FAILED') . '</p>';
+					$status = 'error';
+				}
+				else
+				{
+					// Initialize base values
+					$message = '<h1>' . Text::_('COM_COMPONENTBUILDER_RESET_UNSUCCESSFUL') . '</h1>';
+					$message .= '<p>' . Text::_('COM_COMPONENTBUILDER_THE_RESET_OF_THIS_SNIPPETS_HAS_NOT_BEEN_SUCCESSFUL') . '</p>';
+					$status = 'warning';
+				}
+			} catch (\Exception $e) {
+				$message = '<h1>' . Text::_('COM_COMPONENTBUILDER_RESET_FAILED') . '</h1>';
+				$message .= '<p>' . \htmlspecialchars($e->getMessage()) . '</p>';
+			}
+
+			// set redirect
+			$redirect_url = Route::_('index.php?option=com_componentbuilder&view=snippets', false);
+			$this->setRedirect($redirect_url, $message, $status);
+
+			return $success;
+		}
+
+		// set redirect
 		$redirect_url = Route::_('index.php?option=com_componentbuilder&view=snippets', false);
-		$this->setRedirect($redirect_url, $message, 'success');
+		$this->setRedirect($redirect_url);
 
-		return true;
+		return $success;
 	}
 
 	/**
@@ -117,19 +222,103 @@ class SnippetsController extends AdminController
 	 * 8. It redirects the user to a specified URL with the result message and status.
 	 *
 	 * @return bool True on successful push, false on failure.
+	 * @since  5.1.1
 	 */
 	public function pushPowers()
 	{
 		// Check for request forgeries
 		Session::checkToken() or die(Text::_('JINVALID_TOKEN'));
 
-		// set default in development message
-		$message = '<h1>' . Text::_('COM_COMPONENTBUILDER_STILL_IN_DEVELOPMENT') . '</h1>';
-		$message .= '<p>' . Text::_('COM_COMPONENTBUILDER_ONCE_COMPLETED_THIS_FEATURE_WILL_ALLOW_YOU_TO_PUSH_USERCREATED_SNIPPETS_FROM_THIS_JCB_INSTANCE_TO_YOUR_CONFIGURED_REPOSITORIES') . '</p>';
+		// get IDS of the selected powers
+		$pks = $this->input->post->get('cid', [], 'array');
 
+		// Sanitize the input
+		ArrayHelper::toInteger($pks);
+
+		// check if there is any selections
+		if ($pks === [])
+		{
+			// set error message
+			$message = '<h1>' . Text::_('COM_COMPONENTBUILDER_NO_SELECTION_DETECTED') . '</h1>';
+			$message .= '<p>' . Text::_('COM_COMPONENTBUILDER_PLEASE_FIRST_MAKE_A_SELECTION_FROM_THE_LIST') . '</p>';
+			// set redirect
+			$redirect_url = Route::_('index.php?option=com_componentbuilder&view=snippets', false);
+			$this->setRedirect($redirect_url, $message, 'error');
+			return false;
+		}
+
+		$status = 'error';
+		$success = false;
+		$has_error = false;
+		$message_bus = ['success', 'warning', 'error'];
+
+		// check if user has the right
+		$user = $this->app->getIdentity();
+		if($user->authorise('snippet.push', 'com_componentbuilder'))
+		{
+			// get the guid field of this entity
+			$key_field = SnippetFactory::_('Snippet.Remote.Set')->getGuidField();
+			$guids = SnippetFactory::_('Load')->values([$key_field], ['snippet'], ['id' => ['value' => $pks, 'operator' => 'IN']]);
+
+			try {
+				SnippetFactory::_('Package.Builder.Set')->items('snippet', $guids);
+
+				foreach ($message_bus as $message_key)
+				{
+					if (($messages = SnippetFactory::_('Power.Message')->get($message_key, null)) !== null)
+					{
+						$messages = '<p>' . implode('<br>', $messages) . '</p>';
+						$this->app->enqueueMessage($messages, $message_key);
+
+						if (!$success && $message_key === 'success')
+						{
+							$success = true;
+						}
+
+						if (!$has_error && $message_key === 'error')
+						{
+							$has_error = true;
+						}
+					}
+				}
+
+				if ($success)
+				{
+					// set success message
+					$message = '<h1>' . Text::_('COM_COMPONENTBUILDER_SUCCESS') . '</h1>';
+					$message .= '<p>' . Text::_('COM_COMPONENTBUILDER_THESE_SNIPPETS_HAVE_SUCCESSFULLY_BEEN_PUSHED') . '</p>';
+					$status = 'success';
+				}
+				elseif ($has_error)
+				{
+					// Initialize base values
+					$message = '<h1>' . Text::_('COM_COMPONENTBUILDER_PUSH_FAILED') . '</h1>';
+					$message .= '<p>' . Text::_('COM_COMPONENTBUILDER_THE_PUSH_OF_THIS_SNIPPETS_HAS_FAILED') . '</p>';
+					$status = 'error';
+				}
+				else
+				{
+					// Initialize base values
+					$message = '<h1>' . Text::_('COM_COMPONENTBUILDER_PUSH_UNSUCCESSFUL') . '</h1>';
+					$message .= '<p>' . Text::_('COM_COMPONENTBUILDER_THE_PUSH_OF_THIS_SNIPPETS_HAS_NOT_BEEN_SUCCESSFUL') . '</p>';
+					$status = 'warning';
+				}
+			} catch (\Exception $e) {
+				$message = '<h1>' . Text::_('COM_COMPONENTBUILDER_PUSH_FAILED') . '</h1>';
+				$message .= '<p>' . \htmlspecialchars($e->getMessage()) . '</p>';
+			}
+
+			// set redirect
+			$redirect_url = Route::_('index.php?option=com_componentbuilder&view=snippets', false);
+			$this->setRedirect($redirect_url, $message, $status);
+
+			return $success;
+		}
+
+		// set redirect
 		$redirect_url = Route::_('index.php?option=com_componentbuilder&view=snippets', false);
-		$this->setRedirect($redirect_url, $message, 'success');
+		$this->setRedirect($redirect_url);
 
-		return true;
+		return $success;
 	}
 }

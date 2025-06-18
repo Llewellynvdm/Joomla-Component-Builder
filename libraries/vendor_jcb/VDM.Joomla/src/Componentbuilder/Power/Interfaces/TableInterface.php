@@ -18,31 +18,34 @@ use VDM\Joomla\Interfaces\TableInterface as ExtendingTableInterface;
 /**
  * The JCB Package Table Interface
  * 
- * @since   5.2.1
+ * @since   5.1.1
  */
 interface TableInterface extends ExtendingTableInterface
 {
 	/**
-	 * Get all linked fields of an area/view/table
+	 * Get all parents fields of an area/view/table
 	 *
 	 * @param   string  $table     The area
 	 *
 	 * @return  array  An array of fields
-	 * @since   5.2.1
+	 * @since   5.1.1
 	 */
-	public function linked(string $table): array;
+	public function parents(string $table): array;
 
 	/**
-	 * Get all incoming link dependencies pointing to the given entity.
+	 * Get direct children dependencies pointing to the given entity.
 	 *
 	 * This method returns a map of `$entity` field keys to an array of referencing tables and fields.
 	 *
-	 * @param   string  $entity  The target entity name being linked to (e.g., 'power').
+	 * @param   string       $entity  The target entity name being linked to (e.g., 'power').
+	 * @param   array|null   $direct  The direct children.
+	 *                                     empty-array: means return none
+	 *                                     null: means return all
 	 *
 	 * @return  array  An associative array: [targetField => [['table' => string, 'name' => string], ...]]
-	 * @since   5.2.1
+	 * @since   5.1.1
 	 */
-	public function dependencies(string $entity): array;
+	public function children(string $entity, ?array $direct = null): array;
 
 	/**
 	 * Loops over the $table fields and builds a new array
@@ -52,7 +55,7 @@ interface TableInterface extends ExtendingTableInterface
 	 * @param string  $area   The target areas to search
 	 *
 	 * @return array The newly built array.
-	 * @since  5.2.1
+	 * @since  5.1.0
 	 */
 	public function search(string $table, string $area): array;
 }

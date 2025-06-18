@@ -14,16 +14,16 @@ namespace VDM\Joomla\Componentbuilder\Package\Service;
 
 use Joomla\DI\Container;
 use Joomla\DI\ServiceProviderInterface;
-use VDM\Joomla\Componentbuilder\Power\Table;
 use VDM\Joomla\Componentbuilder\Package\Config;
-use VDM\Joomla\Componentbuilder\Package\Dependency\Tracker;
-use VDM\Joomla\Componentbuilder\Package\MessageBus;
+use VDM\Joomla\Componentbuilder\Package\Builder\Entities;
+use VDM\Joomla\Componentbuilder\Package\Builder\Get;
+use VDM\Joomla\Componentbuilder\Package\Builder\Set;
 
 
 /**
  * Package Service Provider
  * 
- * @since 5.2.1
+ * @since 5.1.1
  */
 class Package implements ServiceProviderInterface
 {
@@ -33,34 +33,21 @@ class Package implements ServiceProviderInterface
 	 * @param   Container  $container  The DI container.
 	 *
 	 * @return  void
-	 * @since 5.2.1
+	 * @since 5.1.1
 	 */
 	public function register(Container $container)
 	{
-		$container->alias(Table::class, 'Power.Table')->alias('Table', 'Power.Table')
-			->share('Power.Table', [$this, 'getPowerTable'], true);
+		$container->alias(Config::class, 'Package.Config')->alias('Config', 'Package.Config')
+			->share('Package.Config', [$this, 'getConfig'], true);
 
-		$container->alias(Config::class, 'Config')
-			->share('Config', [$this, 'getConfig'], true);
+		$container->alias(Entities::class, 'Package.Entities')
+			->share('Package.Entities', [$this, 'getBuilderEntities'], true);
 
-		$container->alias(Tracker::class, 'Power.Tracker')
-			->share('Power.Tracker', [$this, 'getPowerTracker'], true);
+		$container->alias(Set::class, 'Package.Builder.Set')
+			->share('Package.Builder.Set', [$this, 'getBuilderSet'], true);
 
-		$container->alias(MessageBus::class, 'Power.Message')
-			->share('Power.Message', [$this, 'getMessageBus'], true);
-	}
-
-	/**
-	 * Get The Power Table Class.
-	 *
-	 * @param   Container  $container  The DI container.
-	 *
-	 * @return  Table
-	 * @since  5.2.1
-	 */
-	public function getPowerTable(Container $container): Table
-	{
-		return new Table();
+		$container->alias(Set::class, 'Package.Builder.Get')
+			->share('Package.Builder.Get', [$this, 'getBuilderGet'], true);
 	}
 
 	/**
@@ -69,7 +56,7 @@ class Package implements ServiceProviderInterface
 	 * @param   Container  $container  The DI container.
 	 *
 	 * @return  Config
-	 * @since 5.2.1
+	 * @since 5.1.1
 	 */
 	public function getConfig(Container $container): Config
 	{
@@ -77,29 +64,50 @@ class Package implements ServiceProviderInterface
 	}
 
 	/**
-	 * Get The Tracker Class.
+	 * Get The Entities Class.
 	 *
 	 * @param   Container  $container  The DI container.
 	 *
-	 * @return  Tracker
-	 * @since 5.2.1
+	 * @return  Entities
+	 * @since   5.1.1
 	 */
-	public function getPowerTracker(Container $container): Tracker
+	public function getBuilderEntities(Container $container): Entities
 	{
-		return new Tracker();
+		return new Entities();
 	}
 
 	/**
-	 * Get The Message Bus Class.
+	 * Get The Builder Set Class.
 	 *
 	 * @param   Container  $container  The DI container.
 	 *
-	 * @return  MessageBus
-	 * @since 5.2.1
+	 * @return  Set
+	 * @since   5.1.1
 	 */
-	public function getMessageBus(Container $container): MessageBus
+	public function getBuilderSet(Container $container): Set
 	{
-		return new MessageBus();
+		return new Set(
+			$container->get('Package.Entities'),
+			$container->get('Power.Tracker'),
+			$container,
+		);
+	}
+
+	/**
+	 * Get The Builder Get Class.
+	 *
+	 * @param   Container  $container  The DI container.
+	 *
+	 * @return  Get
+	 * @since   5.1.1
+	 */
+	public function getBuilderGet(Container $container): Get
+	{
+		return new Get(
+			$container->get('Package.Entities'),
+			$container->get('Power.Tracker'),
+			$container,
+		);
 	}
 }
 

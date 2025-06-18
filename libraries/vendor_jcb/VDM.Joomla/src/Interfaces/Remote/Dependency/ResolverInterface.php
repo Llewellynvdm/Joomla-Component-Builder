@@ -15,7 +15,7 @@ namespace VDM\Joomla\Interfaces\Remote\Dependency;
 /**
  * Package Dependency Resolver Interfaces
  * 
- * @since 5.2.1
+ * @since 5.1.1
  */
 interface ResolverInterface
 {
@@ -26,9 +26,9 @@ interface ResolverInterface
 	 *
 	 * @param   object  $item  The data item to inspect.
 	 *
-	 * @return  void
-	 * @since   5.2.1
+	 * @return  array|null  The extracted relationships.
+	 * @since   5.1.1
 	 */
-	public function extract(object $item): void;
+	public function extract(object $item): ?array;
 }
 

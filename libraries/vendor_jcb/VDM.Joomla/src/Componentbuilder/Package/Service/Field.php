@@ -17,6 +17,7 @@ use Joomla\DI\ServiceProviderInterface;
 use VDM\Joomla\Componentbuilder\Package\Grep;
 use VDM\Joomla\Componentbuilder\Package\Field\Remote\Config;
 use VDM\Joomla\Componentbuilder\Package\Dependency\Resolver;
+use VDM\Joomla\Componentbuilder\Power\Remote\Get;
 use VDM\Joomla\Componentbuilder\Package\Remote\Set;
 use VDM\Joomla\Componentbuilder\Package\Field\Readme\Item as ItemReadme;
 use VDM\Joomla\Componentbuilder\Package\Field\Readme\Main as MainReadme;
@@ -25,7 +26,7 @@ use VDM\Joomla\Componentbuilder\Package\Field\Readme\Main as MainReadme;
 /**
  * Field Service Provider
  * 
- * @since 5.2.1
+ * @since 5.1.1
  */
 class Field implements ServiceProviderInterface
 {
@@ -35,30 +36,17 @@ class Field implements ServiceProviderInterface
 	 * @param   Container  $container  The DI container.
 	 *
 	 * @return  void
-	 * @since   5.2.1
+	 * @since   5.1.1
 	 */
 	public function register(Container $container)
 	{
-		$container->alias(Grep::class, 'Field.Grep')
-			->share('Field.Grep', [$this, 'getGrep'], true);
-
-		$container->alias(Config::class, 'Field.Remote.Config')
-			->share('Field.Remote.Config', [$this, 'getRemoteConfig'], true);
-
-		$container->alias(Resolver::class, 'Field.Resolver')
-			->share('Field.Resolver', [$this, 'getResolver'], true);
-
-		$container->alias(Get::class, 'Field.Remote.Get')
-			->share('Field.Remote.Get', [$this, 'getRemoteGet'], true);
-
-		$container->alias(Set::class, 'Field.Remote.Set')
-			->share('Field.Remote.Set', [$this, 'getRemoteSet'], true);
-
-		$container->alias(ItemReadme::class, 'Field.Readme.Item')
-			->share('Field.Readme.Item', [$this, 'getItemReadme'], true);
-
-		$container->alias(MainReadme::class, 'Field.Readme.Main')
-			->share('Field.Readme.Main', [$this, 'getMainReadme'], true);
+		$container->share('Field.Grep', [$this, 'getGrep'], true);
+		$container->share('Field.Remote.Config', [$this, 'getRemoteConfig'], true);
+		$container->share('Field.Resolver', [$this, 'getResolver'], true);
+		$container->share('Field.Remote.Get', [$this, 'getRemoteGet'], true);
+		$container->share('Field.Remote.Set', [$this, 'getRemoteSet'], true);
+		$container->share('Field.Readme.Item', [$this, 'getItemReadme'], true);
+		$container->share('Field.Readme.Main', [$this, 'getMainReadme'], true);
 	}
 
 	/**
@@ -67,14 +55,15 @@ class Field implements ServiceProviderInterface
 	 * @param   Container  $container  The DI container.
 	 *
 	 * @return  Grep
-	 * @since   5.2.1
+	 * @since   5.1.1
 	 */
 	public function getGrep(Container $container): Grep
 	{
 		return new Grep(
 			$container->get('Field.Remote.Config'),
-			$container->get('Gitea.Repository.Contents'),
+			$container->get('Git.Repository.Contents'),
 			$container->get('Network.Resolve'),
+			$container->get('Power.Tracker'),
 			$container->get('Config')->approved_package_paths
 		);
 	}
@@ -85,7 +74,7 @@ class Field implements ServiceProviderInterface
 	 * @param   Container  $container  The DI container.
 	 *
 	 * @return  Config
-	 * @since   5.2.1
+	 * @since   5.1.1
 	 */
 	public function getRemoteConfig(Container $container): Config
 	{
@@ -100,14 +89,16 @@ class Field implements ServiceProviderInterface
 	 * @param   Container  $container  The DI container.
 	 *
 	 * @return  Resolver
-	 * @since 5.2.1
+	 * @since 5.1.1
 	 */
 	public function getResolver(Container $container): Resolver
 	{
 		return new Resolver(
 			$container->get('Field.Remote.Config'),
+			$container->get('Utilities.Normalize'),
 			$container->get('Power.Tracker'),
-			$container->get('Power.Table')
+			$container->get('Power.Table'),
+			$container->get('Load')
 		);
 	}
 
@@ -117,14 +108,16 @@ class Field implements ServiceProviderInterface
 	 * @param   Container  $container  The DI container.
 	 *
 	 * @return  Get
-	 * @since   5.2.1
+	 * @since   5.1.1
 	 */
 	public function getRemoteGet(Container $container): Get
 	{
 		return new Get(
 			$container->get('Field.Remote.Config'),
 			$container->get('Field.Grep'),
-			$container->get('Data.Item')
+			$container->get('Data.Item'),
+			$container->get('Power.Tracker'),
+			$container->get('Power.Message')
 		);
 	}
 
@@ -134,18 +127,20 @@ class Field implements ServiceProviderInterface
 	 * @param   Container  $container  The DI container.
 	 *
 	 * @return  Set
-	 * @since   5.2.1
+	 * @since   5.1.1
 	 */
 	public function getRemoteSet(Container $container): Set
 	{
 		return new Set(
-			$container->get('Field.Remote.Config'),
+			$container->get('Power.Tracker'),
+			$container->get('Power.Message'),
 			$container->get('Field.Grep'),
-			$container->get('Data.Items'),
+			$container->get('Field.Resolver'),
+			$container->get('Field.Remote.Config'),
 			$container->get('Field.Readme.Item'),
 			$container->get('Field.Readme.Main'),
-			$container->get('Gitea.Repository.Contents'),
-			$container->get('Power.Message'),
+			$container->get('Git.Repository.Contents'),
+			$container->get('Data.Items'),
 			$container->get('Config')->approved_package_paths
 		);
 	}
@@ -156,7 +151,7 @@ class Field implements ServiceProviderInterface
 	 * @param   Container  $container  The DI container.
 	 *
 	 * @return  ItemReadme
-	 * @since   5.2.1
+	 * @since   5.1.1
 	 */
 	public function getItemReadme(Container $container): ItemReadme
 	{
@@ -169,7 +164,7 @@ class Field implements ServiceProviderInterface
 	 * @param   Container  $container  The DI container.
 	 *
 	 * @return  MainReadme
-	 * @since   5.2.1
+	 * @since   5.1.1
 	 */
 	public function getMainReadme(Container $container): MainReadme
 	{

@@ -18,7 +18,7 @@ use VDM\Joomla\Componentbuilder\Package\Grep;
 use VDM\Joomla\Componentbuilder\Package\DynamicGet\Remote\Config;
 use VDM\Joomla\Componentbuilder\Package\Dependency\Resolver;
 use VDM\Joomla\Componentbuilder\Power\Remote\Get;
-use VDM\Joomla\Componentbuilder\Package\Remote\Set;
+use VDM\Joomla\Componentbuilder\Package\Remote\DynamicGet\Set;
 use VDM\Joomla\Componentbuilder\Package\DynamicGet\Readme\Item as ItemReadme;
 use VDM\Joomla\Componentbuilder\Package\DynamicGet\Readme\Main as MainReadme;
 
@@ -26,7 +26,7 @@ use VDM\Joomla\Componentbuilder\Package\DynamicGet\Readme\Main as MainReadme;
 /**
  * Dynamic Get Service Provider
  * 
- * @since 5.2.1
+ * @since 5.1.1
  */
 class DynamicGet implements ServiceProviderInterface
 {
@@ -36,30 +36,17 @@ class DynamicGet implements ServiceProviderInterface
 	 * @param   Container  $container  The DI container.
 	 *
 	 * @return  void
-	 * @since   5.2.1
+	 * @since   5.1.1
 	 */
 	public function register(Container $container)
 	{
-		$container->alias(Grep::class, 'DynamicGet.Grep')
-			->share('DynamicGet.Grep', [$this, 'getGrep'], true);
-
-		$container->alias(Config::class, 'DynamicGet.Remote.Config')
-			->share('DynamicGet.Remote.Config', [$this, 'getRemoteConfig'], true);
-
-		$container->alias(Resolver::class, 'DynamicGet.Resolver')
-			->share('DynamicGet.Resolver', [$this, 'getResolver'], true);
-
-		$container->alias(Get::class, 'DynamicGet.Remote.Get')
-			->share('DynamicGet.Remote.Get', [$this, 'getRemoteGet'], true);
-
-		$container->alias(Set::class, 'DynamicGet.Remote.Set')
-			->share('DynamicGet.Remote.Set', [$this, 'getRemoteSet'], true);
-
-		$container->alias(ItemReadme::class, 'DynamicGet.Readme.Item')
-			->share('DynamicGet.Readme.Item', [$this, 'getItemReadme'], true);
-
-		$container->alias(MainReadme::class, 'DynamicGet.Readme.Main')
-			->share('DynamicGet.Readme.Main', [$this, 'getMainReadme'], true);
+		$container->share('DynamicGet.Grep', [$this, 'getGrep'], true);
+		$container->share('DynamicGet.Remote.Config', [$this, 'getRemoteConfig'], true);
+		$container->share('DynamicGet.Resolver', [$this, 'getResolver'], true);
+		$container->share('DynamicGet.Remote.Get', [$this, 'getRemoteGet'], true);
+		$container->share('DynamicGet.Remote.Set', [$this, 'getRemoteSet'], true);
+		$container->share('DynamicGet.Readme.Item', [$this, 'getItemReadme'], true);
+		$container->share('DynamicGet.Readme.Main', [$this, 'getMainReadme'], true);
 	}
 
 	/**
@@ -68,14 +55,15 @@ class DynamicGet implements ServiceProviderInterface
 	 * @param   Container  $container  The DI container.
 	 *
 	 * @return  Grep
-	 * @since   5.2.1
+	 * @since   5.1.1
 	 */
 	public function getGrep(Container $container): Grep
 	{
 		return new Grep(
 			$container->get('DynamicGet.Remote.Config'),
-			$container->get('Gitea.Repository.Contents'),
+			$container->get('Git.Repository.Contents'),
 			$container->get('Network.Resolve'),
+			$container->get('Power.Tracker'),
 			$container->get('Config')->approved_package_paths
 		);
 	}
@@ -86,7 +74,7 @@ class DynamicGet implements ServiceProviderInterface
 	 * @param   Container  $container  The DI container.
 	 *
 	 * @return  Config
-	 * @since  5.2.1
+	 * @since  5.1.1
 	 */
 	public function getRemoteConfig(Container $container): Config
 	{
@@ -101,14 +89,16 @@ class DynamicGet implements ServiceProviderInterface
 	 * @param   Container  $container  The DI container.
 	 *
 	 * @return  Resolver
-	 * @since 5.2.1
+	 * @since 5.1.1
 	 */
 	public function getResolver(Container $container): Resolver
 	{
 		return new Resolver(
 			$container->get('DynamicGet.Remote.Config'),
+			$container->get('Utilities.Normalize'),
 			$container->get('Power.Tracker'),
-			$container->get('Power.Table')
+			$container->get('Power.Table'),
+			$container->get('Load')
 		);
 	}
 
@@ -119,14 +109,16 @@ class DynamicGet implements ServiceProviderInterface
 	 * @param   Container  $container  The DI container.
 	 *
 	 * @return  Get
-	 * @since   5.2.1
+	 * @since   5.1.1
 	 */
 	public function getRemoteGet(Container $container): Get
 	{
 		return new Get(
 			$container->get('DynamicGet.Remote.Config'),
 			$container->get('DynamicGet.Grep'),
-			$container->get('Data.Item')
+			$container->get('Data.Item'),
+			$container->get('Power.Tracker'),
+			$container->get('Power.Message')
 		);
 	}
 
@@ -136,18 +128,20 @@ class DynamicGet implements ServiceProviderInterface
 	 * @param   Container  $container  The DI container.
 	 *
 	 * @return  Set
-	 * @since   5.2.1
+	 * @since   5.1.1
 	 */
 	public function getRemoteSet(Container $container): Set
 	{
 		return new Set(
-			$container->get('DynamicGet.Remote.Config'),
+			$container->get('Power.Tracker'),
+			$container->get('Power.Message'),
 			$container->get('DynamicGet.Grep'),
-			$container->get('Data.Items'),
+			$container->get('DynamicGet.Resolver'),
+			$container->get('DynamicGet.Remote.Config'),
 			$container->get('DynamicGet.Readme.Item'),
 			$container->get('DynamicGet.Readme.Main'),
-			$container->get('Gitea.Repository.Contents'),
-			$container->get('Power.Message'),
+			$container->get('Git.Repository.Contents'),
+			$container->get('Data.Items'),
 			$container->get('Config')->approved_package_paths
 		);
 	}
@@ -158,7 +152,7 @@ class DynamicGet implements ServiceProviderInterface
 	 * @param   Container  $container  The DI container.
 	 *
 	 * @return  ItemReadme
-	 * @since   5.2.1
+	 * @since   5.1.1
 	 */
 	public function getItemReadme(Container $container): ItemReadme
 	{
@@ -171,7 +165,7 @@ class DynamicGet implements ServiceProviderInterface
 	 * @param   Container  $container  The DI container.
 	 *
 	 * @return  MainReadme
-	 * @since   5.2.1
+	 * @since   5.1.1
 	 */
 	public function getMainReadme(Container $container): MainReadme
 	{

@@ -218,20 +218,20 @@ class HtmlView extends BaseHtmlView
 				ToolbarHelper::trash('joomla_plugins.trash');
 			}
 		}
-		if ($this->user->authorise('joomla_plugin.get_boilerplate', 'com_componentbuilder'))
+		if ($this->user->authorise('joomla_plugin.init', 'com_componentbuilder'))
 		{
-			// add Get Boilerplate button.
-			ToolbarHelper::custom('joomla_plugins.getBoilerplate', 'joomla custom-button-getboilerplate', '', 'COM_COMPONENTBUILDER_GET_BOILERPLATE', false);
+			// add Init button.
+			ToolbarHelper::custom('joomla_plugins.initPowers', 'health custom-button-initpowers', '', 'COM_COMPONENTBUILDER_INIT', false);
 		}
-		if ($this->user->authorise('joomla_plugin.methods', 'com_componentbuilder'))
+		if ($this->user->authorise('joomla_plugin.reset', 'com_componentbuilder'))
 		{
-			// add Methods button.
-			ToolbarHelper::custom('joomla_plugins.openClassMethods', 'joomla custom-button-openclassmethods', '', 'COM_COMPONENTBUILDER_METHODS', false);
+			// add Reset button.
+			ToolbarHelper::custom('joomla_plugins.resetPowers', 'joomla custom-button-resetpowers', '', 'COM_COMPONENTBUILDER_RESET', false);
 		}
-		if ($this->user->authorise('joomla_plugin.properties', 'com_componentbuilder'))
+		if ($this->user->authorise('joomla_plugin.push', 'com_componentbuilder'))
 		{
-			// add Properties button.
-			ToolbarHelper::custom('joomla_plugins.openClassProperties', 'joomla custom-button-openclassproperties', '', 'COM_COMPONENTBUILDER_PROPERTIES', false);
+			// add Push button.
+			ToolbarHelper::custom('joomla_plugins.pushPowers', 'share custom-button-pushpowers', '', 'COM_COMPONENTBUILDER_PUSH', false);
 		}
 
 		// set help url for this view if found

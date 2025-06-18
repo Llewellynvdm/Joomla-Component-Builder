@@ -100,7 +100,7 @@ final class FieldString implements Fieldtypeinterface
 	 * The ModalSelect Class.
 	 *
 	 * @var   ModalSelect
-	 * @since 5.2.1
+	 * @since 5.1.1
 	 */
 	protected ModalSelect $modalselect;
 
@@ -124,7 +124,7 @@ final class FieldString implements Fieldtypeinterface
 	 * The ComponentFields Class.
 	 *
 	 * @var   ComponentFields
-	 * @since 5.2.1
+	 * @since 5.1.1
 	 */
 	protected ComponentFields $componentfields;
 
@@ -1065,7 +1065,7 @@ final class FieldString implements Fieldtypeinterface
 	 * @param array  $link  The link data which may contain 'table', 'component', 'view', 'text', and 'id'.
 	 *
 	 * @return array|null The structured linker relation array, or null if input is an empty array.
-	 * @since  5.2.1
+	 * @since  5.1.1
 	 */
 	private function setLinkerRelations(array $link): ?array
 	{

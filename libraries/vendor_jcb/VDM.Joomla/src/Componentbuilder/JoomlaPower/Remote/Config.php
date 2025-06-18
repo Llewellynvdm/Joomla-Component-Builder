@@ -53,7 +53,7 @@ final class Config extends ExtendingConfig implements ConfigInterface
 	 * @var    string
 	 * @since 3.2.2
 	 */
-	// [DEFAULT] protected string $suffix_key = '---Power';
+	protected string $suffix_key = '---Power';
 
 	/**
 	 * The main readme file path
@@ -62,6 +62,14 @@ final class Config extends ExtendingConfig implements ConfigInterface
 	 * @since  5.1.1
 	 */
 	// [DEFAULT] protected string $main_readme_path = 'README.md';
+
+	/**
+	 * The item readme file name
+	 *
+	 * @var    string
+	 * @since  5.1.1
+	 */
+	// [DEFAULT] protected string $item_readme_name = 'README.md';
 
 	/**
 	 * The index file path (index of all items)
@@ -80,12 +88,12 @@ final class Config extends ExtendingConfig implements ConfigInterface
 	// [DEFAULT] protected string $src_path = 'src';
 
 	/**
-	 * The item settings file path
+	 * The item settings file name (item data)
 	 *
 	 * @var   string
 	 * @since 3.2.2
 	 */
-	// [DEFAULT] protected string $settings_path = 'item.json';
+	// [DEFAULT] protected string $settings_name = 'item.json';
 
 	/**
 	 * The item guid=unique field
@@ -143,12 +151,7 @@ final class Config extends ExtendingConfig implements ConfigInterface
 	 *
 	 * @var    array
 	 * @since  5.0.3
-	protected array $placeholders = [
-		'[['.'[NamespacePrefix]]]' => 'VDM',
-		'[['.'[ComponentNamespace]]]' => 'Componentbuilder',
-		'[['.'[Component]]]' => 'Componentbuilder', 
-		'[['.'[component]]]' => 'componentbuilder'
-	];
+	protected array $placeholders = [];
 	[DEFAULT] */
 }
 

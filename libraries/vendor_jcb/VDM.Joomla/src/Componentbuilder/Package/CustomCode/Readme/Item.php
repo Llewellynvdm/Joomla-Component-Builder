@@ -23,54 +23,76 @@ use VDM\Joomla\Interfaces\Readme\ItemInterface;
 final class Item implements ItemInterface
 {
 	/**
-	 * Get an item readme
+	 * Generate a README for a JCB Custom Code block in Markdown format.
 	 *
-	 * @param object  $item  An item details.
+	 * Includes system name, execution target (auto/manual), path or function name, and code body.
 	 *
-	 * @return string
-	 * @since 3.2.2
+	 * @param  object  $item  The custom code definition.
+	 *
+	 * @return string  The generated README.
+	 * @since  5.1.1
 	 */
 	public function get(object $item): string
 	{
-		// build readme
-		$readme = ["```
-     ██╗ ██████╗  ██████╗ ███╗   ███╗██╗      █████╗                                       
-     ██║██╔═══██╗██╔═══██╗████╗ ████║██║     ██╔══██╗                                      
-     ██║██║   ██║██║   ██║██╔████╔██║██║     ███████║                                      
-██   ██║██║   ██║██║   ██║██║╚██╔╝██║██║     ██╔══██║                                      
-╚█████╔╝╚██████╔╝╚██████╔╝██║ ╚═╝ ██║███████╗██║  ██║                                      
- ╚════╝  ╚═════╝  ╚═════╝ ╚═╝     ╚═╝╚══════╝╚═╝  ╚═╝                                      
-                                                                                           
- ██████╗██╗   ██╗███████╗████████╗ ██████╗ ███╗   ███╗     ██████╗ ██████╗ ██████╗ ███████╗
-██╔════╝██║   ██║██╔════╝╚══██╔══╝██╔═══██╗████╗ ████║    ██╔════╝██╔═══██╗██╔══██╗██╔════╝
-██║     ██║   ██║███████╗   ██║   ██║   ██║██╔████╔██║    ██║     ██║   ██║██║  ██║█████╗  
-██║     ██║   ██║╚════██║   ██║   ██║   ██║██║╚██╔╝██║    ██║     ██║   ██║██║  ██║██╔══╝  
-╚██████╗╚██████╔╝███████║   ██║   ╚██████╔╝██║ ╚═╝ ██║    ╚██████╗╚██████╔╝██████╔╝███████╗
- ╚═════╝ ╚═════╝ ╚══════╝   ╚═╝    ╚═════╝ ╚═╝     ╚═╝     ╚═════╝ ╚═════╝ ╚═════╝ ╚══════╝
-```"];
-		// system name
-		$readme[] = "# " . $item->system_name;
+		$readme = [];
 
-		if (!empty($item->description))
+		// Title
+		$readme[] = '### JCB! Custom Code';
+		$readme[] = '# ' . ($item->system_name ?? 'error: missing system name');
+		$readme[] = '';
+
+		$target = (int) ($item->target ?? 0);
+
+		if ($target === 1)
 		{
-			$readme[] = "\n" . $item->description;
+			// Hash-based automation
+			$readme[] = '## Hash (automation)';
+
+			$commentType     = (int) ($item->comment_type ?? 0);
+			$joomlaVersion   = (int) ($item->joomla_version ?? 0);
+			$joomlaLabel     = $joomlaVersion > 2 ? " J{$joomlaVersion}" : '';
+			$insertionType   = $commentType === 1 ? "Replacement" : "Insertion";
+			$readme[] = "#### {$insertionType}{$joomlaLabel}";
+			$readme[] = '';
+
+			$path = $item->path ?? 'error: missing path';
+			$readme[] = '### Path';
+			$readme[] = '```';
+			$readme[] = $path;
+			$readme[] = '```';
+			$readme[] = '';
+		}
+		elseif ($target === 2 && !empty($item->function_name))
+		{
+			// Manual [CUSTOMCODE=...] style usage
+			$readme[] = '## JCB (manual)';
+			$readme[] = '```';
+			$readme[] = '[CUSTOM' . 'CODE=' . $item->function_name . ']';
+			$readme[] = '```';
+			$readme[] = '';
 		}
 
-		$readme[] = "\nThe Joomla! custom‑code snippet contained in this repository offers a simple, reliable way to inject a self‑contained block of PHP, JavaScript, CSS, or markup into components built with Joomla Component Builder (JCB) through a custom‑code placeholder such as [CUSTOMCODE=getCustom]. Each snippet is packaged for seamless compatibility with the JCB workflow, so you can drop it into your components without manual wiring or asset juggling. By clicking the \"reset\" button, you can instantly synchronize this custom‑code with the authoritative version stored in our core repository, ensuring your components always take advantage of the latest refinements, security fixes, and performance improvements.\n\n Need something more tailored? Fork this repository and direct your JCB instance to your fork. Whether you’re adding component‑specific logic, stripping out unused functionality, or expanding the custom‑code’s capabilities, you stay fully in control while still leveraging JCB’s convenient custom‑code‑management tooling.\n
-\n
-\"This flexible approach embraces JCB’s open-source model, giving you the freedom to adapt your components to your exact needs while staying connected to a powerful and community-driven ecosystem.\"\n";
+		// Code block
+		$code = $item->code ?? 'error: missing code';
+		$readme[] = '### Code';
+		$readme[] = '```php';
+		$readme[] = $code;
+		$readme[] = '```';
+		$readme[] = '';
 
-		// yes you can remove this, but why?
-		$readme[] = "\n---\n```
-     ██╗ ██████╗██████╗
-     ██║██╔════╝██╔══██╗
-     ██║██║     ██████╔╝
-██   ██║██║     ██╔══██╗
-╚█████╔╝╚██████╗██████╔╝
- ╚════╝  ╚═════╝╚═════╝
-```\n> Build with [Joomla Component Builder](https://git.vdm.dev/joomla/Component-Builder)\n\n";
+		// Footer
+		$readme[] = '> Add clean, self-contained code into your components with this reusable custom-code snippet designed for seamless integration and easy updates in JCB.';
+		$readme[] = '';
+
+		$readme[] = <<<MD
+### Used in [Joomla Component Builder](https://www.joomlacomponentbuilder.com) - [Source](https://git.vdm.dev/joomla/Component-Builder) - [Mirror](https://github.com/vdm-io/Joomla-Component-Builder) - [Download](https://git.vdm.dev/joomla/pkg-component-builder/releases)
+
+---
+[![Joomla Volunteer Portal](https://img.shields.io/badge/-Joomla-gold?logo=joomla)](https://volunteers.joomla.org/joomlers/1396-llewellyn-van-der-merwe "Join Llewellyn on the Joomla Volunteer Portal: Shaping the Future Together!") [![Octoleo](https://img.shields.io/badge/-Octoleo-black?logo=linux)](https://git.vdm.dev/octoleo "--quiet") [![Llewellyn](https://img.shields.io/badge/-Llewellyn-ffffff?logo=gitea)](https://git.vdm.dev/Llewellyn "Collaborate and Innovate with Llewellyn on Git: Building a Better Code Future!") [![Telegram](https://img.shields.io/badge/-Telegram-blue?logo=telegram)](https://t.me/Joomla_component_builder "Join Llewellyn and the Community on Telegram: Building Joomla Components Together!") [![Mastodon](https://img.shields.io/badge/-Mastodon-9e9eec?logo=mastodon)](https://joomla.social/@llewellyn "Connect and Engage with Llewellyn on Joomla Social: Empowering Communities, One Post at a Time!") [![X (Twitter)](https://img.shields.io/badge/-X-black?logo=x)](https://x.com/llewellynvdm "Join the Conversation with Llewellyn on X: Where Ideas Take Flight!") [![GitHub](https://img.shields.io/badge/-GitHub-181717?logo=github)](https://github.com/Llewellynvdm "Build, Innovate, and Thrive with Llewellyn on GitHub: Turning Ideas into Impact!") [![YouTube](https://img.shields.io/badge/-YouTube-ff0000?logo=youtube)](https://www.youtube.com/@OctoYou "Explore, Learn, and Create with Llewellyn on YouTube: Your Gateway to Inspiration!") [![n8n](https://img.shields.io/badge/-n8n-black?logo=n8n)](https://n8n.io/creators/octoleo "Effortless Automation and Impactful Workflows with Llewellyn on n8n!") [![Docker Hub](https://img.shields.io/badge/-Docker-grey?logo=docker)](https://hub.docker.com/u/llewellyn "Llewellyn on Docker: Containerize Your Creativity!") [![Open Collective](https://img.shields.io/badge/-Donate-green?logo=opencollective)](https://opencollective.com/joomla-component-builder "Donate towards JCB: Help Llewellyn financially so he can continue developing this great tool!") [![GPG Key](https://img.shields.io/badge/-GPG-blue?logo=gnupg)](https://git.vdm.dev/Llewellyn/gpg "Unlock Trust and Security with Llewellyn's GPG Key: Your Gateway to Verified Connections!")
+MD;
 
 		return implode("\n", $readme);
 	}
+
 }
 

@@ -265,7 +265,8 @@ class RepositoriesModel extends ListModel
 		{
 			$typeArray = array(
 				0 => 'COM_COMPONENTBUILDER_REPOSITORY_SELECT_AN_OPTION',
-				1 => 'COM_COMPONENTBUILDER_REPOSITORY_GITEA'
+				1 => 'COM_COMPONENTBUILDER_REPOSITORY_GITEA',
+				2 => 'COM_COMPONENTBUILDER_REPOSITORY_GITHUB'
 			);
 			// Now check if value is found in this array
 			if (isset($typeArray[$value]) && StringHelper::check($typeArray[$value]))
@@ -340,7 +341,7 @@ class RepositoriesModel extends ListModel
 			else
 			{
 				$search = $db->quote('%' . $db->escape($search) . '%');
-				$query->where('(a.organisation LIKE '.$search.' OR a.repository LIKE '.$search.' OR a.target LIKE '.$search.' OR a.type LIKE '.$search.' OR a.base LIKE '.$search.' OR a.guid LIKE '.$search.' OR a.username LIKE '.$search.')');
+				$query->where('(a.organisation LIKE '.$search.' OR a.repository LIKE '.$search.' OR a.target LIKE '.$search.' OR a.type LIKE '.$search.' OR a.base LIKE '.$search.' OR a.guid LIKE '.$search.' OR a.author_email LIKE '.$search.' OR a.author_name LIKE '.$search.' OR a.username LIKE '.$search.')');
 			}
 		}
 

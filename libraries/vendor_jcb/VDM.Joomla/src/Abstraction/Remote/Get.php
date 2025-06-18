@@ -12,9 +12,12 @@
 namespace VDM\Joomla\Abstraction\Remote;
 
 
+use Joomla\CMS\Language\Text;
 use VDM\Joomla\Interfaces\Remote\ConfigInterface as Config;
 use VDM\Joomla\Interfaces\GrepInterface as Grep;
 use VDM\Joomla\Interfaces\Data\ItemInterface as Item;
+use VDM\Joomla\Componentbuilder\Package\Dependency\Tracker;
+use VDM\Joomla\Componentbuilder\Package\MessageBus;
 use VDM\Joomla\Interfaces\Remote\GetInterface;
 use VDM\Joomla\Abstraction\Remote\Base;
 
@@ -43,21 +46,43 @@ abstract class Get extends Base implements GetInterface
 	protected Item $item;
 
 	/**
+	 * The Tracker Class.
+	 *
+	 * @var   Tracker
+	 * @since 5.1.1
+	 */
+	protected Tracker $tracker;
+
+	/**
+	 * The MessageBus Class.
+	 *
+	 * @var   MessageBus
+	 * @since 5.1.1
+	 */
+	protected MessageBus $messages;
+
+	/**
 	 * Constructor.
 	 *
 	 * @param Config      $config   The Config Class.
 	 * @param Grep        $grep     The Grep Class.
 	 * @param Item        $item     The ItemInterface Class.
+	 * @param Tracker     $tracker  The Tracker Class.
+	 * @param MessageBus  $messages The MessageBus Class.
 	 * @param string|null $table    The table name.
 	 *
 	 * @since 3.2.0
 	 */
-	public function __construct(Config $config, Grep $grep, Item $item, ?string $table = null)
+	public function __construct(Config $config, Grep $grep, Item $item,
+		Tracker $tracker, MessageBus $messages, ?string $table = null)
 	{
 		parent::__construct($config);
 
 		$this->grep = $grep;
 		$this->item = $item;
+		$this->tracker = $tracker;
+		$this->messages = $messages;
+
 		if ($table !== null)
 		{
 			$this->table($table);
@@ -75,6 +100,7 @@ abstract class Get extends Base implements GetInterface
 	 *
 	 * @param array        $items   An array of item identifiers (GUIDs) to initialize and validate.
 	 * @param object|null  $repo    The repository object to search. If null, all repos will be searched.
+	 * @param bool         $force   Force a local update (if item exist locally).
 	 *
 	 * @return array{
 	 *     local: array<string, string>,
@@ -87,26 +113,28 @@ abstract class Get extends Base implements GetInterface
 	 *
 	 * @since  5.1.1
 	 */
-	public function init(array $items, ?object $repo = null): array
+	public function init(array $items, ?object $repo = null, bool $force = false): array
 	{
-		$done = [];
 		$logger = [
 			'local'     => [],
 			'not_found' => [],
 			'added'     => []
 		];
+
 		$guid_field = $this->getGuidField();
+		$table = $this->getTable();
+		$this->grep->setBranchField('read_branch');
 
 		foreach ($items as $guid)
 		{
-			if (isset($done[$guid]))
+			if ($this->tracker->exists("save.{$table}.{$guid_field}|{$guid}"))
 			{
 				continue;
 			}
-			$done[$guid] = $guid;
+			$this->tracker->set("save.{$table}.{$guid_field}|{$guid}", true);
 
 			// Check if item exists in the local database
-			if ($this->item->table($this->getTable())->value($guid, $guid_field) !== null)
+			if ($force === false && $this->item->table($table)->value($guid, $guid_field) !== null)
 			{
 				$logger['local'][$guid] = $guid;
 				continue;
@@ -121,11 +149,8 @@ abstract class Get extends Base implements GetInterface
 				continue;
 			}
 
-			// pass item to the inspector to get all dependencies
-			// $item = $this->model->init($item);
-
 			// Store the retrieved remote item into the local structure
-			$this->item->set($item, $guid_field);
+			$this->item->table($table)->set($item, $guid_field);
 
 			$logger['added'][$guid] = $guid;
 		}
@@ -143,6 +168,7 @@ abstract class Get extends Base implements GetInterface
 	 */
 	public function path(string $guid): ?object
 	{
+		$this->grep->setBranchField('read_branch');
 		return $this->grep->getPath($guid);
 	}
 
@@ -154,6 +180,7 @@ abstract class Get extends Base implements GetInterface
 	 */
 	public function paths(): ?array
 	{
+		$this->grep->setBranchField('read_branch');
 		return $this->grep->getPaths();
 	}
 
@@ -168,7 +195,9 @@ abstract class Get extends Base implements GetInterface
 	public function list(?string $repo = null): ?array
 	{
 		$guid_field = $this->getGuidField();
-		$table = $this->item->table($this->getTable());
+		$entity = $this->getTable();
+		$table = $this->item->table($entity);
+		$this->grep->setBranchField('read_branch');
 
 		if ($repo === null)
 		{
@@ -185,16 +214,34 @@ abstract class Get extends Base implements GetInterface
 			return null;
 		}
 
-		foreach ($paths as &$path)
+		$list = [];
+		foreach ($paths as $path)
 		{
-			foreach ($path->index as &$item)
+			if (!is_object($path->index[$entity] ?? null))
 			{
-				$guid = $item->{$guid_field};
+				continue;
+			}
+
+			$repo = clone $path;
+			$repo->index = $path->index[$entity];
+
+			foreach ($repo->index as $key => $item)
+			{
+				$guid = $item->guid ?? $item->{$guid_field} ?? null;
+				if (!isset($guid))
+				{
+					unset($repo->index->{$key});
+					continue;
+				}
 				$item->local = $table->value($guid, $guid_field) !== null;
 			}
+
+			$this->normalizeObjectIndexHeader($repo->index);
+
+			$list[] = $repo;
 		}
 
-		return $paths;
+		return $list ?? null;
 	}
 
 	/**
@@ -213,13 +260,20 @@ abstract class Get extends Base implements GetInterface
 		}
 
 		$success = true;
+		$area = $this->getArea();
 
 		foreach($items as $guid)
 		{
 			if (!$this->item($guid, ['remote']))
 			{
 				$success = false;
+				$this->messages->add('warning', Text::sprintf('COM_COMPONENTBUILDER_THE_S_ITEMS_DID_NOT_RESET', strtolower($area), $guid));
 			}
+		}
+
+		if ($success)
+		{
+			$this->messages->add('success', Text::sprintf('COM_COMPONENTBUILDER_THE_S_ITEMS_WAS_RESET', strtolower($area)));
 		}
 
 		return $success;
@@ -239,14 +293,64 @@ abstract class Get extends Base implements GetInterface
 	public function item(string $guid, array $order = ['remote', 'local'], ?object $repo = null): bool
 	{
 		$guid_field = $this->getGuidField();
+		$table = $this->getTable();
+		$this->grep->setBranchField('read_branch');
+		$result = false;
+
+		if ($this->tracker->exists("save.{$table}.{$guid_field}|{$guid}"))
+		{
+			return $this->tracker->get("save.{$table}.{$guid_field}|{$guid}");
+		}
+
 		if (($item = $this->grep->get($guid, $order, $repo)) !== null)
 		{
 			// pass item to the model to set the direct children
-			// $item = $this->model->getItem($item);
-			return $this->item->table($this->getTable())->set($item, $guid_field);
+			$result = $this->item->table($table)->set($item, $guid_field);
 		}
 
-		return false;
+		$this->tracker->set("save.{$table}.{$guid_field}|{$guid}", $result);
+
+		return $result;
+	}
+
+	/**
+	 * Normalize an object of objects (indexed by GUID):
+	 * - Each sub-object is normalized to have all keys in the order from getIndexHeader().
+	 * - Missing keys are filled with an empty string.
+	 * - The outer GUID keys are preserved.
+	 *
+	 * @param  object  &$items  Object of stdClass sub-objects, passed by reference
+	 *
+	 * @return void
+	 * @since  5.1.1
+	 */
+	public function normalizeObjectIndexHeader(object &$items): void
+	{
+		$canonicalKeys = $this->getIndexHeader();
+
+		$expectedCount = count($canonicalKeys);
+		$template = array_fill_keys($canonicalKeys, '');
+
+		foreach ($items as $guid => &$subObject)
+		{
+			if (!is_object($subObject))
+			{
+				continue; // skip if not an object
+			}
+
+			$vars = get_object_vars($subObject);
+
+			// Skip normalization if already compliant
+			if (count($vars) === $expectedCount && array_keys($vars) === $canonicalKeys)
+			{
+				continue;
+			}
+
+			// Normalize: enforce key order and fill missing values
+			$subObject = (object) array_merge($template, $vars);
+		}
+
+		unset($subObject); // break reference
 	}
 }
 

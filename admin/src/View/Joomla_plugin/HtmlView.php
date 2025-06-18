@@ -282,6 +282,16 @@ class HtmlView extends BaseHtmlView
 				{
 					ToolbarHelper::custom('joomla_plugin.save2copy', 'save-copy.png', 'save-copy_f2.png', 'JTOOLBAR_SAVE_AS_COPY', false);
 				}
+				if ($this->canDo->get('joomla_plugin.reset'))
+				{
+					// add Reset button.
+					ToolbarHelper::custom('joomla_plugin.resetPowers', 'joomla custom-button-resetpowers', '', 'COM_COMPONENTBUILDER_RESET', false);
+				}
+				if ($this->canDo->get('joomla_plugin.push'))
+				{
+					// add Push button.
+					ToolbarHelper::custom('joomla_plugin.pushPowers', 'share custom-button-pushpowers', '', 'COM_COMPONENTBUILDER_PUSH', false);
+				}
 				ToolbarHelper::cancel('joomla_plugin.cancel', 'JTOOLBAR_CLOSE');
 			}
 		}
@@ -354,6 +364,16 @@ class HtmlView extends BaseHtmlView
 					// We can save the new record
 					ToolbarHelper::apply('joomla_plugin.apply', 'JTOOLBAR_APPLY');
 					ToolbarHelper::save('joomla_plugin.save', 'JTOOLBAR_SAVE');
+				}
+				if ($this->canDo->get('joomla_plugin.reset'))
+				{
+					// add Reset button.
+					ToolbarHelper::custom('joomla_plugin.resetPowers', 'joomla custom-button-resetpowers', '', 'COM_COMPONENTBUILDER_RESET', false);
+				}
+				if ($this->canDo->get('joomla_plugin.push'))
+				{
+					// add Push button.
+					ToolbarHelper::custom('joomla_plugin.pushPowers', 'share custom-button-pushpowers', '', 'COM_COMPONENTBUILDER_PUSH', false);
 				}
 				ToolbarHelper::cancel('joomla_plugin.cancel', 'JTOOLBAR_CLOSE');
 			}
@@ -463,7 +483,7 @@ class HtmlView extends BaseHtmlView
 		$this->getDocument()->addScriptDeclaration("var expire = ". (int) $expire.";");
 		$this->getDocument()->addScriptDeclaration("selectionArray = {'property':{},'method':{}};");
 		// add a few field options via PHP
-		FormHelper::addFieldPath(JPATH_COMPONENT . '/models/fields');
+		FormHelper::addFieldPath(JPATH_BASE . '/components/com_componentbuilder/models/fields');
 		$tmp_ = FormHelper::loadFieldType('joomlaplugingroups')->options;
 		if (ArrayHelper::check($tmp_))
 		{

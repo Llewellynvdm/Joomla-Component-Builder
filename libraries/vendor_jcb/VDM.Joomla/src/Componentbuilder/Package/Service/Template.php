@@ -26,7 +26,7 @@ use VDM\Joomla\Componentbuilder\Package\Template\Readme\Main as MainReadme;
 /**
  * Template Service Provider
  * 
- * @since  5.2.1
+ * @since  5.1.1
  */
 class Template implements ServiceProviderInterface
 {
@@ -36,30 +36,17 @@ class Template implements ServiceProviderInterface
 	 * @param   Container  $container  The DI container.
 	 *
 	 * @return  void
-	 * @since   5.2.1
+	 * @since   5.1.1
 	 */
 	public function register(Container $container)
 	{
-		$container->alias(Grep::class, 'Template.Grep')
-			->share('Template.Grep', [$this, 'getGrep'], true);
-
-		$container->alias(Config::class, 'Template.Remote.Config')
-			->share('Template.Remote.Config', [$this, 'getRemoteConfig'], true);
-
-		$container->alias(Resolver::class, 'Template.Resolver')
-			->share('Template.Resolver', [$this, 'getResolver'], true);
-
-		$container->alias(Get::class, 'Template.Remote.Get')
-			->share('Template.Remote.Get', [$this, 'getRemoteGet'], true);
-
-		$container->alias(Set::class, 'Template.Remote.Set')
-			->share('Template.Remote.Set', [$this, 'getRemoteSet'], true);
-
-		$container->alias(ItemReadme::class, 'Template.Readme.Item')
-			->share('Template.Readme.Item', [$this, 'getItemReadme'], true);
-
-		$container->alias(MainReadme::class, 'Template.Readme.Main')
-			->share('Template.Readme.Main', [$this, 'getMainReadme'], true);
+		$container->share('Template.Grep', [$this, 'getGrep'], true);
+		$container->share('Template.Remote.Config', [$this, 'getRemoteConfig'], true);
+		$container->share('Template.Resolver', [$this, 'getResolver'], true);
+		$container->share('Template.Remote.Get', [$this, 'getRemoteGet'], true);
+		$container->share('Template.Remote.Set', [$this, 'getRemoteSet'], true);
+		$container->share('Template.Readme.Item', [$this, 'getItemReadme'], true);
+		$container->share('Template.Readme.Main', [$this, 'getMainReadme'], true);
 	}
 
 	/**
@@ -68,7 +55,7 @@ class Template implements ServiceProviderInterface
 	 * @param   Container  $container  The DI container.
 	 *
 	 * @return  Config
-	 * @since  5.2.1
+	 * @since  5.1.1
 	 */
 	public function getRemoteConfig(Container $container): Config
 	{
@@ -83,14 +70,16 @@ class Template implements ServiceProviderInterface
 	 * @param   Container  $container  The DI container.
 	 *
 	 * @return  Resolver
-	 * @since 5.2.1
+	 * @since 5.1.1
 	 */
 	public function getResolver(Container $container): Resolver
 	{
 		return new Resolver(
 			$container->get('Template.Remote.Config'),
+			$container->get('Utilities.Normalize'),
 			$container->get('Power.Tracker'),
-			$container->get('Power.Table')
+			$container->get('Power.Table'),
+			$container->get('Load')
 		);
 	}
 
@@ -100,14 +89,15 @@ class Template implements ServiceProviderInterface
 	 * @param   Container  $container  The DI container.
 	 *
 	 * @return  Grep
-	 * @since   5.2.1
+	 * @since   5.1.1
 	 */
 	public function getGrep(Container $container): Grep
 	{
 		return new Grep(
 			$container->get('Template.Remote.Config'),
-			$container->get('Gitea.Repository.Contents'),
+			$container->get('Git.Repository.Contents'),
 			$container->get('Network.Resolve'),
+			$container->get('Power.Tracker'),
 			$container->get('Config')->approved_package_paths
 		);
 	}
@@ -118,14 +108,16 @@ class Template implements ServiceProviderInterface
 	 * @param   Container  $container  The DI container.
 	 *
 	 * @return  Get
-	 * @since   5.2.1
+	 * @since   5.1.1
 	 */
 	public function getRemoteGet(Container $container): Get
 	{
 		return new Get(
 			$container->get('Template.Remote.Config'),
 			$container->get('Template.Grep'),
-			$container->get('Data.Item')
+			$container->get('Data.Item'),
+			$container->get('Power.Tracker'),
+			$container->get('Power.Message')
 		);
 	}
 
@@ -135,18 +127,20 @@ class Template implements ServiceProviderInterface
 	 * @param   Container  $container  The DI container.
 	 *
 	 * @return  Set
-	 * @since   5.2.1
+	 * @since   5.1.1
 	 */
 	public function getRemoteSet(Container $container): Set
 	{
 		return new Set(
-			$container->get('Template.Remote.Config'),
+			$container->get('Power.Tracker'),
+			$container->get('Power.Message'),
 			$container->get('Template.Grep'),
-			$container->get('Data.Items'),
+			$container->get('Template.Resolver'),
+			$container->get('Template.Remote.Config'),
 			$container->get('Template.Readme.Item'),
 			$container->get('Template.Readme.Main'),
-			$container->get('Gitea.Repository.Contents'),
-			$container->get('Power.Message'),
+			$container->get('Git.Repository.Contents'),
+			$container->get('Data.Items'),
 			$container->get('Config')->approved_package_paths
 		);
 	}
@@ -157,7 +151,7 @@ class Template implements ServiceProviderInterface
 	 * @param   Container  $container  The DI container.
 	 *
 	 * @return  ItemReadme
-	 * @since   5.2.1
+	 * @since   5.1.1
 	 */
 	public function getItemReadme(Container $container): ItemReadme
 	{
@@ -170,7 +164,7 @@ class Template implements ServiceProviderInterface
 	 * @param   Container  $container  The DI container.
 	 *
 	 * @return  MainReadme
-	 * @since   5.2.1
+	 * @since   5.1.1
 	 */
 	public function getMainReadme(Container $container): MainReadme
 	{

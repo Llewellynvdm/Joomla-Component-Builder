@@ -13,7 +13,7 @@ namespace VDM\Joomla\Abstraction;
 
 
 use Joomla\CMS\Factory;
-use Joomla\Database\DatabaseInterface;
+use Joomla\Database\DatabaseInterface as JoomlaDatabase;
 use VDM\Joomla\Utilities\Component\Helper;
 
 
@@ -27,17 +27,10 @@ abstract class Database
 	/**
 	 * Database object to query local DB
 	 *
+	 * @var JoomlaDatabase
 	 * @since 3.2.0
 	 */
-	protected $db;
-
-	/**
-	 * Core Component Table Name
-	 *
-	 * @var   string
-	 * @since 3.2.0
-	 */
-	protected string $table;
+	protected JoomlaDatabase $db;
 
 	/**
 	 * Date format to return
@@ -48,66 +41,108 @@ abstract class Database
 	protected string $dateFormat = 'Y-m-d H:i:s';
 
 	/**
+	 * Current component code name
+	 *
+	 * @var     string
+	 * @since 5.1.1
+	 */
+	protected string $componentCode;
+
+	/**
+	 * Core Component Table Name
+	 *
+	 * @var   string
+	 * @since 3.2.0
+	 */
+	protected string $table;
+
+	/**
 	 * Constructor
 	 *
 	 * @throws \Exception
 	 * @since 3.2.0
 	 */
-	public function __construct()
+	public function __construct(?JoomlaDatabase $db = null)
 	{
-		$this->db = Factory::getContainer()->get(DatabaseInterface::class);
+		$this->db = $db ?: Factory::getContainer()->get(JoomlaDatabase::class);
 
-		// set the component table
-		$this->table = '#__' . Helper::getCode();
+		$this->componentCode = Helper::getCode();
+		$this->table = '#__' . $this->componentCode;
 	}
 
 	/**
-	 * Set a value based on data type
+	 * Safely quote a value for database use, preserving data integrity.
 	 *
-	 * @param   mixed  $value   The value to set
+	 * - Native ints/floats passed as-is
+	 * - Clean integer strings are cast to int
+	 * - Clean float strings are cast to float
+	 * - Scientific notation is quoted to preserve original form
+	 * - Leading-zero integers are quoted
+	 * - Dates are formatted and quoted
+	 * - Booleans are converted to TRUE/FALSE
+	 * - Null is converted to NULL
+	 * - All else is quoted with Joomla's db quote
+	 *
+	 * @param   mixed  $value  The value to quote.
 	 *
 	 * @return  mixed
 	 * @since   3.2.0
-	 **/
+	 */
 	protected function quote($value)
 	{
+		// NULL handling
 		if ($value === null)
 		{
 			return 'NULL';
 		}
 
-		if (is_numeric($value))
+		// DateTime handling
+		if ($value instanceof \DateTimeInterface)
 		{
-			// If the value is a numeric string (e.g., "0123"), treat it as a string to preserve the format
-			if (is_string($value) && ltrim($value, '0') !== $value)
+			return $this->db->quote($value->format($this->getDateFormat()));
+		}
+
+		// Native numeric types
+		if (is_int($value) || is_float($value))
+		{
+			return $value;
+		}
+
+		// Stringified numeric values
+		if (is_string($value) && is_numeric($value))
+		{
+			// Case 1: Leading-zero integers like "007"
+			if ($value[0] === '0' && strlen($value) > 1 && ctype_digit($value))
 			{
 				return $this->db->quote($value);
 			}
 
-			if (filter_var($value, FILTER_VALIDATE_INT))
+			// Case 2: Scientific notation - preserve exact format
+			if (stripos($value, 'e') !== false)
 			{
-				return (int) $value;
+				return $this->db->quote($value);
 			}
 
-			if (filter_var($value, FILTER_VALIDATE_FLOAT))
+			// Case 3: Decimal float string (not scientific)
+			if (str_contains($value, '.'))
 			{
 				return (float) $value;
 			}
+
+			// Case 4: Pure integer string
+			if (ctype_digit($value))
+			{
+				return (int) $value;
+			}
 		}
 
-		// Handle boolean values
+		// Boolean handling
 		if (is_bool($value))
 		{
 			return $value ? 'TRUE' : 'FALSE';
 		}
 
-		// For date and datetime values
-		if ($value instanceof \DateTime)
-		{
-			return $this->db->quote($value->format($this->getDateFormat()));
-		}
-
-		// For other types of values, quote as string
+		// Everything else
 		return $this->db->quote($value);
 	}
 
@@ -128,17 +163,6 @@ abstract class Database
 		}
 
 		return $table;
-	}
-
-	/**
-	 * Get the date format to return in the quote
-	 *
-	 * @return  string
-	 * @since   5.0.2
-	 **/
-	protected function getDateFormat(): string
-	{
-		return $this->dateFormat;
 	}
 }
 

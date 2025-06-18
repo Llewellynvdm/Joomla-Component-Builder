@@ -283,10 +283,6 @@ class Class_propertiesModel extends ListModel
 		// From the componentbuilder_item table
 		$query->from($db->quoteName('#__componentbuilder_class_property', 'a'));
 
-		// From the componentbuilder_joomla_plugin_group table.
-		$query->select($db->quoteName(['g.name','g.id'],['joomla_plugin_group_name','joomla_plugin_group_id']));
-		$query->join('LEFT', $db->quoteName('#__componentbuilder_joomla_plugin_group', 'g') . ' ON (' . $db->quoteName('a.joomla_plugin_group') . ' = ' . $db->quoteName('g.guid') . ')');
-
 		// Filter by published state
 		$published = $this->getState('filter.published');
 		if (is_numeric($published))

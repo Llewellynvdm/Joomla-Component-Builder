@@ -19,7 +19,7 @@ use VDM\Joomla\Abstraction\Registry;
 /**
  * Package Dependency Tracker
  * 
- * @since 5.2.1
+ * @since 5.1.1
  */
 final class Tracker extends Registry implements Registryinterface
 {

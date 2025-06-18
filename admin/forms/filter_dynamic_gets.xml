@@ -41,7 +41,9 @@
 			type="dynamicgetsfiltergettype"
 			name="gettype"
 			label="COM_COMPONENTBUILDER_DYNAMIC_GET_GETTYPE_LABEL"
-			multiple="false"
+			layout="joomla.form.field.list-fancy-select"
+			multiple="true"
+			hint="COM_COMPONENTBUILDER_FILTER_SELECT_GETTYPE"
 			class="js-select-submit-on-change"
 		/>
 		<input type="hidden" name="form_submited" value="1"/>

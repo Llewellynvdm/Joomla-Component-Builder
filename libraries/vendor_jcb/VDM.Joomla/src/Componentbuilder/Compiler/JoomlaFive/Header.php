@@ -506,7 +506,7 @@ final class Header implements HeaderInterface
 			case 'import.model':
 				$headers[] = 'use Joomla\Filesystem\File;';
 				$headers[] = 'use Joomla\Filesystem\Folder;';
-				$headers[] = 'use Joomla\CMS\Filesystem\Path;';
+				$headers[] = 'use Joomla\Filesystem\Path;';
 				$headers[] = 'use Joomla\CMS\Filter\OutputFilter;';
 				$headers[] = 'use Joomla\CMS\Installer\InstallerHelper;';
 				$headers[] = 'use Joomla\CMS\MVC\Model\BaseDatabaseModel;';

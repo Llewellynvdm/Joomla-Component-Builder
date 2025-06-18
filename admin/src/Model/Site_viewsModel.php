@@ -88,12 +88,12 @@ class Site_viewsModel extends ListModel
 				'a.ordering','ordering',
 				'a.created_by','created_by',
 				'a.modified_by','modified_by',
-				'g.name','main_get',
 				'a.add_php_ajax','add_php_ajax',
 				'a.add_custom_button','add_custom_button',
 				'a.system_name','system_name',
 				'a.name','name',
 				'a.description','description',
+				'g.name','main_get',
 				'a.context','context'
 			);
 		}
@@ -194,13 +194,6 @@ class Site_viewsModel extends ListModel
 		$search = $this->getUserStateFromRequest($this->context . '.filter.search', 'filter_search');
 		$this->setState('filter.search', $search);
 
-		$main_get = $this->getUserStateFromRequest($this->context . '.filter.main_get', 'filter_main_get');
-		if ($formSubmited)
-		{
-			$main_get = $app->input->post->get('main_get');
-			$this->setState('filter.main_get', $main_get);
-		}
-
 		$add_php_ajax = $this->getUserStateFromRequest($this->context . '.filter.add_php_ajax', 'filter_add_php_ajax');
 		if ($formSubmited)
 		{
@@ -234,6 +227,13 @@ class Site_viewsModel extends ListModel
 		{
 			$description = $app->input->post->get('description');
 			$this->setState('filter.description', $description);
+		}
+
+		$main_get = $this->getUserStateFromRequest($this->context . '.filter.main_get', 'filter_main_get');
+		if ($formSubmited)
+		{
+			$main_get = $app->input->post->get('main_get');
+			$this->setState('filter.main_get', $main_get);
 		}
 
 		$context = $this->getUserStateFromRequest($this->context . '.filter.context', 'filter_context');
@@ -422,46 +422,6 @@ class Site_viewsModel extends ListModel
 			}
 		}
 
-		// Filter by Main_get.
-		$_main_get = $this->getState('filter.main_get');
-		if (is_numeric($_main_get))
-		{
-			if (is_float($_main_get))
-			{
-				$query->where('a.main_get = ' . (float) $_main_get);
-			}
-			else
-			{
-				$query->where('a.main_get = ' . (int) $_main_get);
-			}
-		}
-		elseif (StringHelper::check($_main_get))
-		{
-			$query->where('a.main_get = ' . $db->quote($db->escape($_main_get)));
-		}
-		elseif (UtilitiesArrayHelper::check($_main_get))
-		{
-			// Secure the array for the query
-			$_main_get = array_map( function ($val) use(&$db) {
-				if (is_numeric($val))
-				{
-					if (is_float($val))
-					{
-						return (float) $val;
-					}
-					else
-					{
-						return (int) $val;
-					}
-				}
-				elseif (StringHelper::check($val))
-				{
-					return $db->quote($db->escape($val));
-				}
-			}, $_main_get);
-			// Filter by the Main_get Array.
-			$query->where('a.main_get IN (' . implode(',', $_main_get) . ')');
-		}
 		// Filter by Add_php_ajax.
 		$_add_php_ajax = $this->getState('filter.add_php_ajax');
 		if (is_numeric($_add_php_ajax))
@@ -537,23 +497,12 @@ class Site_viewsModel extends ListModel
 		$id .= ':' . $this->getState('filter.ordering');
 		$id .= ':' . $this->getState('filter.created_by');
 		$id .= ':' . $this->getState('filter.modified_by');
-		// Check if the value is an array
-		$_main_get = $this->getState('filter.main_get');
-		if (UtilitiesArrayHelper::check($_main_get))
-		{
-			$id .= ':' . implode(':', $_main_get);
-		}
-		// Check if this is only an number or string
-		elseif (is_numeric($_main_get)
-		 || StringHelper::check($_main_get))
-		{
-			$id .= ':' . $_main_get;
-		}
 		$id .= ':' . $this->getState('filter.add_php_ajax');
 		$id .= ':' . $this->getState('filter.add_custom_button');
 		$id .= ':' . $this->getState('filter.system_name');
 		$id .= ':' . $this->getState('filter.name');
 		$id .= ':' . $this->getState('filter.description');
+		$id .= ':' . $this->getState('filter.main_get');
 		$id .= ':' . $this->getState('filter.context');
 
 		return parent::getStoreId($id);

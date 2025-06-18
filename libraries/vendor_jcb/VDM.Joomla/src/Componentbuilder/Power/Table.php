@@ -19,19 +19,19 @@ use VDM\Joomla\Componentbuilder\Table as ExtendingTable;
 /**
  * Package Table
  * 
- * @since 5.2.1
+ * @since 5.1.1
  */
 final class Table extends ExtendingTable implements TableInterface
 {
 	/**
-	 * Get all linked fields of an area/view/table
+	 * Get all parents fields of an area/view/table
 	 *
 	 * @param   string  $table     The area
 	 *
 	 * @return  array  An array of fields
-	 * @since   5.2.1
+	 * @since   5.1.1
 	 */
-	public function linked(string $table): array
+	public function parents(string $table): array
 	{
 		// Retrieve fields from the specified table
 		$fields = $this->get($table);
@@ -45,14 +45,14 @@ final class Table extends ExtendingTable implements TableInterface
 
 		foreach ($fields as $name => $field)
 		{
-			if ($this->isValidLinkedField($field))
+			if ($this->isValidParent($field))
 			{
 				$linked[$name] = $field['link'];
 			}
 
-			if ($this->isSubformField($field))
+			if ($this->isSubform($field))
 			{
-				$this->traverseSubformLinkedFields($name, $field['fields'], $linked);
+				$this->traverseSubformParents($name, $field['fields'], $linked);
 			}
 		}
 
@@ -60,26 +60,39 @@ final class Table extends ExtendingTable implements TableInterface
 	}
 
 	/**
-	 * Get all incoming link dependencies pointing to the given entity.
+	 * Get direct children dependencies pointing to the given entity.
 	 *
 	 * This method returns a map of `$entity` field keys to an array of referencing tables and fields.
 	 *
-	 * @param   string  $entity  The target entity name being linked to (e.g., 'power').
+	 * @param   string       $entity  The target entity name being linked to (e.g., 'power').
+	 * @param   array|null   $direct  The direct children.
+	 *                                     empty-array: means return none
+	 *                                     null: means return all
 	 *
 	 * @return  array  An associative array: [targetField => [['table' => string, 'name' => string], ...]]
-	 * @since   5.2.1
+	 * @since   5.1.1
 	 */
-	public function dependencies(string $entity): array
+	public function children(string $entity, ?array $direct = null): array
 	{
 		$result = [];
 
+		if ($direct !== null && $direct === [])
+		{
+			return $result;
+		}
+
 		foreach ($this->tables as $table => $fields)
 		{
+			if ($direct !== null && !in_array($table, $direct, true))
+			{
+				continue;
+			}
+
 			foreach ($fields as $name => $field)
 			{
 				$link = $field['link'] ?? null;
 
-				if ($this->isValidDependencyField($link, $entity))
+				if ($this->isValidChild($link, $entity))
 				{
 					$entity_field = $link['key'];
 					$result[$entity_field][] = [
@@ -89,9 +102,9 @@ final class Table extends ExtendingTable implements TableInterface
 					];
 				}
 
-				if ($this->isSubformField($field))
+				if ($this->isSubform($field))
 				{
-					$this->traverseSubformDependencies($table, $name, $field['fields'], $entity, $result);
+					$this->traverseSubformChildren($table, $name, $field['fields'], $entity, $result);
 				}
 			}
 		}
@@ -128,6 +141,16 @@ final class Table extends ExtendingTable implements TableInterface
 					$result[$fieldName] = $fieldName;
 				}
 			}
+			elseif ($area === 'customcode')
+			{
+				if (isset($fieldProperties['type']) && isset($fieldProperties['db']['type']) &&
+					isset($fieldProperties['store']) && $fieldProperties['store'] === 'base64' &&
+					in_array($fieldProperties['type'], ['textarea', 'editor'], true) &&
+					in_array($fieldProperties['db']['type'], ['MEDIUMTEXT'], true))
+				{
+					$result[$fieldName] = $fieldName;
+				}
+			}
 			elseif ($area === 'placeholders')
 			{
 				if (isset($fieldProperties['type']) &&
@@ -142,34 +165,34 @@ final class Table extends ExtendingTable implements TableInterface
 	}
 
 	/**
-	 * Recursively traverses subform fields to collect valid linked fields
+	 * Recursively traverses subform fields to collect valid parent fields
 	 *
 	 * @param   string $name    The current field name
 	 * @param   array  $fields  The current set of subform fields
 	 * @param   array  &$linked The reference bucket to collect linked fields
 	 *
 	 * @return  void
-	 * @since   5.2.1
+	 * @since   5.1.1
 	 */
-	private function traverseSubformLinkedFields(string $name, array $fields, array &$linked): void
+	private function traverseSubformParents(string $name, array $fields, array &$linked): void
 	{
 		foreach ($fields as $sub_name => $field)
 		{
 			$key_name = $name . '|' . $sub_name;
-			if ($this->isValidLinkedField($field))
+			if ($this->isValidParent($field))
 			{
 				$linked[$key_name] = $field['link'];
 			}
 
-			if ($this->isSubformField($field))
+			if ($this->isSubform($field))
 			{
-				$this->traverseSubformLinkedFields($key_name, $field['fields'], $linked);
+				$this->traverseSubformParents($key_name, $field['fields'], $linked);
 			}
 		}
 	}
 
 	/**
-	 * Recursively traverses subform fields to collect valid dependencies
+	 * Recursively traverses subform fields to collect valid Children dependencies
 	 *
 	 * @param   string $table         The current table name
 	 * @param   string $name          The current field name
@@ -177,9 +200,9 @@ final class Table extends ExtendingTable implements TableInterface
 	 * @param   array  &$result       The reference bucket to collect linked fields
 	 *
 	 * @return  void
-	 * @since   5.2.1
+	 * @since   5.1.1
 	 */
-	private function traverseSubformDependencies(string $table, string $name, array $fields,
+	private function traverseSubformChildren(string $table, string $name, array $fields,
 		string $entity, array &$result): void
 	{
 		foreach ($fields as $sub_name => $field)
@@ -187,7 +210,7 @@ final class Table extends ExtendingTable implements TableInterface
 			$link = $field['link'] ?? null;
 			$key_name = $name . '|' . $sub_name;
 
-			if ($this->isValidDependencyField($link, $entity))
+			if ($this->isValidChild($link, $entity))
 			{
 				$entity_field = $link['key'];
 				$result[$entity_field][] = [
@@ -197,9 +220,9 @@ final class Table extends ExtendingTable implements TableInterface
 				];
 			}
 
-			if ($this->isSubformField($field))
+			if ($this->isSubform($field))
 			{
-				$this->traverseSubformDependencies($table, $key_name, $field['fields'], $entity, $result);
+				$this->traverseSubformChildren($table, $key_name, $field['fields'], $entity, $result);
 			}
 		}
 	}
@@ -210,9 +233,9 @@ final class Table extends ExtendingTable implements TableInterface
 	 * @param   array  $field  The field metadata array from the table map.
 	 *
 	 * @return  bool  True if the field has a valid subform; false otherwise.
-	 * @since   5.2.1
+	 * @since   5.1.1
 	 */
-	private function isSubformField(array $field): bool
+	private function isSubform(array $field): bool
 	{
 		$type = $field['type'] ?? null;
 		$fields = $field['fields'] ?? null;
@@ -221,14 +244,14 @@ final class Table extends ExtendingTable implements TableInterface
 	}
 
 	/**
-	 * Validates that the given field represents a well-formed outgoing link.
+	 * Validates that the given field represents a well-formed outgoing/parent link.
 	 *
 	 * @param   array  $field  The field metadata array from the table map.
 	 *
-	 * @return  bool  True if the field has a valid outgoing link; false otherwise.
-	 * @since   5.2.1
+	 * @return  bool  True if the field has a valid outgoing/parent link; false otherwise.
+	 * @since   5.1.1
 	 */
-	private function isValidLinkedField(array $field): bool
+	private function isValidParent(array $field): bool
 	{
 		$link = $field['link'] ?? null;
 
@@ -236,19 +259,20 @@ final class Table extends ExtendingTable implements TableInterface
 			&& ($link['type'] ?? 0) === 1
 			&& !empty($link['entity'])
 			&& !empty($link['table'])
-			&& !empty($link['key']);
+			&& !empty($link['key'])
+			&& $link['key'] === 'guid';
 	}
 
 	/**
-	 * Validates that the provided link config represents a valid dependency on the given entity.
+	 * Validates that the provided link config represents a valid child dependency on the given entity.
 	 *
 	 * @param   array|null  $link     The 'link' metadata from a field definition.
 	 * @param   string      $entity   The entity to which the field must link.
 	 *
-	 * @return  bool  True if the field represents a valid type-1 dependency to the entity.
-	 * @since   5.2.1
+	 * @return  bool  True if the field represents a valid child dependency to the entity.
+	 * @since   5.1.1
 	 */
-	private function isValidDependencyField(?array $link, string $entity): bool
+	private function isValidChild(?array $link, string $entity): bool
 	{
 		return is_array($link)
 			&& ($link['type'] ?? 0) === 1

@@ -81,6 +81,14 @@ interface GrepInterface
 	public function getRemoteIndex(string $guid): ?object;
 
 	/**
+	 * Get the network target name
+	 *
+	 * @return string|null
+	 * @since  5.1.1
+	 */
+	public function getNetworkTarget(): ?string;
+
+	/**
 	 * Check if an item exists in any repo or in a specific repo.
 	 *
 	 * @param string $guid The unique identifier for the item.

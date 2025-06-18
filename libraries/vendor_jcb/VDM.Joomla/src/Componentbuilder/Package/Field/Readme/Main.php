@@ -13,6 +13,7 @@ namespace VDM\Joomla\Componentbuilder\Package\Field\Readme;
 
 
 use VDM\Joomla\Interfaces\Readme\MainInterface;
+use VDM\Joomla\Componentbuilder\Package\Readme\Main as ExtendingMain;
 
 
 /**
@@ -20,215 +21,117 @@ use VDM\Joomla\Interfaces\Readme\MainInterface;
  * 
  * @since  5.1.1
  */
-final class Main implements MainInterface
+final class Main extends ExtendingMain implements MainInterface
 {
 	/**
-	 * Get Main Readme
+	 * Generate the main README for the JCB Fields repository in Markdown format.
 	 *
-	 * @param array    $items  All items of this repository.
+	 * Fields define the structure, behavior, and storage of data throughout various
+	 * JCB-managed entities and are central to the Joomla component architecture.
 	 *
-	 * @return string
-	 * @since 3.2.0
+	 * @param  array  $items  All Field definitions in this repository.
+	 *
+	 * @return string  The full generated Markdown README.
+	 * @since  5.1.1
 	 */
 	public function get(array $items): string
 	{
-		// build readme
-		$readme = ["```
-     ██╗ ██████╗  ██████╗ ███╗   ███╗██╗      █████╗ 
-     ██║██╔═══██╗██╔═══██╗████╗ ████║██║     ██╔══██╗
-     ██║██║   ██║██║   ██║██╔████╔██║██║     ███████║
-██   ██║██║   ██║██║   ██║██║╚██╔╝██║██║     ██╔══██║
-╚█████╔╝╚██████╔╝╚██████╔╝██║ ╚═╝ ██║███████╗██║  ██║
- ╚════╝  ╚═════╝  ╚═════╝ ╚═╝     ╚═╝╚══════╝╚═╝  ╚═╝
-                                                     
-███████╗██╗███████╗██╗     ██████╗ ███████╗          
-██╔════╝██║██╔════╝██║     ██╔══██╗██╔════╝          
-█████╗  ██║█████╗  ██║     ██║  ██║███████╗          
-██╔══╝  ██║██╔══╝  ██║     ██║  ██║╚════██║          
-██║     ██║███████╗███████╗██████╔╝███████║          
-╚═╝     ╚═╝╚══════╝╚══════╝╚═════╝ ╚══════╝          
-```"];
+		$readme = [];
 
-		// default description of fields
-		$readme[] = "\n### What are Joomla Fields?\nJoomla fields are the heartbeat of every JCB‑built component: they define the data schema, drive form generation, and dictate how information is captured, validated, and stored in the database. By combining fieldtypes, datatypes, and field parameters into reusable building blocks, fields lay the groundwork upon which all admin views, site views, and custom admin views are constructed, making them the foundation of the entire JCB ecosystem.\n
-\n
-Whenever you need to update Fields in any JCB project, simply select the desired fields and click the \"reset\" button. The selected fields is synchronized with the original version stored in this repository, bringing the latest design tweaks, security fixes, and performance boosts.\n
-\n
-If your project calls for more distinctive fields, or component‑specific business logic. Simply fork the repository and point JCB to your copy. This lets you maintain and evolve Joomla Fields independently of the main JCB community while preserving the convenience of JCB’s one‑click update mechanism.\n
-\n
-\"We believe this approach empowers you to extend and customize JCB to fit your unique requirements, exemplifying the true spirit of freedom in software development. We trust you will find this capability both useful and aligned with the expectations of how open-source software should function.\"\n";
+		// Title
+		$readme[] = '# JCB! Fields';
+		$readme[] = '';
 
-		// get the readme body
-		$readme[] = $this->readmeBuilder($items);
+		// Introduction
+		$readme[] = '### What Are Fields?';
+		$readme[] = <<<MD
+Fields are the **foundation** of every Joomla Component Builder (JCB) project.
 
-		// yes you can remove this, but why?
-		$readme[] = "\n---\n```
-     ██╗ ██████╗  ██████╗ ███╗   ███╗██╗      █████╗
-     ██║██╔═══██╗██╔═══██╗████╗ ████║██║     ██╔══██╗
-     ██║██║   ██║██║   ██║██╔████╔██║██║     ███████║
-██   ██║██║   ██║██║   ██║██║╚██╔╝██║██║     ██╔══██║
-╚█████╔╝╚██████╔╝╚██████╔╝██║ ╚═╝ ██║███████╗██║  ██║
- ╚════╝  ╚═════╝  ╚═════╝ ╚═╝     ╚═╝╚══════╝╚═╝  ╚═╝
- ██████╗ ██████╗ ███╗   ███╗██████╗  ██████╗ ███╗   ██╗███████╗███╗   ██╗████████╗
-██╔════╝██╔═══██╗████╗ ████║██╔══██╗██╔═══██╗████╗  ██║██╔════╝████╗  ██║╚══██╔══╝
-██║     ██║   ██║██╔████╔██║██████╔╝██║   ██║██╔██╗ ██║█████╗  ██╔██╗ ██║   ██║
-██║     ██║   ██║██║╚██╔╝██║██╔═══╝ ██║   ██║██║╚██╗██║██╔══╝  ██║╚██╗██║   ██║
-╚██████╗╚██████╔╝██║ ╚═╝ ██║██║     ╚██████╔╝██║ ╚████║███████╗██║ ╚████║   ██║
- ╚═════╝ ╚═════╝ ╚═╝     ╚═╝╚═╝      ╚═════╝ ╚═╝  ╚═══╝╚══════╝╚═╝  ╚═══╝   ╚═╝
-██████╗ ██╗   ██╗██╗██╗     ██████╗ ███████╗██████╗
-██╔══██╗██║   ██║██║██║     ██╔══██╗██╔════╝██╔══██╗
-██████╔╝██║   ██║██║██║     ██║  ██║█████╗  ██████╔╝
-██╔══██╗██║   ██║██║██║     ██║  ██║██╔══╝  ██╔══██╗
-██████╔╝╚██████╔╝██║███████╗██████╔╝███████╗██║  ██║
-╚═════╝  ╚═════╝ ╚═╝╚══════╝╚═════╝ ╚══════╝╚═╝  ╚═╝
-```\n> Build with [Joomla Component Builder](https://git.vdm.dev/joomla/Component-Builder)\n\n";
+They define how data is **stored**, **validated**, **rendered**, and **interacted with** in your Joomla extensions.
+
+Fields let you control everything from the **underlying database schema** to the **user interface**, all within a single configuration.
+
+Each Field:
+- Defines **database structure** (type, size, default, null, unique keys, indexes)
+- Binds to a **fieldtype**, determining HTML rendering and behavior
+- Supports per-field **custom PHP** for model saving and retrieval
+- Allows styling and scripting (HTML attributes, JS, CSS)
+- Automatically generates Joomla-compliant XML field definitions
+
+MD;
+
+		// Scope of Use
+		$readme[] = '### Where Are Fields Used in JCB?';
+		$readme[] = <<<MD
+Fields are universal integrated — they are used in, highly structured areas:
+
+- ✅ **Admin Views** (the native Joomla back-end editing views)
+- ✅ **Modules** (frontend display configurations)
+- ✅ **Plugins** (event-driven integrations)
+- ✅ **Component Configurations** (global parameter settings)
+
+MD;
+
+		// Field Capabilities
+		$readme[] = '### What Can a Field Do?';
+		$readme[] = <<<MD
+A Field in JCB can define:
+
+- **Database Type & Schema**: `int`, `varchar`, `json`, custom, nullable, defaults, indexes
+- **Permissions**: who can view/edit the field (ACL)
+- **Rendering Options**: HTML classes, labels, JS behaviors
+- **Model Integration**: how the value is saved or retrieved
+- **Dynamic Logic**: PHP hooks for `onGet`, `onSave`, `onPrepareForm`, etc.
+- **Fieldtypes**: link to rich behaviors like Model Selects, Subforms, Toggle Switches, Encrypted Fields, etc.
+
+This centralization makes field management efficient and highly reusable.
+
+MD;
+
+		// Reusability
+		$readme[] = '### Reuse and Sharing';
+		$readme[] = <<<MD
+Fields are standalone entities:
+
+- Define once, **reuse across multiple Admin Views**, Modules, or Plugins
+- Fields can also be exported and shared via repositories
+- JCB will automatically adjust them to fit into each consuming context
+
+This means less duplication, and greater consistency across your entire component structure.
+
+MD;
+
+		// Versioning / Sync
+		$readme[] = '### Versioning and Customization';
+		$readme[] = <<<MD
+To update a field:
+
+- Click **"reset"** in the JCB UI to sync with this repository
+- Or **fork** this repository, customize the field, and point JCB to your fork
+
+This preserves version control while allowing your own field improvements to live independently.
+
+>Fields define both structure and behavior — they are where your data comes alive.
+
+---
+MD;
+
+		// Index section
+		$readme[] = '### Index of Fields';
+		$readme[] = '';
+
+		// Add index
+		$readme[] = $this->getIndex($items);
+		$readme[] = '';
+
+		$readme[] = <<<MD
+### All used in [Joomla Component Builder](https://www.joomlacomponentbuilder.com) - [Source](https://git.vdm.dev/joomla/Component-Builder) - [Mirror](https://github.com/vdm-io/Joomla-Component-Builder) - [Download](https://git.vdm.dev/joomla/pkg-component-builder/releases)
+
+---
+[![Joomla Volunteer Portal](https://img.shields.io/badge/-Joomla-gold?logo=joomla)](https://volunteers.joomla.org/joomlers/1396-llewellyn-van-der-merwe "Join Llewellyn on the Joomla Volunteer Portal: Shaping the Future Together!") [![Octoleo](https://img.shields.io/badge/-Octoleo-black?logo=linux)](https://git.vdm.dev/octoleo "--quiet") [![Llewellyn](https://img.shields.io/badge/-Llewellyn-ffffff?logo=gitea)](https://git.vdm.dev/Llewellyn "Collaborate and Innovate with Llewellyn on Git: Building a Better Code Future!") [![Telegram](https://img.shields.io/badge/-Telegram-blue?logo=telegram)](https://t.me/Joomla_component_builder "Join Llewellyn and the Community on Telegram: Building Joomla Components Together!") [![Mastodon](https://img.shields.io/badge/-Mastodon-9e9eec?logo=mastodon)](https://joomla.social/@llewellyn "Connect and Engage with Llewellyn on Joomla Social: Empowering Communities, One Post at a Time!") [![X (Twitter)](https://img.shields.io/badge/-X-black?logo=x)](https://x.com/llewellynvdm "Join the Conversation with Llewellyn on X: Where Ideas Take Flight!") [![GitHub](https://img.shields.io/badge/-GitHub-181717?logo=github)](https://github.com/Llewellynvdm "Build, Innovate, and Thrive with Llewellyn on GitHub: Turning Ideas into Impact!") [![YouTube](https://img.shields.io/badge/-YouTube-ff0000?logo=youtube)](https://www.youtube.com/@OctoYou "Explore, Learn, and Create with Llewellyn on YouTube: Your Gateway to Inspiration!") [![n8n](https://img.shields.io/badge/-n8n-black?logo=n8n)](https://n8n.io/creators/octoleo "Effortless Automation and Impactful Workflows with Llewellyn on n8n!") [![Docker Hub](https://img.shields.io/badge/-Docker-grey?logo=docker)](https://hub.docker.com/u/llewellyn "Llewellyn on Docker: Containerize Your Creativity!") [![Open Collective](https://img.shields.io/badge/-Donate-green?logo=opencollective)](https://opencollective.com/joomla-component-builder "Donate towards JCB: Help Llewellyn financially so he can continue developing this great tool!") [![GPG Key](https://img.shields.io/badge/-GPG-blue?logo=gnupg)](https://git.vdm.dev/Llewellyn/gpg "Unlock Trust and Security with Llewellyn's GPG Key: Your Gateway to Verified Connections!")
+MD;
 
 		return implode("\n", $readme);
-	}
-
-	/**
-	 * The readme builder
-	 *
-	 * @param array    $classes  The powers.
-	 *
-	 * @return string
-	 * @since 3.2.0
-	 */
-	private function readmeBuilder(array &$items): string
-	{
-		$classes = [];
-		foreach ($items as $guid => $power)
-		{
-			// add to the sort bucket
-			$classes[] = [
-				'name' => $power['name'],
-				'link' => $this->indexLinkPower($power)
-			];
-		}
-
-		return $this->readmeModel($classes);
-	}
-
-	/**
-	 * Sort and model the readme classes
-	 *
-	 * @param array $classes The powers.
-	 *
-	 * @return string
-	 * @since 3.2.0
-	 */
-	private function readmeModel(array &$classes): string
-	{
-		$this->sortClasses($classes);
-
-		return $this->generateIndex($classes);
-	}
-
-	/**
-	 * Generate the index string for classes
-	 *
-	 * @param array $classes The sorted classes
-	 *
-	 * @return string The index string
-	 */
-	private function generateIndex(array &$classes): string
-	{
-		$result = "# Index of Joomla! Field Types\n";
-
-		foreach ($classes as $class)
-		{
-			// Add the class details
-			$result .= "\n - " . $class['link'];
-		}
-
-		return $result;
-	}
-
-	/**
-	 * Sort the flattened array using a single sorting function
-	 *
-	 * @param array $classes The classes to sort
-	 *
-	 * @since 3.2.0
-	 */
-	private function sortClasses(array &$classes): void
-	{
-		usort($classes, function ($a, $b) {
-			return $this->compareName($a, $b);
-		});
-	}
-
-	/**
-	 * Compare the name of two classes
-	 *
-	 * @param array $a First class
-	 * @param array $b Second class
-	 *
-	 * @return int Comparison result
-	 * @since 3.2.0
-	 */
-	private function compareName(array $a, array $b): int
-	{
-		return strcmp($a['name'], $b['name']);
-	}
-
-	/**
-	 * Build the Link to the power in this repository
-	 *
-	 * @param array  $power  The power details.
-	 *
-	 * @return string
-	 * @since 3.2.0
-	 */
-	private function indexLinkPower(array &$power): string
-	{
-		$name = $power['name'] ?? 'error';
-		return '**' . $name . "** | "
-			. $this->linkPowerRepo($power) . ' | '
-			. $this->linkPowerSettings($power) . ' | '
-			. $this->linkPowerDesc($power);
-	}
-
-	/**
-	 * Build the Link to the power in this repository
-	 *
-	 * @param array  $power  The power details.
-	 *
-	 * @return string
-	 * @since 3.2.0
-	 */
-	private function linkPowerRepo(array &$power): string
-	{
-		$path = $power['path'] ?? 'error';
-		return '[Details](' . $path . ')';
-	}
-
-	/**
-	 * Build the Link to the power settings in this repository
-	 *
-	 * @param array  $power  The power details.
-	 *
-	 * @return string
-	 * @since 3.2.0
-	 */
-	private function linkPowerSettings(array &$power): string
-	{
-		$settings = $power['settings'] ?? 'error';
-		return '[Settings](' . $settings . ')';
-	}
-
-	/**
-	 * Get the short description
-	 *
-	 * @param array  $power  The power details.
-	 *
-	 * @return string
-	 * @since 3.2.0
-	 */
-	private function linkPowerDesc(array &$power): string
-	{
-		$jpk = $power['desc'] ?? '';
-		return $jpk;
 	}
 }
 

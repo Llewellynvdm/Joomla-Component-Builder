@@ -85,8 +85,13 @@ $wa->useScript('core')
 
 	// add to page body
 	outerBodyDiv.appendChild(loadingDiv);
-// when the expand button is clicked
-jQuery('#toolbar').on('click',"button.button-expand-2", function(e){
-	loadingDiv.style.display = 'block';
-});
+    document.addEventListener('DOMContentLoaded', function () {
+        const form = document.adminForm;
+        // Hook into the form's submit event
+        if (form && loadingDiv) {
+            form.addEventListener('submit', function () {
+                loadingDiv.style.display = 'block';
+            });
+        }
+    });
 </script>

@@ -85,9 +85,31 @@ $wa->useScript('core')
 
 	// add to page body
 	outerBodyDiv.appendChild(loadingDiv);
-// when the build button is clicked
-jQuery('#toolbar').on('click',"button.button-joomla", function(e){
-	loadingDiv.style.display = 'block';
-});
 
+    document.addEventListener('DOMContentLoaded', function () {
+        const pushButton = document.getElementById('toolbar-share-custom-button-pushpowers');
+        const resetButton = document.getElementById('toolbar-joomla-custom-button-resetpowers');
+        // Set confirmation messages
+        if (pushButton) {
+            const pushText = Joomla.Text._('COM_COMPONENTBUILDER_HTHREEKEEP_THIS_WIDOW_OPENHTHREEPTHIS_IS_A_BVERY_LARGE_TASKB_AND_MAY_TAKE_A_BLONG_TIMEB_TO_COMPLETEBRBRIT_WILL_BPUSH_ALLB_ENTITIES_LINKED_TO_EACH_SELECTED_BJOOMLA_MODULEB_DOWN_TO_THE_FIELD_LEVELBRBRDO_YOU_WANT_TO_PROCEEDP');
+            pushButton.setAttribute('confirm-message', pushText);
+        }
+        if (resetButton) {
+            const resetText = Joomla.Text._('COM_COMPONENTBUILDER_HTHREEKEEP_THIS_WIDOW_OPENHTHREEPTHIS_IS_A_BVERY_LARGE_TASKB_AND_MAY_TAKE_A_BLONG_TIMEB_TO_COMPLETEBRBRIT_WILL_BRESET_ALLB_ENTITIES_LINKED_TO_EACH_SELECTED_BJOOMLA_MODULEB_DOWN_TO_THE_FIELD_LEVELBRBRDO_YOU_WANT_TO_CONTINUEP');
+            resetButton.setAttribute('confirm-message', resetText);
+        }
+        const form = document.adminForm;
+        // Hook into the form's submit event
+        if (form && loadingDiv) {
+            form.addEventListener('submit', function () {
+                loadingDiv.style.display = 'block';
+            });
+        }
+    });
+
+<?php
+		// some language strings for JS in this area
+		Text::script('COM_COMPONENTBUILDER_HTHREEKEEP_THIS_WIDOW_OPENHTHREEPTHIS_IS_A_BVERY_LARGE_TASKB_AND_MAY_TAKE_A_BLONG_TIMEB_TO_COMPLETEBRBRIT_WILL_BPUSH_ALLB_ENTITIES_LINKED_TO_EACH_SELECTED_BJOOMLA_MODULEB_DOWN_TO_THE_FIELD_LEVELBRBRDO_YOU_WANT_TO_PROCEEDP');
+		Text::script('COM_COMPONENTBUILDER_HTHREEKEEP_THIS_WIDOW_OPENHTHREEPTHIS_IS_A_BVERY_LARGE_TASKB_AND_MAY_TAKE_A_BLONG_TIMEB_TO_COMPLETEBRBRIT_WILL_BRESET_ALLB_ENTITIES_LINKED_TO_EACH_SELECTED_BJOOMLA_MODULEB_DOWN_TO_THE_FIELD_LEVELBRBRDO_YOU_WANT_TO_CONTINUEP');
+?>
 </script>

@@ -664,6 +664,22 @@ final class Guid
 			'array' => false,
 			'valueType' => 1,
 		],
+		[
+			'table' => 'class_method',
+			'column' => 'joomla_plugin_group',
+			'linkedTable' => 'class_property',
+			'linkedColumn' => 'id',
+			'array' => false,
+			'valueType' => 1,
+		],
+		[
+			'table' => 'class_property',
+			'column' => 'joomla_plugin_group',
+			'linkedTable' => 'class_property',
+			'linkedColumn' => 'id',
+			'array' => false,
+			'valueType' => 1,
+		],
 	];
 
 	/**

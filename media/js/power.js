@@ -11,15 +11,15 @@
 // Initial Script
 document.addEventListener('DOMContentLoaded', function()
 {
-	var add_head_vvvvvxa = jQuery("#jform_add_head input[type='radio']:checked").val();
-	vvvvvxa(add_head_vvvvvxa);
+	var add_head_vvvvvwx = jQuery("#jform_add_head input[type='radio']:checked").val();
+	vvvvvwx(add_head_vvvvvwx);
 });
 
-// the vvvvvxa function
-function vvvvvxa(add_head_vvvvvxa)
+// the vvvvvwx function
+function vvvvvwx(add_head_vvvvvwx)
 {
 	// set the function logic
-	if (add_head_vvvvvxa == 1)
+	if (add_head_vvvvvwx == 1)
 	{
 		jQuery('#jform_head-lbl').closest('.control-group').show();
 	}

@@ -58,7 +58,6 @@ class DynamicgetsfiltergettypeField extends ListField
 
 		$_results = $db->loadColumn();
 		$_filter = [];
-		$_filter[] = Html::_('select.option', '', '- ' . Text::_('COM_COMPONENTBUILDER_FILTER_SELECT_GETTYPE') . ' -');
 
 		if ($_results)
 		{

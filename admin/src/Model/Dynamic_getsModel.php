@@ -23,6 +23,7 @@ use Joomla\Utilities\ArrayHelper;
 use Joomla\Input\Input;
 use VDM\Component\Componentbuilder\Administrator\Helper\ComponentbuilderHelper;
 use Joomla\CMS\Helper\TagsHelper;
+use VDM\Joomla\Utilities\FormHelper;
 use VDM\Joomla\Utilities\ArrayHelper as UtilitiesArrayHelper;
 use VDM\Joomla\Utilities\ObjectHelper;
 use VDM\Joomla\Utilities\StringHelper;
@@ -95,6 +96,44 @@ class Dynamic_getsModel extends ListModel
 		parent::__construct($config, $factory);
 
 		$this->app ??= Factory::getApplication();
+	}
+
+	/**
+	 * Get the filter form - Override the parent method
+	 *
+	 * @param   array    $data      data
+	 * @param   boolean  $loadData  load current data
+	 *
+	 * @return  Form|null  The Form object or false on error
+	 *
+	 * @since   JCB 2.12.5
+	 */
+	public function getFilterForm($data = array(), $loadData = true)
+	{
+		// load form from the parent class
+		$form = parent::getFilterForm($data, $loadData);
+
+		// Create the "getgroup" filter
+		$attributes = [
+			'name' => 'getgroup',
+			'type' => 'list',
+			'onchange' => 'this.form.submit();',
+		];
+		$options = [
+			'' => '-  ' . Text::_('COM_COMPONENTBUILDER_SELECT_GET_GROUP') . '  -',
+			'main' => Text::_('COM_COMPONENTBUILDER_MAIN_GET'),
+			'custom' => Text::_('COM_COMPONENTBUILDER_CUSTOM_GET')
+		];
+
+		$form->setField(FormHelper::xml($attributes, $options),'filter');
+		$form->setValue(
+			'getgroup',
+			'filter',
+			$this->state->get("filter.getgroup")
+		);
+		array_push($this->filter_fields, 'getgroup');
+
+		return $form;
 	}
 
 	/**
@@ -280,6 +319,22 @@ class Dynamic_getsModel extends ListModel
 		// From the componentbuilder_item table
 		$query->from($db->quoteName('#__componentbuilder_dynamic_get', 'a'));
 
+		// Filtering "getgroup"
+		$filter_getgroup = $this->state->get("filter.getgroup");
+		if (!empty($filter_getgroup))
+		{
+			if ($filter_getgroup === 'main')
+			{
+				// the main gets
+				$query->where($db->quoteName('a.gettype') . ' IN (1,2)');
+			}
+			elseif ($filter_getgroup === 'custom')
+			{
+				// the custom gets
+				$query->where($db->quoteName('a.gettype') . ' IN (3,4)');
+			}
+		}
+
 		// Filter by published state
 		$published = $this->getState('filter.published');
 		if (is_numeric($published))
@@ -362,6 +417,29 @@ class Dynamic_getsModel extends ListModel
 		{
 			$query->where('a.gettype = ' . $db->quote($db->escape($_gettype)));
 		}
+		elseif (UtilitiesArrayHelper::check($_gettype))
+		{
+			// Secure the array for the query
+			$_gettype = array_map( function ($val) use(&$db) {
+				if (is_numeric($val))
+				{
+					if (is_float($val))
+					{
+						return (float) $val;
+					}
+					else
+					{
+						return (int) $val;
+					}
+				}
+				elseif (StringHelper::check($val))
+				{
+					return $db->quote($db->escape($val));
+				}
+			}, $_gettype);
+			// Filter by the Gettype Array.
+			$query->where('a.gettype IN (' . implode(',', $_gettype) . ')');
+		}
 
 		// Add the list ordering clause.
 		$orderCol = $this->getState('list.ordering', 'a.id');
@@ -404,7 +482,18 @@ class Dynamic_getsModel extends ListModel
 		$id .= ':' . $this->getState('filter.created_by');
 		$id .= ':' . $this->getState('filter.modified_by');
 		$id .= ':' . $this->getState('filter.main_source');
-		$id .= ':' . $this->getState('filter.gettype');
+		// Check if the value is an array
+		$_gettype = $this->getState('filter.gettype');
+		if (UtilitiesArrayHelper::check($_gettype))
+		{
+			$id .= ':' . implode(':', $_gettype);
+		}
+		// Check if this is only an number or string
+		elseif (is_numeric($_gettype)
+		 || StringHelper::check($_gettype))
+		{
+			$id .= ':' . $_gettype;
+		}
 		$id .= ':' . $this->getState('filter.name');
 
 		return parent::getStoreId($id);

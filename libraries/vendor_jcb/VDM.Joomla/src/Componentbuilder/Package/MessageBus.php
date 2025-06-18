@@ -19,7 +19,7 @@ use VDM\Joomla\Abstraction\Registry;
 /**
  * Remote Message Bus
  * 
- * @since 5.2.1
+ * @since 5.1.1
  */
 final class MessageBus extends Registry implements Registryinterface
 {
@@ -27,7 +27,7 @@ final class MessageBus extends Registry implements Registryinterface
 	 * Base switch to add values as string or array
 	 *
 	 * @var    boolean
-	 * @since 5.2.1
+	 * @since 5.1.1
 	 **/
 	protected bool $addAsArray = true;
 }

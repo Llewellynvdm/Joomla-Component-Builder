@@ -30,7 +30,6 @@ use VDM\Joomla\Componentbuilder\Fieldtype\Factory as FieldtypeFactory;
 use VDM\Joomla\Componentbuilder\JoomlaPower\Factory as JoomlaPowerFactory;
 use VDM\Joomla\Componentbuilder\Power\Factory as PowerFactory;
 use VDM\Joomla\Componentbuilder\Snippet\Factory as SnippetFactory;
-use VDM\Joomla\Interfaces\Remote\GetInterface;
 
 // No direct access to this file
 \defined('_JEXEC') or die;
@@ -320,7 +319,7 @@ class Initialization_selectionModel extends ItemModel
 	 *
 	 * @return  array|null
 	 *
-	 * @since   5.2.1
+	 * @since   5.1.1
 	 */
 	protected function getTargetAreaPower(): ?array
 	{
@@ -333,7 +332,7 @@ class Initialization_selectionModel extends ItemModel
 	 *
 	 * @return  array|null
 	 * @throws \Exception
-	 * @since   5.2.1
+	 * @since   5.1.1
 	 */
 	protected function getPaths(): ?array
 	{
@@ -368,7 +367,7 @@ class Initialization_selectionModel extends ItemModel
 	 * The powers that we can initialize
 	 *
 	 * @var    array
-	 * @since  5.2.1
+	 * @since  5.1.1
 	 */
 	protected array $powers = [
 		'AdminView' => 'PackageFactory',
@@ -381,12 +380,16 @@ class Initialization_selectionModel extends ItemModel
 		'Joomla.Power' => 'JoomlaPowerFactory',
 		'Layout' => 'PackageFactory',
 		'Library' => 'PackageFactory',
-		'Module' => 'PackageFactory',
+		'JoomlaModule' => 'PackageFactory',
+		'JoomlaPlugin' => 'PackageFactory',
 		'Power' => 'PowerFactory',
-		'Plugin' => 'PackageFactory',
 		'SiteView' => 'PackageFactory',
 		'Snippet' => 'SnippetFactory',
-		'Template' => 'PackageFactory'
+		'Template' => 'PackageFactory',
+		'ClassExtends' => 'PackageFactory',
+		'ClassProperty' => 'PackageFactory',
+		'ClassMethod' => 'PackageFactory',
+		'Placeholder' => 'PackageFactory'
 	];
 
 	/**
@@ -395,10 +398,10 @@ class Initialization_selectionModel extends ItemModel
 	 * @param   string  $factoryName  The factory name
 	 * @param   string  $getClass          The remote power class name
 	 *
-	 * @return  GetInterface|null
-	 * @since   5.2.1
+	 * @return  mixed
+	 * @since   5.1.1
 	 */
-	protected function getPowerClass(string $factoryName, string $getClass): ?GetInterface
+	protected function getPowerClass(string $factoryName, string $getClass)
 	{
 		return match ($factoryName) {
 			'PowerFactory' => PowerFactory::_($getClass),

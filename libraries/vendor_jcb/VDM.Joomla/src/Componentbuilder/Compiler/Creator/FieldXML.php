@@ -99,7 +99,7 @@ final class FieldXML implements Fieldtypeinterface
 	 * The ModalSelect Class.
 	 *
 	 * @var   ModalSelect
-	 * @since 5.2.1
+	 * @since 5.1.1
 	 */
 	protected ModalSelect $modalselect;
 
@@ -131,7 +131,7 @@ final class FieldXML implements Fieldtypeinterface
 	 * The ComponentFields Class.
 	 *
 	 * @var   ComponentFields
-	 * @since 5.2.1
+	 * @since 5.1.1
 	 */
 	protected ComponentFields $componentfields;
 
@@ -234,7 +234,7 @@ final class FieldXML implements Fieldtypeinterface
 	 * @param   array|null  $optionArray      The option bucket array used to set the field options if needed.
 	 *
 	 * @return  \stdClass   The field in xml object
-	 * @since   5.2.1
+	 * @since   5.1.1
 	 */
 	private function buildOptionField(array &$fieldAttributes, string $name, string $typeName,
 		string $langView, string $nameSingleCode, string $nameListCode,
@@ -296,7 +296,7 @@ final class FieldXML implements Fieldtypeinterface
 	 * @param   string  $typeName         The field type
 	 *
 	 * @return  \stdClass   The field in xml object
-	 * @since   5.2.1
+	 * @since   5.1.1
 	 */
 	private function buildPlainField(array &$fieldAttributes, string $name, string $typeName): \stdClass
 	{
@@ -318,7 +318,7 @@ final class FieldXML implements Fieldtypeinterface
 	 * @param   string  $typeName         The field type
 	 *
 	 * @return  \stdClass   The field in xml object
-	 * @since   5.2.1
+	 * @since   5.1.1
 	 */
 	private function buildSpacerField(array &$fieldAttributes, string $name, string $typeName): \stdClass
 	{
@@ -345,7 +345,7 @@ final class FieldXML implements Fieldtypeinterface
 	 * @param   array       $placeholders
 	 *
 	 * @return  \stdClass
-	 * @since   5.2.1
+	 * @since   5.1.1
 	 */
 	private function buildSpecialField(array &$fieldAttributes, string $name, array &$subform, string $typeName,
 		string $langView, string $nameSingleCode, string $nameListCode,
@@ -379,7 +379,7 @@ final class FieldXML implements Fieldtypeinterface
 	 * @param   array|null  $custom
 	 *
 	 * @return  \stdClass
-	 * @since   5.2.1
+	 * @since   5.1.1
 	 */
 	private function buildCustomField(array &$fieldAttributes, string &$name, string &$typeName,
 		string &$langView, string &$nameSingleCode, string &$nameListCode,
@@ -454,7 +454,7 @@ final class FieldXML implements Fieldtypeinterface
 	 * @param   array       $placeholders
 	 *
 	 * @return  \stdClass
-	 * @since   5.2.1
+	 * @since   5.1.1
 	 */
 	private function buildSubformField(array &$fieldAttributes, string $name, array &$subform, string $typeName,
 		string $langView, string $nameSingleCode, string $nameListCode,
@@ -624,7 +624,7 @@ final class FieldXML implements Fieldtypeinterface
 	 * @param   array|null  $custom           Used when field is from config
 	 *
 	 * @return  \stdClass   The field in xml object
-	 * @since   5.2.1
+	 * @since   5.1.1
 	 */
 	private function getSubformField(string $setType, array &$fieldAttributes, string $name, array &$subform,
 		string $typeName, string $langView, string $nameSingleCode, string $nameListCode,
@@ -669,7 +669,7 @@ final class FieldXML implements Fieldtypeinterface
 	 * @param   array       $placeholders
 	 *
 	 * @return  \stdClass
-	 * @since   5.2.1
+	 * @since   5.1.1
 	 */
 	private function buildRepeatableField(array &$fieldAttributes, string $name, string $typeName,
 		string $langView, string $nameSingleCode, string $nameListCode,
@@ -833,7 +833,7 @@ final class FieldXML implements Fieldtypeinterface
 	 * @param   array|null         $optionArray
 	 *
 	 * @return  void
-	 * @since   5.2.1
+	 * @since   5.1.1
 	 */
 	private function buildSingleOption(\SimpleXMLElement $fieldXML, string $value, string $langView, ?array &$optionArray): void
 	{
@@ -867,7 +867,7 @@ final class FieldXML implements Fieldtypeinterface
 	 * @param   array|null         $optionArray
 	 *
 	 * @return  void
-	 * @since   5.2.1
+	 * @since   5.1.1
 	 */
 	private function buildMultipleOptions(\SimpleXMLElement $fieldXML, string $value, string $langView, ?array &$optionArray): void
 	{
@@ -889,7 +889,7 @@ final class FieldXML implements Fieldtypeinterface
 	 * @param   array|null         $optionArray
 	 *
 	 * @return  void
-	 * @since   5.2.1
+	 * @since   5.1.1
 	 */
 	private function buildGroupedOptionSet(\SimpleXMLElement $fieldXML, string $value, string $langView, string $typeName, ?array &$optionArray): void
 	{
@@ -927,7 +927,7 @@ final class FieldXML implements Fieldtypeinterface
 	 * @param   array   $order
 	 *
 	 * @return  void
-	 * @since   5.2.1
+	 * @since   5.1.1
 	 */
 	private function parseGroupLabel(string $option, string $langView, array &$groups, array &$order): void
 	{
@@ -950,7 +950,7 @@ final class FieldXML implements Fieldtypeinterface
 	 * @param   array|null   $optionArray
 	 *
 	 * @return  void
-	 * @since   5.2.1
+	 * @since   5.1.1
 	 */
 	private function parseGroupedOption(string $option, string $langView, array &$grouped, array &$order, ?array &$optionArray): void
 	{
@@ -988,7 +988,7 @@ final class FieldXML implements Fieldtypeinterface
 	 * @param   array|null   $optionArray
 	 *
 	 * @return  void
-	 * @since   5.2.1
+	 * @since   5.1.1
 	 */
 	private function parsePlainGroupedOption(string $option, string $langView, array &$grouped, array &$order, ?array &$optionArray): void
 	{
@@ -1009,7 +1009,7 @@ final class FieldXML implements Fieldtypeinterface
 	 * @param   array              $order
 	 *
 	 * @return  void
-	 * @since   5.2.1
+	 * @since   5.1.1
 	 */
 	private function appendGroupedOptions(\SimpleXMLElement $fieldXML, array &$groups, array &$grouped, array &$order): void
 	{
@@ -1045,7 +1045,7 @@ final class FieldXML implements Fieldtypeinterface
 	 * @param  string|null        $exclude
 	 *
 	 * @return void
-	 * @since  5.2.1
+	 * @since  5.1.1
 	 */
 	private function appendFieldAttributes(\SimpleXMLElement $fieldXML, array $fieldAttributes, ?string $exclude = null): void
 	{
@@ -1068,7 +1068,7 @@ final class FieldXML implements Fieldtypeinterface
 	 * @param array  $link  The link data which may contain 'table', 'component', 'view', 'text', and 'id'.
 	 *
 	 * @return array|null The structured linker relation array, or null if input is an empty array.
-	 * @since  5.2.1
+	 * @since  5.1.1
 	 */
 	private function setLinkerRelations(array $link): ?array
 	{

@@ -24,6 +24,7 @@ use Joomla\CMS\Router\Route;
 use Joomla\CMS\Session\Session;
 use Joomla\CMS\Uri\Uri;
 use VDM\Component\Componentbuilder\Administrator\Helper\ComponentbuilderHelper;
+use VDM\Joomla\Componentbuilder\Package\Factory as PackageFactory;
 
 // No direct access to this file
 \defined('_JEXEC') or die;
@@ -92,6 +93,7 @@ class LayoutController extends FormController
 	 * 7. It redirects the user to a specified URL with the result message and status.
 	 *
 	 * @return bool True on successful reset, false on failure.
+	 * @since  5.1.1
 	 */
 	public function resetPowers()
 	{
@@ -101,21 +103,92 @@ class LayoutController extends FormController
 		// get Item posted
 		$item = $this->input->post->get('jform', array(), 'array');
 
+		// check if user has the right
+		$user = $this->app->getIdentity();
+
+		// set default error message
+		$message = '<h1>' . Text::_('COM_COMPONENTBUILDER_PERMISSION_DENIED') . '</h1>';
+		$message .= '<p>' . Text::_('COM_COMPONENTBUILDER_YOU_DO_NOT_HAVE_PERMISSION_TO_RESET_THIS_LAYOUT') . '</p>';
+		$status = 'error';
+		$success = false;
+		$has_error = false;
+
+		// get the guid field of this entity
+		$key_field = PackageFactory::_('Layout.Remote.Get')->getGuidField();
+
 		// load the ID
 		$id = $item['id'] ?? null;
+		$guid = $item[$key_field] ?? null;
 
-		// set default in development message
-		$message = '<h1>' . Text::_('COM_COMPONENTBUILDER_STILL_IN_DEVELOPMENT') . '</h1>';
-		$message .= '<p>' . Text::_('COM_COMPONENTBUILDER_ONCE_COMPLETED_THIS_FEATURE_WILL_ALLOW_YOU_TO_RESET_BOTH_DEMO_AND_USERCREATED_LAYOUT_WITHIN_THIS_JCB_INSTANCE') . '</p>';
+		$message_bus = ['success', 'warning', 'error'];
+
+		// check if there is any selections
+		if ($id === null || $guid === null)
+		{
+			// set error message
+			$message = '<h1>' . Text::_('COM_COMPONENTBUILDER_NOT_RESET') . '</h1>';
+			$message .= '<p>' . Text::_('COM_COMPONENTBUILDER_YOU_MUST_FIRST_SAVE_THE_LAYOUT_BEFORE_YOU_CAN_USE_THIS_FEATURE') . '</p>';
+		}
+		elseif($user->authorise('layout.reset', 'com_componentbuilder'))
+		{
+			try {
+				PackageFactory::_('Package.Builder.Get')->reset('layout', [$guid]);
+
+				foreach ($message_bus as $message_key)
+				{
+					if (($messages = PackageFactory::_('Power.Message')->get($message_key, null)) !== null)
+					{
+						$messages = '<p>' . implode('<br>', $messages) . '</p>';
+						$this->app->enqueueMessage($messages, $message_key);
+
+						if (!$success && $message_key === 'success')
+						{
+							$success = true;
+						}
+
+						if (!$has_error && $message_key === 'error')
+						{
+							$has_error = true;
+						}
+					}
+				}
+
+				if ($success)
+				{
+					// set success message
+					$message = '<h1>' . Text::_('COM_COMPONENTBUILDER_SUCCESS') . '</h1>';
+					$message .= '<p>' . Text::_('COM_COMPONENTBUILDER_THE_LAYOUT_HAS_SUCCESSFULLY_BEEN_RESET') . '</p>';
+					$status = 'success';
+				}
+				elseif ($has_error)
+				{
+					// set error message
+					$message = '<h1>' . Text::_('COM_COMPONENTBUILDER_RESET_FAILED') . '</h1>';
+					$message .= '<p>' . Text::_('COM_COMPONENTBUILDER_THE_RESET_OF_THIS_LAYOUT_HAS_FAILED') . '</p>';
+					$status = 'error';
+				}
+				else
+				{
+					// set warning message
+					$message = '<h1>' . Text::_('COM_COMPONENTBUILDER_RESET_UNSUCCESSFUL') . '</h1>';
+					$message .= '<p>' . Text::_('COM_COMPONENTBUILDER_THE_RESET_OF_THIS_LAYOUT_HAS_NOT_BEEN_SUCCESSFUL') . '</p>';
+					$status = 'warning';
+				}
+			} catch (\Exception $e) {
+				$message = '<h1>' . Text::_('COM_COMPONENTBUILDER_RESET_FAILED') . '</h1>';
+				$message .= '<p>' . \htmlspecialchars($e->getMessage()) . '</p>';
+			}
+		}
 
 		// set redirect
 		$redirect_url = Route::_(
 			'index.php?option=com_componentbuilder&view=layout'
 			. $this->getRedirectToItemAppend($id), false
 		);
-		$this->setRedirect($redirect_url, $message, 'success');
 
-		return true;
+		$this->setRedirect($redirect_url, $message, $status);
+
+		return $success;
 	}
 
 	 /**
@@ -131,6 +204,7 @@ class LayoutController extends FormController
 	 * 7. It redirects the user to a specified URL with the result message and status.
 	 *
 	 * @return bool True on successful push, false on failure.
+	 * @since  5.1.1
 	 */
 	public function pushPowers()
 	{
@@ -140,21 +214,92 @@ class LayoutController extends FormController
 		// get Item posted
 		$item = $this->input->post->get('jform', array(), 'array');
 
+		// check if user has the right
+		$user = $this->app->getIdentity();
+
+		// set default error message
+		$message = '<h1>' . Text::_('COM_COMPONENTBUILDER_PERMISSION_DENIED') . '</h1>';
+		$message .= '<p>' . Text::_('COM_COMPONENTBUILDER_YOU_DO_NOT_HAVE_PERMISSION_TO_PUSH_THIS_LAYOUT') . '</p>';
+		$status = 'error';
+		$success = false;
+		$has_error = false;
+
+		// get the guid field of this entity
+		$key_field = PackageFactory::_('Layout.Remote.Set')->getGuidField();
+
 		// load the ID
 		$id = $item['id'] ?? null;
+		$guid = $item[$key_field] ?? null;
 
-		// set default in development message
-		$message = '<h1>' . Text::_('COM_COMPONENTBUILDER_STILL_IN_DEVELOPMENT') . '</h1>';
-		$message .= '<p>' . Text::_('COM_COMPONENTBUILDER_ONCE_COMPLETED_THIS_FEATURE_WILL_ALLOW_YOU_TO_PUSH_USERCREATED_LAYOUT_FROM_THIS_JCB_INSTANCE_TO_YOUR_CONFIGURED_REPOSITORIES') . '</p>';
+		$message_bus = ['success', 'warning', 'error'];
+
+		// check if there is any selections
+		if ($id === null || $guid === null)
+		{
+			// set error message
+			$message = '<h1>' . Text::_('COM_COMPONENTBUILDER_NOT_PUSHED') . '</h1>';
+			$message .= '<p>' . Text::_('COM_COMPONENTBUILDER_YOU_MUST_FIRST_SAVE_THE_LAYOUT_BEFORE_YOU_CAN_USE_THIS_FEATURE') . '</p>';
+		}
+		elseif($user->authorise('layout.push', 'com_componentbuilder'))
+		{
+			try {
+				PackageFactory::_('Package.Builder.Set')->items('layout', [$guid]);
+
+				foreach ($message_bus as $message_key)
+				{
+					if (($messages = PackageFactory::_('Power.Message')->get($message_key, null)) !== null)
+					{
+						$messages = '<p>' . implode('<br>', $messages) . '</p>';
+						$this->app->enqueueMessage($messages, $message_key);
+
+						if (!$success && $message_key === 'success')
+						{
+							$success = true;
+						}
+
+						if (!$has_error && $message_key === 'error')
+						{
+							$has_error = true;
+						}
+					}
+				}
+
+				if ($success)
+				{
+					// set success message
+					$message = '<h1>' . Text::_('COM_COMPONENTBUILDER_SUCCESS') . '</h1>';
+					$message .= '<p>' . Text::_('COM_COMPONENTBUILDER_THE_LAYOUT_HAS_SUCCESSFULLY_BEEN_PUSHED') . '</p>';
+					$status = 'success';
+				}
+				elseif ($has_error)
+				{
+					// Initialize base values
+					$message = '<h1>' . Text::_('COM_COMPONENTBUILDER_PUSH_FAILED') . '</h1>';
+					$message .= '<p>' . Text::_('COM_COMPONENTBUILDER_THE_PUSH_OF_THIS_LAYOUT_HAS_FAILED') . '</p>';
+					$status = 'error';
+				}
+				else
+				{
+					// Initialize base values
+					$message = '<h1>' . Text::_('COM_COMPONENTBUILDER_PUSH_UNSUCCESSFUL') . '</h1>';
+					$message .= '<p>' . Text::_('COM_COMPONENTBUILDER_THE_PUSH_OF_THIS_LAYOUT_HAS_NOT_BEEN_SUCCESSFUL') . '</p>';
+					$status = 'warning';
+				}
+			} catch (\Exception $e) {
+				$message = '<h1>' . Text::_('COM_COMPONENTBUILDER_PUSH_FAILED') . '</h1>';
+				$message .= '<p>' . \htmlspecialchars($e->getMessage()) . '</p>';
+			}
+		}
 
 		// set redirect
 		$redirect_url = Route::_(
 			'index.php?option=com_componentbuilder&view=layout'
 			. $this->getRedirectToItemAppend($id), false
 		);
-		$this->setRedirect($redirect_url, $message, 'success');
 
-		return true;
+		$this->setRedirect($redirect_url, $message, $status);
+
+		return $success;
 	}
 
 	/**
