@@ -1,8 +1,9 @@
-# v5.1.1-beta1
+# v5.1.1-beta2
 
-- Add JCB new package engine.
+- Enhance operator support in dynamic get system. Relates to issue #1226.
 
-# v5.1.1-alpha
+
+# v5.1.1-beta
 
 - Move all banners to GitHub.
 - Adds library phpspreadsheet to JCB.
@@ -19,6 +20,7 @@
 - Refactor initialization flow to accommodate future scalability and integration with all designated areas.
 - Refactor the Creator Builders class.
 - Refactor the FieldString and FieldXML classes.
+- Add JCB new package engine.
 
 # v5.1.0
 
