@@ -9,19 +9,18 @@
  * @license    GNU General Public License version 2 or later; see LICENSE.txt
  */
 
-namespace VDM\Joomla\Gitea\Repository;
+namespace VDM\Joomla\Interfaces\Git\Repository;
 
 
-use VDM\Joomla\Interfaces\Git\Repository\WikiInterface;
-use VDM\Joomla\Gitea\Abstraction\Api;
+use VDM\Joomla\Interfaces\Git\ApiInterface;
 
 
 /**
- * The Gitea Repository Wiki
+ * The Git Repository Wiki Interface
  * 
- * @since 3.2.0
+ * @since 5.1.1
  */
-class Wiki extends Api implements WikiInterface
+interface WikiInterface extends ApiInterface
 {
 	/**
 	 * Create a wiki page.
@@ -41,29 +40,7 @@ class Wiki extends Api implements WikiInterface
 		string $title,
 		string $contentBase64,
 		?string $message = null
-	): ?object
-	{
-		// Build the request path.
-		$path = "/repos/{$owner}/{$repo}/wiki/new";
-
-		// Set the wiki data.
-		$data = new \stdClass();
-		$data->title = $title;
-		$data->content_base64 = $contentBase64;
-
-		if ($message !== null)
-		{
-			$data->message = $message;
-		}
-
-		// Send the post request.
-		return $this->response->get(
-			$this->http->post(
-				$this->uri->get($path),
-				json_encode($data)
-			), 201
-		);
-	}
+	): ?object;
 
 	/**
 	 * Get a wiki page.
@@ -79,19 +56,7 @@ class Wiki extends Api implements WikiInterface
 		string $owner,
 		string $repo,
 		string $pageName
-	): ?object
-	{
-		// Build the request path.
-		$path = "/repos/{$owner}/{$repo}/wiki/page/{$pageName}";
-
-		// Set the URI.
-		$uri = $this->uri->get($path);
-
-		// Send the get request.
-		return $this->response->get(
-			$this->http->get($uri)
-		);
-	}
+	): ?object;
 
 	/**
 	 * Get all wiki pages.
@@ -109,21 +74,7 @@ class Wiki extends Api implements WikiInterface
 		string $repo,
 		int $page = 1,
 		int $limit = 10
-	): ?array
-	{
-		// Build the request path.
-		$path = "/repos/{$owner}/{$repo}/wiki/pages";
-
-		// Set the URI.
-		$uri = $this->uri->get($path);
-		$uri->setVar('page', $page);
-		$uri->setVar('limit', $limit);
-
-		// Send the get request.
-		return $this->response->get(
-			$this->http->get($uri)
-		);
-	}
+	): ?array;
 
 	/**
 	 * Delete a wiki page.
@@ -139,19 +90,7 @@ class Wiki extends Api implements WikiInterface
 		string $owner,
 		string $repo,
 		string $pageName
-	): string
-	{
-		// Build the request path.
-		$path = "/repos/{$owner}/{$repo}/wiki/page/{$pageName}";
-
-		// Get the URI.
-		$uri = $this->uri->get($path);
-
-		// Send the delete request.
-		return $this->response->get(
-			$this->http->delete($uri), 204, 'success'
-		);
-	}
+	): string;
 
 	/**
 	 * Edit a wiki page.
@@ -173,29 +112,7 @@ class Wiki extends Api implements WikiInterface
 		string $title,
 		string $content,
 		string $message = null
-	): ?object
-	{
-		// Build the request path.
-		$path = "/repos/{$owner}/{$repo}/wiki/page/{$pageName}";
-
-		// Set the wiki data.
-		$data = new \stdClass();
-		$data->title = $title;
-		$data->content_base64 = base64_encode($content);
-
-		if ($message !== null)
-		{
-			$data->message = $message;
-		}
-
-		// Send the patch request.
-		return $this->response->get(
-			$this->http->patch(
-				$this->uri->get($path),
-				json_encode($data)
-			)
-		);
-	}
+	): ?object;
 
 	/**
 	 * Get revisions of a wiki page.
@@ -213,20 +130,6 @@ class Wiki extends Api implements WikiInterface
 		string $repo,
 		string $pageName,
 		int $page = 1
-	): ?object
-	{
-		// Build the request path.
-		$path = "/repos/{$owner}/{$repo}/wiki/revisions/{$pageName}";
-
-		// Set the page number.
-		$this->uri->setVar('page', $page);
-
-		// Send the get request.
-		return $this->response->get(
-			$this->http->get(
-				$this->uri->get($path)
-			)
-		);
-	}
+	): ?object;
 }
 

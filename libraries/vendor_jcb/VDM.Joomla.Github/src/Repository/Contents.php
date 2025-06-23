@@ -21,7 +21,7 @@ use VDM\Joomla\Github\Abstraction\Api;
  * 
  * @since 5.1.1
  */
-class Contents extends Api implements ContentsInterface
+final class Contents extends Api implements ContentsInterface
 {
 	/**
 	 * Get a file from a repository.

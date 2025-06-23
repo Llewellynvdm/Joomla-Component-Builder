@@ -9,19 +9,18 @@
  * @license    GNU General Public License version 2 or later; see LICENSE.txt
  */
 
-namespace VDM\Joomla\Gitea\Repository;
+namespace VDM\Joomla\Interfaces\Git\Repository;
 
 
-use VDM\Joomla\Interfaces\Git\Repository\TagsInterface;
-use VDM\Joomla\Gitea\Abstraction\Api;
+use VDM\Joomla\Interfaces\Git\ApiInterface;
 
 
 /**
- * The Gitea Repository Tags
+ * The Git Repository Tags Interface
  * 
- * @since 3.2.0
+ * @since 5.1.1
  */
-class Tags extends Api implements TagsInterface
+interface TagsInterface extends ApiInterface
 {
 	/**
 	 * List a repository's tags
@@ -39,30 +38,7 @@ class Tags extends Api implements TagsInterface
 		string $repo,
 		?int $page = 1,
 		?int $limit = 10
-	): ?array
-	{
-		// Build the request path.
-		$path = "/repos/{$owner}/{$repo}/tags";
-
-		// Get the URI with the path.
-		$uri = $this->uri->get($path);
-
-		// Add query parameters if they are provided.
-		if ($page !== null)
-		{
-			$uri->setVar('page', $page);
-		}
-
-		if ($limit !== null)
-		{
-			$uri->setVar('limit', $limit);
-		}
-
-		// Send the get request.
-		return $this->response->get(
-			$this->http->get($uri)
-		);
-	}
+	): ?array;
 
 	/**
 	 * Get the tag of a repository by tag name.
@@ -74,18 +50,7 @@ class Tags extends Api implements TagsInterface
 	 * @return  object|null
 	 * @since   3.2.0
 	 **/
-	public function get(string $owner, string $repo, string $tag): ?object
-	{
-		// Build the request path.
-		$path = "/repos/{$owner}/{$repo}/tags/{$tag}";
-
-		// Send the get request.
-		return $this->response->get(
-			$this->http->get(
-				$this->uri->get($path)
-			)
-		);
-	}
+	public function get(string $owner, string $repo, string $tag): ?object;
 
 	/**
 	 * Get the tag object of an annotated tag (not lightweight tags).
@@ -101,19 +66,7 @@ class Tags extends Api implements TagsInterface
 		string $owner,
 		string $repo,
 		string $sha
-	): ?object
-	{
-		// Build the request path.
-		$path = "/repos/{$owner}/{$repo}/git/tags/{$sha}";
-
-		// Get the URI with the path.
-		$uri = $this->uri->get($path);
-
-		// Send the get request.
-		return $this->response->get(
-			$this->http->get($uri)
-		);
-	}
+	): ?object;
 
 	/**
 	 * Create a new git tag in a repository.
@@ -133,24 +86,7 @@ class Tags extends Api implements TagsInterface
 		string $tagName,
 		string $target,
 		string $message
-	): ?object
-	{
-		// Build the request path.
-		$path = "/repos/{$owner}/{$repo}/tags";
-
-		// Set the tag data
-		$data = new \stdClass();
-		$data->tag_name = $tagName;
-		$data->target = $target;
-		$data->message = $message;
-
-		// Send the post request.
-		return $this->response->get(
-			$this->http->post(
-				$this->uri->get($path), json_encode($data)
-			)
-		);
-	}
+	): ?object;
 
 	/**
 	 * Delete a repository's tag by name.
@@ -166,18 +102,6 @@ class Tags extends Api implements TagsInterface
 		string $owner,
 		string $repo,
 		string $tag
-	): string
-	{
-		// Build the request path.
-		$path = "/repos/{$owner}/{$repo}/tags/{$tag}";
-
-		// Send the delete request.
-		return $this->response->get(
-			$this->http->delete(
-				$this->uri->get($path)
-			), 204, 'succes'
-		);
-	}
-
+	): string;
 }
 

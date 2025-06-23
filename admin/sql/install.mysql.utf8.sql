@@ -3022,8 +3022,8 @@ INSERT INTO `#__componentbuilder_repository` (`id`, `system_name`, `organisation
 (17, 'Openai (codeberg - mirror)', 'joomla', 'openai', 1, 1, 'https://codeberg.org', 'c625381a-7795-4b9f-8b4e-997c9291e3fc', 'master', 1, 17, 1, '2025-06-17 21:47:49', '2024-06-10 11:03:19', '', '{}'),
 (18, 'Joomla Powers (codeberg - mirror)', 'joomla', 'joomla-powers', 2, 1, 'https://codeberg.org', '8ac595d4-0b1d-4877-ba3e-2b815c1c7e3c', 'master', 1, 18, 1, '2025-06-17 21:47:22', '2024-07-08 14:07:31', '', '{}'),
 (19, 'Joomla Field Types (codeberg - mirror)', 'joomla', 'joomla-fieldtypes', 3, 1, 'https://codeberg.org', 'bf4a1d77-e3a4-4aa8-a07f-2b01872bf7e9', 'master', 1, 19, 1, '2025-06-17 21:48:25', '2024-08-23 16:21:35', '', '{}'),
-(20, 'Official Packages', 'joomengine', 'packages', 4, 2, 'https://api.github.com', '562624ab-48bf-4979-9a14-6b10cf3635de', 'master', 1, 20, 1, '2025-06-18 10:39:24', '2025-05-31 08:47:01', '', '{}'),
-(21, 'Official Snippets', 'joomengine', 'snippets', 5, 2, 'https://api.github.com', '70e85588-bc28-4459-9b29-858f68faae8f', 'master', 1, 21, 1, '2025-06-18 18:46:05', '2025-06-18 10:35:14', '', '{}');
+(20, 'Official Packages (github - mirror)', 'joomengine', 'packages', 4, 2, 'https://api.github.com', '562624ab-48bf-4979-9a14-6b10cf3635de', 'master', 1, 20, 1, '2025-06-23 16:46:09', '2025-05-31 08:47:01', '', '{}'),
+(21, 'Official Packages (github - mirror)', 'joomengine', 'snippets', 5, 2, 'https://api.github.com', '70e85588-bc28-4459-9b29-858f68faae8f', 'master', 1, 21, 1, '2025-06-23 16:46:13', '2025-06-18 10:35:14', '', '{}');
 
 --
 -- Dumping data for table `#__componentbuilder_help_document`

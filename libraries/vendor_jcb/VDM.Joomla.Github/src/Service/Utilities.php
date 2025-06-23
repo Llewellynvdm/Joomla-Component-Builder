@@ -14,6 +14,7 @@ namespace VDM\Joomla\Github\Service;
 
 use Joomla\DI\Container;
 use Joomla\DI\ServiceProviderInterface;
+use VDM\Joomla\Utilities\Component\Helper;
 use VDM\Joomla\Github\Utilities\Http;
 use VDM\Joomla\Github\Utilities\Uri;
 use VDM\Joomla\Github\Utilities\Response;
@@ -56,7 +57,9 @@ class Utilities implements ServiceProviderInterface
 	 */
 	public function getHttp(Container $container): Http
 	{
-		return new Http();
+		return new Http(
+			Helper::getParams('com_componentbuilder')->get('github_access_token') ?? null
+		);
 	}
 
 	/**

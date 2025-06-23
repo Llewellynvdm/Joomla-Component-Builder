@@ -1,7 +1,8 @@
-# v5.1.1-beta2
+# v5.1.1-beta3
 
-- Enhance operator support in dynamic get system. Relates to issue #1226.
-
+- Fixes issue with loading the Component Builder Wiki.
+- Adds advanced version update notice to the Component Builder Dashboard.
+- Completely refactors the class that builds the Component Dashboard. #1134
 
 # v5.1.1-beta
 
@@ -21,6 +22,7 @@
 - Refactor the Creator Builders class.
 - Refactor the FieldString and FieldXML classes.
 - Add JCB new package engine.
+- Enhance operator support in dynamic get system. Relates to issue #1226.
 
 # v5.1.0
 

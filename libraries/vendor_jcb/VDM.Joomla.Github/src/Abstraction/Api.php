@@ -19,7 +19,7 @@ use VDM\Joomla\Interfaces\Git\ApiInterface;
 
 
 /**
- * The Gitea Api
+ * The Github Api
  * 
  * @since 5.1.1
  */
@@ -98,10 +98,11 @@ abstract class Api implements ApiInterface
 		// for the rest of the container
 		if ($backup)
 		{
-			if ($url !== null)
-			{
-				$this->url = $this->uri->getUrl();
-			}
+			// Github has only one URL
+			// if ($url !== null)
+			// {
+			// 	$this->url = $this->uri->getUrl();
+			// }
 
 			if ($token !== null)
 			{
@@ -109,10 +110,11 @@ abstract class Api implements ApiInterface
 			}
 		}
 
-		if ($url !== null)
-		{
-			$this->uri->setUrl($url);
-		}
+		// Github has only one URL
+		// if ($url !== null)
+		// {
+		// 	$this->uri->setUrl($url);
+		// }
 
 		if ($token !== null)
 		{
@@ -128,11 +130,12 @@ abstract class Api implements ApiInterface
 	 **/
 	public function reset_(): void
 	{
-		if ($this->url !== null)
-		{
-			$this->uri->setUrl($this->url);
-			$this->url = null;
-		}
+		// Github has only one URL
+		// if ($this->url !== null)
+		// {
+		// 	$this->uri->setUrl($this->url);
+		// 	$this->url = null;
+		// }
 
 		if ($this->token !== null)
 		{
