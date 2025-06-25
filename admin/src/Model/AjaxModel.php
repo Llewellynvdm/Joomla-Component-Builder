@@ -47,6 +47,7 @@ use VDM\Joomla\Componentbuilder\Fieldtype\Factory as FieldtypeFactory;
 use VDM\Joomla\Componentbuilder\JoomlaPower\Factory as JoomlaPowerFactory;
 use VDM\Joomla\Componentbuilder\Power\Factory as PowerFactory;
 use VDM\Joomla\Componentbuilder\Snippet\Factory as SnippetFactory;
+use VDM\Joomla\Componentbuilder\Repository\Factory as RepositoryFactory;
 use Joomla\CMS\Form\FormHelper as FormFormHelper;
 
 // No direct access to this file
@@ -5341,7 +5342,8 @@ class AjaxModel extends ListModel
 		'ClassExtends' => 'PackageFactory',
 		'ClassProperty' => 'PackageFactory',
 		'ClassMethod' => 'PackageFactory',
-		'Placeholder' => 'PackageFactory'
+		'Placeholder' => 'PackageFactory',
+		'Repository' => 'RepositoryFactory'
 	];
 
 	/**
@@ -5361,6 +5363,7 @@ class AjaxModel extends ListModel
 			'FieldtypeFactory' => FieldtypeFactory::_($getClass),
 			'SnippetFactory' => SnippetFactory::_($getClass),
 			'PackageFactory' => PackageFactory::_($getClass),
+			'RepositoryFactory' => RepositoryFactory::_($getClass),
 			default => null,
 		};
 	}

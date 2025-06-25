@@ -9,7 +9,7 @@
  * @license    GNU General Public License version 2 or later; see LICENSE.txt
  */
 
-namespace VDM\Joomla\Componentbuilder\Power\Remote;
+namespace VDM\Joomla\Componentbuilder\Remote;
 
 
 use VDM\Joomla\Interfaces\Remote\GetInterface;
@@ -17,7 +17,7 @@ use VDM\Joomla\Abstraction\Remote\Get as ExtendingGet;
 
 
 /**
- * Remote Get Power of JCB
+ * Remote Get of an Entity
  * 
  * @since 3.2.0
  */

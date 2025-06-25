@@ -17,7 +17,7 @@ use Joomla\DI\ServiceProviderInterface;
 use VDM\Joomla\Componentbuilder\Power\Config;
 use VDM\Joomla\Componentbuilder\Power\Grep;
 use VDM\Joomla\Componentbuilder\Power\Remote\Config as RemoteConfig;
-use VDM\Joomla\Componentbuilder\Power\Remote\Get;
+use VDM\Joomla\Componentbuilder\Remote\Get;
 use VDM\Joomla\Componentbuilder\Power\Remote\Set;
 use VDM\Joomla\Componentbuilder\Power\Parser;
 use VDM\Joomla\Componentbuilder\Power\Plantuml;

@@ -166,6 +166,7 @@ class InitializationManager {
 		const powers = [
 			'Joomla.Fieldtype',
 			'Joomla.Power',
+			'Repository',
 			'Power'
 		];
 

@@ -17,7 +17,7 @@ use Joomla\DI\ServiceProviderInterface;
 use VDM\Joomla\Componentbuilder\Package\Grep;
 use VDM\Joomla\Componentbuilder\Package\DynamicGet\Remote\Config;
 use VDM\Joomla\Componentbuilder\Package\Dependency\Resolver;
-use VDM\Joomla\Componentbuilder\Power\Remote\Get;
+use VDM\Joomla\Componentbuilder\Remote\Get;
 use VDM\Joomla\Componentbuilder\Package\Remote\DynamicGet\Set;
 use VDM\Joomla\Componentbuilder\Package\DynamicGet\Readme\Item as ItemReadme;
 use VDM\Joomla\Componentbuilder\Package\DynamicGet\Readme\Main as MainReadme;

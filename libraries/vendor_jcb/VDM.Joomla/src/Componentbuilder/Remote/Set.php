@@ -9,7 +9,7 @@
  * @license    GNU General Public License version 2 or later; see LICENSE.txt
  */
 
-namespace VDM\Joomla\Componentbuilder\Package\Remote;
+namespace VDM\Joomla\Componentbuilder\Remote;
 
 
 use Joomla\CMS\Language\Text;
@@ -27,7 +27,7 @@ use VDM\Joomla\Abstraction\Remote\Set as ExtendingSet;
 
 
 /**
- * Set package based on global unique ids to remote repository
+ * Set global unique ids to remote repository
  * 
  * @since 5.1.1
  */

@@ -22,9 +22,16 @@ defined('JPATH_BASE') or die;
 
 $base = $displayData['repo']->base ?? null;
 $path = $displayData['repo']->path ?? null;
+$type = $displayData['repo']->type ?? 0;
 $url = "#";
 if (!empty($base) && !empty($path))
 {
+	// if the type is GitHub = 2
+	if ($type == 2)
+	{
+		$base = 'https://github.com';
+	}
+
 	$url = "{$base}/{$path}";
 }
 $name = $displayData['name'] ?? 'error';

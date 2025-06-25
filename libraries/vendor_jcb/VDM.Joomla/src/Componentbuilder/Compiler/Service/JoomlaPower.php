@@ -17,7 +17,7 @@ use Joomla\DI\ServiceProviderInterface;
 use VDM\Joomla\Componentbuilder\Compiler\JoomlaPower as Powers;
 use VDM\Joomla\Componentbuilder\JoomlaPower\Grep;
 use VDM\Joomla\Componentbuilder\JoomlaPower\Remote\Config;
-use VDM\Joomla\Componentbuilder\Power\Remote\Get;
+use VDM\Joomla\Componentbuilder\Remote\Get;
 use VDM\Joomla\Componentbuilder\Compiler\JoomlaPower\Extractor;
 use VDM\Joomla\Componentbuilder\Compiler\JoomlaPower\Injector;
 

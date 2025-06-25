@@ -321,7 +321,7 @@ abstract class Set extends Base implements SetInterface
 		// load the base and token if set
 		$this->grep->loadApi(
 			$this->git,
-			$target === 'gitea' ? ($repo->base ?? null) : null,
+			$repo->base ?? null,
 			$repo->token ?? null
 		);
 
@@ -544,7 +544,7 @@ abstract class Set extends Base implements SetInterface
 			// load the base and token if set
 			$this->grep->loadApi(
 				$this->git,
-				$target_system === 'gitea' ? ($repo->base ?? null) : null,
+				$repo->base ?? null,
 				$repo->token ?? null
 			);
 

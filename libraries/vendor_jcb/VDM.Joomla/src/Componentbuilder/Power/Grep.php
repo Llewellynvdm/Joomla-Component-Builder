@@ -136,7 +136,7 @@ final class Grep extends ExtendingGrep implements GrepInterface
 		// load the base and token if set
 		$this->loadApi(
 			$this->contents,
-			$target === 'gitea' ? ($path->base ?? null) : null,
+			$path->base ?? null,
 			$path->token ?? null
 		);
 

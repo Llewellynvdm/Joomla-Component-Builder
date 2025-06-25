@@ -9,11 +9,10 @@
  * @license    GNU General Public License version 2 or later; see LICENSE.txt
  */
 
-namespace VDM\Joomla\Componentbuilder\Snippet;
+namespace VDM\Joomla\Componentbuilder\Repository;
 
 
 use Joomla\CMS\Language\Text;
-use VDM\Joomla\Componentbuilder\Remote\SetDependenciesTrait;
 use VDM\Joomla\Interfaces\GrepInterface;
 use VDM\Joomla\Componentbuilder\Remote\Grep as ExtendingGrep;
 
@@ -31,19 +30,12 @@ use VDM\Joomla\Componentbuilder\Remote\Grep as ExtendingGrep;
 final class Grep extends ExtendingGrep implements GrepInterface
 {
 	/**
-	 * The Set Dependencies Method
-	 *
-	 * @since  5.1.1
-	 **/
-	use SetDependenciesTrait;
-
-	/**
 	 * The Grep target [network]
 	 *
 	 * @var    string
 	 * @since  5.1.1
 	 **/
-	protected ?string $target = 'snippet';
+	protected ?string $target = 'repository';
 
 	/**
 	 * Set repository messages and errors based on given conditions.
@@ -60,7 +52,7 @@ final class Grep extends ExtendingGrep implements GrepInterface
 	protected function setRemoteIndexMessage(string $message, string $path, string $repository, string $organisation, ?string $base): void
 	{
 		$this->app->enqueueMessage(
-			Text::sprintf('COM_COMPONENTBUILDER_PSNIPPETB_REPOSITORY_AT_BSSB_GAVE_THE_FOLLOWING_ERRORBR_SP', $this->contents->api(), $path, $message),
+			Text::sprintf('COM_COMPONENTBUILDER_PREPOSITORYB_ENTITY_AT_BSSB_GAVE_THE_FOLLOWING_ERRORBR_SP', $this->contents->api(), $path, $message),
 			'Error'
 		);
 	}

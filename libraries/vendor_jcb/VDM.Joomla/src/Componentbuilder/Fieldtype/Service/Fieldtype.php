@@ -17,7 +17,7 @@ use Joomla\DI\ServiceProviderInterface;
 use VDM\Joomla\Componentbuilder\Fieldtype\Config;
 use VDM\Joomla\Componentbuilder\Fieldtype\Grep;
 use VDM\Joomla\Componentbuilder\Fieldtype\Remote\Config as RemoteConfig;
-use VDM\Joomla\Componentbuilder\Power\Remote\Get;
+use VDM\Joomla\Componentbuilder\Remote\Get;
 use VDM\Joomla\Componentbuilder\Fieldtype\Remote\Set;
 use VDM\Joomla\Componentbuilder\Fieldtype\Readme\Item as ItemReadme;
 use VDM\Joomla\Componentbuilder\Fieldtype\Readme\Main as MainReadme;

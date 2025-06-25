@@ -14,7 +14,7 @@ namespace VDM\Joomla\Componentbuilder\Package\Remote;
 
 use Joomla\CMS\Language\Text;
 use VDM\Joomla\Interfaces\Remote\SetInterface;
-use VDM\Joomla\Componentbuilder\Package\Remote\Set;
+use VDM\Joomla\Componentbuilder\Remote\Set;
 
 
 /**
@@ -157,7 +157,7 @@ abstract class SetContent extends Set implements SetInterface
 			// load the base and token if set
 			$this->grep->loadApi(
 				$this->git,
-				$target_system === 'gitea' ? ($repo->base ?? null) : null,
+				$repo->base ?? null,
 				$repo->token ?? null
 			);
 

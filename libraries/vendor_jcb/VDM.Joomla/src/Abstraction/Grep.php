@@ -423,10 +423,14 @@ abstract class Grep implements GrepInterface
 	 */
 	public function loadApi(Api $api, ?string $base, ?string $token): void
 	{
-		// Determine the token to use based on the base URL
-		if ($base && strpos($base. '/', $this->api_base) !== false)
+		// If we have global tokens for a base system we must not reset on an empty token
+		if ($base && (
+			strpos($base. '/', $this->api_base) !== false ||
+			strpos($base, 'api.github.com') !== false
+		))
 		{
 			// If base contains $this->api_base = https://git.vdm.dev/, use the token as is
+			// If base contains api.github.com, use the token as is
 			$tokenToUse = $token;
 		}
 		else
@@ -861,7 +865,7 @@ abstract class Grep implements GrepInterface
 			// load the base and token if set
 			$this->loadApi(
 				$this->contents,
-				$target === 'gitea' ? ($path->base ?? null) : null,
+				$path->base ?? null,
 				$path->token ?? null
 			);
 

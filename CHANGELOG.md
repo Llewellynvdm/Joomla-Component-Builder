@@ -1,8 +1,7 @@
-# v5.1.1-beta3
+# v5.1.1-beta4
 
-- Fixes issue with loading the Component Builder Wiki.
-- Adds advanced version update notice to the Component Builder Dashboard.
-- Completely refactors the class that builds the Component Dashboard. #1134
+- Fix the FieldXML interface mismatch. #1228
+- Adds Initialize, Reset, and Push functionality to the Repository entities.
 
 # v5.1.1-beta
 
@@ -23,6 +22,9 @@
 - Refactor the FieldString and FieldXML classes.
 - Add JCB new package engine.
 - Enhance operator support in dynamic get system. Relates to issue #1226.
+- Fixes issue with loading the Component Builder Wiki.
+- Adds advanced version update notice to the Component Builder Dashboard.
+- Completely refactors the class that builds the Component Dashboard. #1134
 
 # v5.1.0
 

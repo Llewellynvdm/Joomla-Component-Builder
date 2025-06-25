@@ -23,7 +23,7 @@ use VDM\Joomla\Interfaces\Readme\MainInterface as MainReadme;
 use VDM\Joomla\Interfaces\Git\Repository\ContentsInterface as Git;
 use VDM\Joomla\Interfaces\Data\ItemsInterface as Items;
 use VDM\Joomla\Interfaces\Remote\SetInterface;
-use VDM\Joomla\Componentbuilder\Package\Remote\Set as ExtendingSet;
+use VDM\Joomla\Componentbuilder\Remote\Set as ExtendingSet;
 
 
 /**

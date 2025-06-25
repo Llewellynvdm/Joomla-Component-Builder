@@ -17,7 +17,7 @@ use Joomla\DI\ServiceProviderInterface;
 use VDM\Joomla\Componentbuilder\Package\Grep;
 use VDM\Joomla\Componentbuilder\Package\CustomCode\Remote\Config;
 use VDM\Joomla\Componentbuilder\Package\Dependency\Resolver;
-use VDM\Joomla\Componentbuilder\Power\Remote\Get;
+use VDM\Joomla\Componentbuilder\Remote\Get;
 use VDM\Joomla\Componentbuilder\Package\Remote\CustomCode\Set;
 use VDM\Joomla\Componentbuilder\Package\CustomCode\Readme\Item as ItemReadme;
 use VDM\Joomla\Componentbuilder\Package\CustomCode\Readme\Main as MainReadme;

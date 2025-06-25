@@ -13,7 +13,7 @@ namespace VDM\Joomla\Componentbuilder\Package\Remote\DynamicGet;
 
 
 use VDM\Joomla\Interfaces\Remote\SetInterface;
-use VDM\Joomla\Componentbuilder\Package\Remote\Set as ExtendingSet;
+use VDM\Joomla\Componentbuilder\Remote\Set as ExtendingSet;
 
 
 /**

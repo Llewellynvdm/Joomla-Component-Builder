@@ -13,8 +13,9 @@ namespace VDM\Joomla\Componentbuilder\Package;
 
 
 use Joomla\CMS\Language\Text;
+use VDM\Joomla\Componentbuilder\Remote\SetDependenciesTrait;
 use VDM\Joomla\Interfaces\GrepInterface;
-use VDM\Joomla\Abstraction\Grep as ExtendingGrep;
+use VDM\Joomla\Componentbuilder\Remote\Grep as ExtendingGrep;
 
 
 /**
@@ -30,155 +31,19 @@ use VDM\Joomla\Abstraction\Grep as ExtendingGrep;
 final class Grep extends ExtendingGrep implements GrepInterface
 {
 	/**
+	 * The Set Dependencies Method
+	 *
+	 * @since  5.1.1
+	 **/
+	use SetDependenciesTrait;
+
+	/**
 	 * The Grep target [network]
 	 *
 	 * @var    string
 	 * @since  5.1.1
 	 **/
 	protected ?string $target = 'package';
-
-	/**
-	 * Order of global search
-	 *
-	 * @var    array
-	 * @since 5.1.1
-	 **/
-	protected array $order = ['remote'];
-
-	/**
-	 * Search for a remote item
-	 *
-	 * @param string    $guid    The global unique id of the item
-	 *
-	 * @return object|null
-	 * @since  5.1.1
-	 */
-	protected function searchRemote(string $guid): ?object
-	{
-		// check if it exists remotely
-		if (($path = $this->existsRemotely($guid)) !== null)
-		{
-			return $this->getRemote($path, $guid);
-		}
-
-		return null;
-	}
-
-	/**
-	 * Get a remote package (item) object from a repository.
-	 *
-	 * @param object $path  The repository path details
-	 * @param string $guid  The global unique ID of the power
-	 *
-	 * @return object|null
-	 * @since  5.1.1
-	 */
-	protected function getRemote(object $path, string $guid): ?object
-	{
-		$relative_path = $path->index[$this->entity]->{$guid}->path ?? null;
-		if (empty($relative_path))
-		{
-			return null;
-		}
-
-		$branch         = $this->getBranchName($path);
-		$guid_field     = $this->getGuidField();
-		$settings_name  = $this->getSettingsName();
-		$readme_enabled = $this->hasItemReadme();
-
-		// set the target system
-		$target = $path->target ?? 'gitea';
-		$this->contents->setTarget($target);
-
-		// load the base and token if set
-		$this->loadApi(
-			$this->contents,
-			$target === 'gitea' ? ($path->base ?? null) : null,
-			$path->token ?? null
-		);
-
-		$power = $this->loadRemoteFile(
-			$path->organisation,
-			$path->repository,
-			"{$relative_path}/{$settings_name}",
-			$branch
-		);
-
-		if ($power === null || !isset($power->{$guid_field}))
-		{
-			$this->contents->reset_();
-			return null;
-		}
-
-		$path_guid = $path->guid ?? null;
-
-		$branch_field = $this->getBranchField();
-
-		if ($branch_field === 'write_branch' && $path_guid !== null)
-		{
-			$this->setRepoItemSha($power, $path, "{$relative_path}/{$settings_name}", $branch, "{$path_guid}-settings");
-
-			if ($readme_enabled)
-			{
-				$readme_name = $this->getItemReadmeName();
-				$this->setRepoItemSha($power, $path, "{$relative_path}/{$readme_name}", $branch, "{$path_guid}-readme");
-			}
-		}
-
-		$this->contents->reset_();
-
-		$this->setDependencies($power);
-
-		return $power;
-	}
-
-	/**
-	 * Load dependency records into the tracker.
-	 *
-	 * This method supports each dependency item being either an object or an associative array.
-	 * It verifies the presence of the `key`, `value`, and `entity` properties before adding them to the tracker.
-	 *
-	 * @param object $power  The remote power object
-	 *
-	 * @return void
-	 * @since 5.1.1
-	 */
-	protected function setDependencies(object $power): void
-	{
-		$dependencies = $power->{"@dependencies"} ?? [];
-
-		if (empty($dependencies))
-		{
-			return;
-		}
-
-		foreach ($dependencies as $item)
-		{
-			// Support both object and array types
-			$key    = is_array($item) ? ($item['key'] ?? null)    : ($item->key    ?? null);
-			$value  = is_array($item) ? ($item['value'] ?? null)  : ($item->value  ?? null);
-			$entity = is_array($item) ? ($item['entity'] ?? null) : ($item->entity ?? null);
-			$table = is_array($item) ? ($item['table'] ?? null) : ($item->table ?? null);
-
-			if (empty($key) || empty($value) || empty($entity))
-			{
-				continue;
-			}
-
-			if ($table === 'file_system')
-			{
-				$pointer = str_replace('.', '--', $key);
-				if (!$this->tracker->exists("{$entity}.save.{$pointer}"))
-				{
-					$this->tracker->set("{$entity}.get.{$pointer}", $item);
-				}
-			}
-			elseif (!$this->tracker->exists("save.{$entity}.{$key}|{$value}"))
-			{
-				$this->tracker->set("get.{$entity}.{$key}|{$value}", $item);
-			}
-		}
-	}
 
 	/**
 	 * Set repository messages and errors based on given conditions.

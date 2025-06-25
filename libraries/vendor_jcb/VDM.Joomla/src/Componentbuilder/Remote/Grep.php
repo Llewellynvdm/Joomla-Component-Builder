@@ -9,12 +9,12 @@
  * @license    GNU General Public License version 2 or later; see LICENSE.txt
  */
 
-namespace VDM\Joomla\Componentbuilder\Package;
+namespace VDM\Joomla\Componentbuilder\Remote;
 
 
 use Joomla\CMS\Language\Text;
 use VDM\Joomla\Interfaces\GrepInterface;
-use VDM\Joomla\Componentbuilder\Remote\Grep;
+use VDM\Joomla\Abstraction\Grep as ExtendingGrep;
 
 
 /**
@@ -27,18 +27,37 @@ use VDM\Joomla\Componentbuilder\Remote\Grep;
  * 
  * @since 5.1.1
  */
-class GrepContent extends Grep implements GrepInterface
+abstract class Grep extends ExtendingGrep implements GrepInterface
 {
 	/**
-	 * The Grep target [network]
+	 * Order of global search
 	 *
-	 * @var    string
-	 * @since  5.1.1
+	 * @var    array
+	 * @since 5.1.1
 	 **/
-	protected ?string $target = 'package';
+	protected array $order = ['remote'];
 
 	/**
-	 * Get a remote folder.zip from a repository.
+	 * Search for a remote item
+	 *
+	 * @param string    $guid    The global unique id of the item
+	 *
+	 * @return object|null
+	 * @since  5.1.1
+	 */
+	protected function searchRemote(string $guid): ?object
+	{
+		// check if it exists remotely
+		if (($path = $this->existsRemotely($guid)) !== null)
+		{
+			return $this->getRemote($path, $guid);
+		}
+
+		return null;
+	}
+
+	/**
+	 * Get a remote snippet object from a repository.
 	 *
 	 * @param object $path  The repository path details
 	 * @param string $guid  The global unique ID of the power
@@ -48,13 +67,16 @@ class GrepContent extends Grep implements GrepInterface
 	 */
 	protected function getRemote(object $path, string $guid): ?object
 	{
-		$content_path = $path->index[$this->entity]->{$guid}->path ?? null;
-		if (empty($content_path))
+		$relative_path = $path->index[$this->entity]->{$guid}->path ?? null;
+		if (empty($relative_path))
 		{
 			return null;
 		}
 
-		$branch = $this->getBranchName($path);
+		$branch         = $this->getBranchName($path);
+		$guid_field     = $this->getGuidField();
+		$settings_name  = $this->getSettingsName();
+		$readme_enabled = $this->hasItemReadme();
 
 		// set the target system
 		$target = $path->target ?? 'gitea';
@@ -70,31 +92,39 @@ class GrepContent extends Grep implements GrepInterface
 		$power = $this->loadRemoteFile(
 			$path->organisation,
 			$path->repository,
-			$content_path,
+			"{$relative_path}/{$settings_name}",
 			$branch
 		);
 
-		if ($power === null)
+		if ($power === null || !isset($power->{$guid_field}))
 		{
 			$this->contents->reset_();
 			return null;
 		}
 
-		$data = $path->index[$this->entity]->{$guid};
 		$path_guid = $path->guid ?? null;
 
 		$branch_field = $this->getBranchField();
 
 		if ($branch_field === 'write_branch' && $path_guid !== null)
 		{
-			$this->setRepoItemSha($data, $path, $content_path, $branch, "{$path_guid}-settings");
+			$this->setRepoItemSha($power, $path, "{$relative_path}/{$settings_name}", $branch, "{$path_guid}-settings");
+
+			if ($readme_enabled)
+			{
+				$readme_name = $this->getItemReadmeName();
+				$this->setRepoItemSha($power, $path, "{$relative_path}/{$readme_name}", $branch, "{$path_guid}-readme");
+			}
 		}
 
 		$this->contents->reset_();
 
-		$data->content = $power;
+		if (method_exists($this, 'setDependencies'))
+		{
+			$this->setDependencies($power);
+		}
 
-		return $data;
+		return $power;
 	}
 
 	/**
@@ -107,14 +137,8 @@ class GrepContent extends Grep implements GrepInterface
 	 * @param string|null  $base          Base URL
 	 *
 	 * @return void
-	 * @since  5.1.1
+	 * @since  3.2.0
 	 */
-	protected function setRemoteIndexMessage(string $message, string $path, string $repository, string $organisation, ?string $base): void
-	{
-		$this->app->enqueueMessage(
-			Text::sprintf('COM_COMPONENTBUILDER_PPACKAGECONTENTB_REPOSITORY_AT_BSSB_GAVE_THE_FOLLOWING_ERRORBR_SP', $this->contents->api(), $path, $message),
-			'Error'
-		);
-	}
+	abstract protected function setRemoteIndexMessage(string $message, string $path, string $repository, string $organisation, ?string $base): void;
 }
 

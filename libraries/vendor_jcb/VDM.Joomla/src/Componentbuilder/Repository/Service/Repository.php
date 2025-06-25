@@ -9,26 +9,27 @@
  * @license    GNU General Public License version 2 or later; see LICENSE.txt
  */
 
-namespace VDM\Joomla\Componentbuilder\Package\Service;
+namespace VDM\Joomla\Componentbuilder\Repository\Service;
 
 
 use Joomla\DI\Container;
 use Joomla\DI\ServiceProviderInterface;
-use VDM\Joomla\Componentbuilder\Package\Grep;
-use VDM\Joomla\Componentbuilder\Package\Field\Remote\Config;
+use VDM\Joomla\Componentbuilder\Repository\Config;
+use VDM\Joomla\Componentbuilder\Repository\Grep;
+use VDM\Joomla\Componentbuilder\Repository\Remote\Config as RemoteConfig;
 use VDM\Joomla\Componentbuilder\Package\Dependency\Resolver;
 use VDM\Joomla\Componentbuilder\Remote\Get;
 use VDM\Joomla\Componentbuilder\Remote\Set;
-use VDM\Joomla\Componentbuilder\Package\Field\Readme\Item as ItemReadme;
-use VDM\Joomla\Componentbuilder\Package\Field\Readme\Main as MainReadme;
+use VDM\Joomla\Componentbuilder\Repository\Readme\Item as ItemReadme;
+use VDM\Joomla\Componentbuilder\Repository\Readme\Main as MainReadme;
 
 
 /**
- * Field Service Provider
+ * Repository Service Provider
  * 
- * @since 5.1.1
+ * @since  5.1.1
  */
-class Field implements ServiceProviderInterface
+class Repository implements ServiceProviderInterface
 {
 	/**
 	 * Registers the service provider with a DI container.
@@ -40,13 +41,42 @@ class Field implements ServiceProviderInterface
 	 */
 	public function register(Container $container)
 	{
-		$container->share('Field.Grep', [$this, 'getGrep'], true);
-		$container->share('Field.Remote.Config', [$this, 'getRemoteConfig'], true);
-		$container->share('Field.Resolver', [$this, 'getResolver'], true);
-		$container->share('Field.Remote.Get', [$this, 'getRemoteGet'], true);
-		$container->share('Field.Remote.Set', [$this, 'getRemoteSet'], true);
-		$container->share('Field.Readme.Item', [$this, 'getItemReadme'], true);
-		$container->share('Field.Readme.Main', [$this, 'getMainReadme'], true);
+		$container->alias(Config::class, 'Repository.Config')->alias('Config', 'Repository.Config')
+			->share('Repository.Config', [$this, 'getConfig'], true);
+
+		$container->alias(Grep::class, 'Repository.Grep')
+			->share('Repository.Grep', [$this, 'getGrep'], true);
+
+		$container->alias(RemoteConfig::class, 'Repository.Remote.Config')
+			->share('Repository.Remote.Config', [$this, 'getRemoteConfig'], true);
+
+		$container->alias(Resolver::class, 'Repository.Resolver')
+			->share('Repository.Resolver', [$this, 'getResolver'], true);
+
+		$container->alias(Get::class, 'Repository.Remote.Get')
+			->share('Repository.Remote.Get', [$this, 'getRepositoryGet'], true);
+
+		$container->alias(Set::class, 'Repository.Remote.Set')
+			->share('Repository.Remote.Set', [$this, 'getRepositorySet'], true);
+
+		$container->alias(ItemReadme::class, 'Repository.Readme.Item')
+			->share('Repository.Readme.Item', [$this, 'getItemReadme'], true);
+
+		$container->alias(MainReadme::class, 'Repository.Readme.Main')
+			->share('Repository.Readme.Main', [$this, 'getMainReadme'], true);
+	}
+
+	/**
+	 * Get The Config Class.
+	 *
+	 * @param   Container  $container  The DI container.
+	 *
+	 * @return  Config
+	 * @since   5.1.1
+	 */
+	public function getConfig(Container $container): Config
+	{
+		return new Config();
 	}
 
 	/**
@@ -60,25 +90,25 @@ class Field implements ServiceProviderInterface
 	public function getGrep(Container $container): Grep
 	{
 		return new Grep(
-			$container->get('Field.Remote.Config'),
+			$container->get('Repository.Remote.Config'),
 			$container->get('Git.Repository.Contents'),
 			$container->get('Network.Resolve'),
 			$container->get('Power.Tracker'),
-			$container->get('Config')->approved_package_paths
+			$container->get('Repository.Config')->approved_joomla_paths
 		);
 	}
 
 	/**
-	 * Get The Remote Config Class.
+	 * Get The Remote Configure Class.
 	 *
 	 * @param   Container  $container  The DI container.
 	 *
-	 * @return  Config
-	 * @since   5.1.1
+	 * @return  RemoteConfig
+	 * @since  5.1.1
 	 */
-	public function getRemoteConfig(Container $container): Config
+	public function getRemoteConfig(Container $container): RemoteConfig
 	{
-		return new Config(
+		return new RemoteConfig(
 			$container->get('Power.Table')
 		);
 	}
@@ -94,7 +124,7 @@ class Field implements ServiceProviderInterface
 	public function getResolver(Container $container): Resolver
 	{
 		return new Resolver(
-			$container->get('Field.Remote.Config'),
+			$container->get('Repository.Remote.Config'),
 			$container->get('Utilities.Normalize'),
 			$container->get('Power.Tracker'),
 			$container->get('Power.Table'),
@@ -110,11 +140,11 @@ class Field implements ServiceProviderInterface
 	 * @return  Get
 	 * @since   5.1.1
 	 */
-	public function getRemoteGet(Container $container): Get
+	public function getRepositoryGet(Container $container): Get
 	{
 		return new Get(
-			$container->get('Field.Remote.Config'),
-			$container->get('Field.Grep'),
+			$container->get('Repository.Remote.Config'),
+			$container->get('Repository.Grep'),
 			$container->get('Data.Item'),
 			$container->get('Power.Tracker'),
 			$container->get('Power.Message')
@@ -129,19 +159,19 @@ class Field implements ServiceProviderInterface
 	 * @return  Set
 	 * @since   5.1.1
 	 */
-	public function getRemoteSet(Container $container): Set
+	public function getRepositorySet(Container $container): Set
 	{
 		return new Set(
 			$container->get('Power.Tracker'),
 			$container->get('Power.Message'),
-			$container->get('Field.Grep'),
-			$container->get('Field.Resolver'),
-			$container->get('Field.Remote.Config'),
-			$container->get('Field.Readme.Item'),
-			$container->get('Field.Readme.Main'),
+			$container->get('Repository.Grep'),
+			$container->get('Repository.Resolver'),
+			$container->get('Repository.Remote.Config'),
+			$container->get('Repository.Readme.Item'),
+			$container->get('Repository.Readme.Main'),
 			$container->get('Git.Repository.Contents'),
 			$container->get('Data.Items'),
-			$container->get('Config')->approved_package_paths
+			$container->get('Repository.Config')->approved_joomla_paths
 		);
 	}
 

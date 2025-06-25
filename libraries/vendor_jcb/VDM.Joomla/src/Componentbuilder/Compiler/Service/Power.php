@@ -19,7 +19,7 @@ use VDM\Joomla\Componentbuilder\Power\Table;
 use VDM\Joomla\Componentbuilder\Package\Dependency\Tracker;
 use VDM\Joomla\Componentbuilder\Package\MessageBus;
 use VDM\Joomla\Componentbuilder\Power\Remote\Config;
-use VDM\Joomla\Componentbuilder\Power\Remote\Get;
+use VDM\Joomla\Componentbuilder\Remote\Get;
 use VDM\Joomla\Componentbuilder\Power\Grep;
 use VDM\Joomla\Componentbuilder\Compiler\Power\Autoloader;
 use VDM\Joomla\Componentbuilder\Compiler\Power\Infusion;
