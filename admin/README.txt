@@ -7,11 +7,11 @@ This is a professional-grade [Joomla 5.x](https://extensions.joomla.org/extensio
 
 > 🎥 [Original... Quick Hello World Demo](https://www.youtube.com/watch?v=IQfsLYIeblk&list=PLQRGFI8XZ_wtGvPQZWBfDzzlERLQgpMRE&index=45), yes JCB has been around for over a decade.
 
-JCB generates native Joomla components, plugins, and modules for Joomla 3.x, 4.x, and 5.x — and is already prepared for Joomla 6. Every compiled project is tailored for the specific version without needing backward compatibility plugins. With integrated version-aware compiling, smart boilerplating, and Git-powered project syncing, JCB is much more than a code generator—it's a **full-stack development pipeline for Joomla extensions**.
+JCB generates native Joomla components, plugins, and modules for Joomla 3.x, 4.x, and 5.x - and is already prepared for Joomla 6. Every compiled project is tailored for the specific version without needing backward compatibility plugins. With integrated version-aware compiling, smart boilerplating, and Git-powered project syncing, JCB is much more than a code generator-it's a **full-stack development pipeline for Joomla extensions**.
 
-You can install this component easily. The latest release (**5.1.1-beta4**) is available on [Releases](https://git.vdm.dev/joomla/pkg-component-builder/releases) and updated frequently with full source access.
+You can install this component easily. The latest release (**5.1.1-beta5**) is available on [Releases](https://git.vdm.dev/joomla/pkg-component-builder/releases) and updated frequently with full source access.
 
-Upgrades are seamless through Joomla’s built-in extension update mechanism.
+Upgrades are seamless through Joomla's built-in extension update mechanism.
 
 ---
 
@@ -19,21 +19,21 @@ Upgrades are seamless through Joomla’s built-in extension update mechanism.
 
 Here are just some of the key powers JCB brings:
 
-* 🔁 **Bi-Directional IDE Sync** – Fetch custom logic from compiled projects and reintegrate on rebuild.
-* 🧱 **Build Joomla Components, Plugins, and Modules** – Fully native and independently compiled.
-* 🧠 **Superpowers (PHP Class Builder)** – Create namespaced abstract, interface, and trait-based PHP classes visually.
-* 🔌 **Joomla Powers** – Intelligent Joomla class referencing via dynamic placeholders (JPKs) that adapt to Joomla versions.
-* 🗃️ **Smart Boilerplating** – Start fast with 6+ curated demo blueprints for instant use or customization.
-* 🔂 **Round-Trip Development** – Add, update, and persist changes across compiled code using insert/replace tags.
-* 🔐 **Field Types Engine** – Blueprint reusable Joomla-native fields with constraints, security, DB structure, and logic.
-* 🧬 **Admin Views, Custom Admin Views & Site Views** – Fine-grained design for structured or dynamic backend/front-end UIs.
-* 🧮 **Dynamic GET Builder** – Advanced visual query designer for cross-table, filter-rich, deeply joined SQL fetches.
-* 💡 **Snippets, Layouts, Templates & Libraries** – Shareable GUI-linked modules for reusable HTML/CSS/JS integration.
-* 🧰 **Custom Code System** – Write logic once and reuse anywhere; full support for HTML & PHP placeholders and tracking.
-* 🛠️ **Multi-Version Compilation** – Compile version-specific code for J3, J4, J5 without compatibility bloat.
-* 📦 **Package Management** – Export/import blueprints, version control builds, sync with Git, and distribute clean packages.
-* 🖥️ **CLI Integration** – Build commands natively via terminal using Joomla's CLI runner.
-* 🌐 **Update Server Support** – Integrate custom update mechanisms for extensions post-deployment.
+* 🔁 **Bi-Directional IDE Sync** - Fetch custom logic from compiled projects and reintegrate on rebuild.
+* 🧱 **Build Joomla Components, Plugins, and Modules** - Fully native and independently compiled.
+* 🧠 **Superpowers (PHP Class Builder)** - Create namespaced abstract, interface, and trait-based PHP classes visually.
+* 🔌 **Joomla Powers** - Intelligent Joomla class referencing via dynamic placeholders (JPKs) that adapt to Joomla versions.
+* 🗃️ **Smart Boilerplating** - Start fast with 6+ curated demo blueprints for instant use or customization.
+* 🔂 **Round-Trip Development** - Add, update, and persist changes across compiled code using insert/replace tags.
+* 🔐 **Field Types Engine** - Blueprint reusable Joomla-native fields with constraints, security, DB structure, and logic.
+* 🧬 **Admin Views, Custom Admin Views & Site Views** - Fine-grained design for structured or dynamic backend/front-end UIs.
+* 🧮 **Dynamic GET Builder** - Advanced visual query designer for cross-table, filter-rich, deeply joined SQL fetches.
+* 💡 **Snippets, Layouts, Templates & Libraries** - Shareable GUI-linked modules for reusable HTML/CSS/JS integration.
+* 🧰 **Custom Code System** - Write logic once and reuse anywhere; full support for HTML & PHP placeholders and tracking.
+* 🛠️ **Multi-Version Compilation** - Compile version-specific code for J3, J4, J5 without compatibility bloat.
+* 📦 **Package Management** - Export/import blueprints, version control builds, sync with Git, and distribute clean packages.
+* 🖥️ **CLI Integration** - Build commands natively via terminal using Joomla's CLI runner.
+* 🌐 **Update Server Support** - Integrate custom update mechanisms for extensions post-deployment.
 
 <details>
 <summary>📚 View 100+ Additional Advanced Features</summary>
@@ -200,7 +200,7 @@ Here are just some of the key powers JCB brings:
 ## 📦 Get Started Now
 
 * 🔽 **Download**: [Stable Releases](https://git.vdm.dev/joomla/pkg-component-builder/releases) · [Nightly J5](https://git.vdm.dev/joomla/pkg-component-builder/archive/5.x.zip) · [Nightly J4](https://git.vdm.dev/joomla/pkg-component-builder/archive/4.x.zip)
-* 📥 **Install**: Use Joomla’s extension manager
+* 📥 **Install**: Use Joomla's extension manager
 * 🎓 **Learn**: [Tutorials](https://www.youtube.com/playlist?list=PLQRGFI8XZ_wtGvPQZWBfDzzlERLQgpMRE) · [How to Install Demo Blueprints](https://vdm.bz/how-to-install-jcb-packages)
 
 ---
@@ -220,7 +220,7 @@ Here are just some of the key powers JCB brings:
 
 ## 🌱 Why It's Free
 
-JCB is developed by developers for developers. Its purpose is to democratize high-performance Joomla development by empowering everyone — from solo builders to large teams — to work with clean, scalable, maintainable, and versionable code. This isn’t a template generator — it’s a full-scale **extension engineering platform**.
+JCB is developed by developers for developers. Its purpose is to democratize high-performance Joomla development by empowering everyone — from solo builders to large teams — to work with clean, scalable, maintainable, and versionable code. This isn't a template generator — it's a full-scale **extension engineering platform**.
 
 ---
 
@@ -229,9 +229,9 @@ JCB is developed by developers for developers. Its purpose is to democratize hig
 * **Company:** [Vast Development Method](https://dev.vdm.io)
 * **Author:** [Llewellyn van der Merwe](mailto:joomla@vdm.io)
 * **Component:** [Component Builder](https://git.vdm.dev/joomla/Component-Builder)
-* **Created:** 30th April, 2015 · **Last Build:** 25th June, 2025 · **Version:** 5.1.1-beta4
+* **Created:** 30th April, 2015 · **Last Build:** 25th June, 2025 · **Version:** 5.1.1-beta5
 * **License:** GNU General Public License version 2 or later; see LICENSE.txt · **Copyright:** Copyright (C) 2015 Vast Development Method. All rights reserved.
-* **Lines:** 1093361 · **Fields:** 2096 · **Files:** 7498 · **Folders:** 728
+* **Lines:** 1092899 · **Fields:** 2096 · **Files:** 7506 · **Folders:** 728
 
 > Generated with [JCB](https://www.joomlacomponentbuilder.com) — The Smartest Way to Build Joomla Extensions.
 

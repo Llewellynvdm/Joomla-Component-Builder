@@ -181,9 +181,6 @@ class HtmlView extends BaseHtmlView
 			$this->referral .= '&return=' . (string) $return;
 		}
 
-		// Get Linked view data
-		$this->vxifields = $this->get('Vxifields');
-
 		// Set the toolbar
 		if ($this->getLayout() !== 'modal')
 		{
@@ -421,16 +418,6 @@ class HtmlView extends BaseHtmlView
 		}
 		// Add Ajax Token
 		$this->getDocument()->addScriptDeclaration("var token = '" . Session::getFormToken() . "';");
-
-		// Add the CSS for Footable
-		Html::_('stylesheet', 'https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css', ['version' => 'auto']);
-		Html::_('stylesheet', 'media/com_componentbuilder/footable-v3/css/footable.standalone.min.css', ['version' => 'auto']);
-		// Add the JavaScript for Footable (adding all functions)
-		Html::_('script', 'media/com_componentbuilder/footable-v3/js/footable.min.js', ['version' => 'auto']);
-
-		$footable = "jQuery(document).ready(function() { jQuery(function () { jQuery('.footable').footable();});});";
-		$this->getDocument()->addScriptDeclaration($footable);
-
 		// add scripts
 		foreach ($this->scripts as $script)
 		{

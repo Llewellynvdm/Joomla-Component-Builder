@@ -1,7 +1,6 @@
-# v5.1.1-beta4
+# v5.1.1-beta5
 
-- Fix the FieldXML interface mismatch. #1228
-- Adds Initialize, Reset, and Push functionality to the Repository entities.
+- Completely refactors the SQL tweaks and SQL dump classes.
 
 # v5.1.1-beta
 
@@ -25,6 +24,8 @@
 - Fixes issue with loading the Component Builder Wiki.
 - Adds advanced version update notice to the Component Builder Dashboard.
 - Completely refactors the class that builds the Component Dashboard. #1134
+- Fix the FieldXML interface mismatch. #1228
+- Adds Initialize, Reset, and Push functionality to the Repository entities.
 
 # v5.1.0
 

@@ -63,8 +63,17 @@ class Sql
 	 */
 	public function set(object &$item)
 	{
-		if (isset($item->add_sql) && (int) $item->add_sql === 1 && isset($item->source))
+		if (isset($item->add_sql) && (int) $item->add_sql === 1
+			&& isset($item->source) && isset($item->name_single_code))
 		{
+			//  avoid setting this a multiple time for the same name_singe_code
+			if ((int) $item->source === 1 && isset($this->dispenser->hub['sql'])
+				&& is_array($this->dispenser->hub['sql'])
+				&& isset($this->dispenser->hub['sql'][$item->name_single_code]))
+			{
+				return;
+			}
+
 			if ((int) $item->source === 1 && isset($item->tables) &&
 				($string = $this->dump->get(
 					$item->tables, $item->name_single_code, $item->guid

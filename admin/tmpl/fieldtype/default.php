@@ -79,18 +79,6 @@ $tmpl    = $tmpl ? '&tmpl=' . $tmpl : '';
 		</div>
 	<?php echo Html::_('uitab.endTab'); ?>
 
-	<?php if ($this->canDo->get('field.access')) : ?>
-	<?php echo Html::_('uitab.addTab', 'fieldtypeTab', 'fields', Text::_('COM_COMPONENTBUILDER_FIELDTYPE_FIELDS', true)); ?>
-		<div class="row">
-		</div>
-		<div class="row">
-			<div class="col-md-12">
-				<?php echo LayoutHelper::render('fieldtype.fields_fullwidth', $this); ?>
-			</div>
-		</div>
-	<?php echo Html::_('uitab.endTab'); ?>
-	<?php endif; ?>
-
 	<?php $this->ignore_fieldsets = array('details','metadata','vdmmetadata','accesscontrol'); ?>
 	<?php $this->tab_name = 'fieldtypeTab'; ?>
 	<?php echo LayoutHelper::render('joomla.edit.params', $this); ?>

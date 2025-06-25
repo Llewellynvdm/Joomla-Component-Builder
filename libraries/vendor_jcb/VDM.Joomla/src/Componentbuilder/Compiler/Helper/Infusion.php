@@ -55,6 +55,8 @@ class Infusion extends Interpretation
 	 */
 	public $removeSiteEditFolder = true;
 
+	public $secondRunAdmin;
+
 	/**
 	 * Constructor
 	 */
