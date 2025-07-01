@@ -46,6 +46,7 @@ use VDM\Joomla\Utilities\FileHelper;
 use VDM\Joomla\Utilities\JsonHelper;
 use VDM\Joomla\Utilities\ObjectHelper;
 use VDM\Joomla\Utilities\Component\Helper;
+use VDM\Joomla\Utilities\SessionHelper;
 use VDM\Joomla\Componentbuilder\Compiler\Utilities\FieldHelper;
 use VDM\Joomla\Componentbuilder\Compiler\Factory as CompilerFactory;
 use VDM\Joomla\Utilities\Base64Helper;
@@ -1470,15 +1471,6 @@ abstract class ComponentbuilderHelper
 	}
 
 	/**
-	*  set the session defaults if not set
-	**/
-	protected static function setSessionDefaults()
-	{
-		// noting for now
-		return true;
-	}
-
-	/**
 	* check if it is a new hash
 	**/
 	public static function newHash($hash, $name = 'backup', $type = 'hash', $key = '',  $fileType = 'txt')
@@ -2294,61 +2286,70 @@ abstract class ComponentbuilderHelper
 
 
 	/**
-	* the Butler
-	**/
-	public static $session = array();
+	 * Local in-memory cache of session values for faster access.
+	 *
+	 * @var array<string, mixed>
+	 * @since 3.5.2
+	 */
+	protected static array $localSession = [];
 
 	/**
-	* the Butler Assistant 
-	**/
-	protected static $localSession = array();
-
-	/**
-	* start a session if not already set, and load with data
-	**/
-	public static function loadSession()
+	 * Initialize the session and set default values.
+	 *
+	 * This ensures the session is ready and can be used safely.
+	 * Defaults can be loaded or checked here if needed.
+	 *
+	 * @return void
+	 * @throws \RuntimeException if the session cannot be initialized
+	 * @since 3.5.2
+	 */
+	public static function loadSession(): void
 	{
-		if (!isset(self::$session) || !ObjectHelper::check(self::$session))
+		// Ensure the session is initialized (handled by the session() method).
+		SessionHelper::session();
+
+		// Set default session values if needed
+		if (method_exists(static::class, 'setSessionDefaults'))
 		{
-			self::$session = Factory::getApplication()->getSession();
+			static::setSessionDefaults();
 		}
-		// set the defaults
-		self::setSessionDefaults();
 	}
 
 	/**
-	* give Session more to keep
-	**/
-	public static function set($key, $value)
+	 * Store a key-value pair in the session and local memory.
+	 *
+	 * @param string $key The session key name
+	 * @param mixed  $value  The value to store
+	 *
+	 * @return mixed The previous session value if it existed
+	 * @since 3.5.2
+	 */
+	public static function set(string $key, $value)
 	{
-		if (!isset(self::$session) || !ObjectHelper::check(self::$session))
-		{
-			self::$session = Factory::getApplication()->getSession();
-		}
-		// set to local memory to speed up program
-		self::$localSession[$key] = $value;
-		// load to session for later use
-		return self::$session->set($key, self::$localSession[$key]);
+		static::$localSession[$key] = $value;
+
+		return SessionHelper::set($key, $value);
 	}
 
 	/**
-	* get info from Session
-	**/
-	public static function get($key, $default = null)
+	 * Retrieve a value from the session.
+	 * Uses local cache if already fetched during this request.
+	 *
+	 * @param string $key The session key name
+	 * @param mixed  $default  Default value if the key is not found
+	 *
+	 * @return mixed The session value
+	 * @since 3.5.2
+	 */
+	public static function get(string $key, $default = null)
 	{
-		if (!isset(self::$session) || !ObjectHelper::check(self::$session))
+		if (!array_key_exists($key, static::$localSession))
 		{
-			self::$session = Factory::getApplication()->getSession();
+			static::$localSession[$key] = SessionHelper::get($key, $default);
 		}
-		// check if in local memory
-		if (!isset(self::$localSession[$key]))
-		{
-			// set to local memory to speed up program
-			self::$localSession[$key] = self::$session->get($key, $default);
-		}
-		return self::$localSession[$key];
-	}
 
+		return static::$localSession[$key];
+	}
 
 	/**
 	 * get field type properties

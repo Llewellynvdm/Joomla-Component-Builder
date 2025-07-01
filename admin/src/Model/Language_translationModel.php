@@ -202,30 +202,36 @@ class Language_translationModel extends AdminModel
 				$item->metadata = $registry->toArray();
 			}
 
+			if (!empty($item->plugins))
+			{
+				// Convert the plugins field to an array.
+				$plugins = new Registry;
+				$plugins->loadString($item->plugins);
+				$item->plugins = $plugins->toArray();
+			}
+
+			if (!empty($item->modules))
+			{
+				// Convert the modules field to an array.
+				$modules = new Registry;
+				$modules->loadString($item->modules);
+				$item->modules = $modules->toArray();
+			}
+
+			if (!empty($item->components))
+			{
+				// Convert the components field to an array.
+				$components = new Registry;
+				$components->loadString($item->components);
+				$item->components = $components->toArray();
+			}
+
 			if (!empty($item->translation))
 			{
 				// Convert the translation field to an array.
 				$translation = new Registry;
 				$translation->loadString($item->translation);
 				$item->translation = $translation->toArray();
-			}
-
-			if (!empty($item->plugins))
-			{
-				// JSON Decode plugins.
-				$item->plugins = json_decode($item->plugins);
-			}
-
-			if (!empty($item->modules))
-			{
-				// JSON Decode modules.
-				$item->modules = json_decode($item->modules);
-			}
-
-			if (!empty($item->components))
-			{
-				// JSON Decode components.
-				$item->components = json_decode($item->components);
 			}
 
 
@@ -987,6 +993,45 @@ class Language_translationModel extends AdminModel
 			$data['metadata'] = (string) $metadata;
 		}
 
+		// Set the plugins items to data.
+		if (isset($data['plugins']) && is_array($data['plugins']))
+		{
+			$plugins = new Registry;
+			$plugins->loadArray($data['plugins']);
+			$data['plugins'] = (string) $plugins;
+		}
+		elseif (!isset($data['plugins']))
+		{
+			// Set the empty plugins to data
+			$data['plugins'] = '';
+		}
+
+		// Set the modules items to data.
+		if (isset($data['modules']) && is_array($data['modules']))
+		{
+			$modules = new Registry;
+			$modules->loadArray($data['modules']);
+			$data['modules'] = (string) $modules;
+		}
+		elseif (!isset($data['modules']))
+		{
+			// Set the empty modules to data
+			$data['modules'] = '';
+		}
+
+		// Set the components items to data.
+		if (isset($data['components']) && is_array($data['components']))
+		{
+			$components = new Registry;
+			$components->loadArray($data['components']);
+			$data['components'] = (string) $components;
+		}
+		elseif (!isset($data['components']))
+		{
+			// Set the empty components to data
+			$data['components'] = '';
+		}
+
 		// Set the translation items to data.
 		if (isset($data['translation']) && is_array($data['translation']))
 		{
@@ -998,24 +1043,6 @@ class Language_translationModel extends AdminModel
 		{
 			// Set the empty translation to data
 			$data['translation'] = '';
-		}
-
-		// Set the plugins string to JSON string.
-		if (isset($data['plugins']))
-		{
-			$data['plugins'] = (string) json_encode($data['plugins']);
-		}
-
-		// Set the modules string to JSON string.
-		if (isset($data['modules']))
-		{
-			$data['modules'] = (string) json_encode($data['modules']);
-		}
-
-		// Set the components string to JSON string.
-		if (isset($data['components']))
-		{
-			$data['components'] = (string) json_encode($data['components']);
 		}
 
 		// Set the Params Items to data

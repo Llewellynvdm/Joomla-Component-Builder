@@ -1,6 +1,6 @@
-# v5.1.1-beta5
+# v5.1.1-beta6
 
-- Completely refactors the SQL tweaks and SQL dump classes.
+- Fix bug in the filter of Languages by linked entities. #1230
 
 # v5.1.1-beta
 
@@ -26,6 +26,7 @@
 - Completely refactors the class that builds the Component Dashboard. #1134
 - Fix the FieldXML interface mismatch. #1228
 - Adds Initialize, Reset, and Push functionality to the Repository entities.
+- Completely refactors the SQL tweaks and SQL dump classes.
 
 # v5.1.0
 

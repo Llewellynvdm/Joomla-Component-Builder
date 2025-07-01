@@ -241,7 +241,7 @@ class Table extends BaseTable implements TableInterface
 					'type' => 'TINYINT(1)',
 					'default' => '1',
 					'GUID' => '2089f202-667a-4fbd-881c-cc0fe1343ce4',
-					'null_switch' => 'NOT NULL',
+					'null_switch' => 'NULL',
 					'unique_key' => false,
 					'key' => true,
 				],
@@ -10863,7 +10863,7 @@ class Table extends BaseTable implements TableInterface
 				'store' => 'json',
 				'tab_name' => 'Details',
 				'db' => [
-					'type' => 'TEXT',
+					'type' => 'MEDIUMTEXT',
 					'default' => 'EMPTY',
 					'GUID' => '36edbdce-b9b7-4b89-b2d9-03f91bb56019',
 					'null_switch' => 'NULL',
