@@ -42,6 +42,8 @@ use VDM\Joomla\Utilities\Base64Helper;
 use VDM\Joomla\Componentbuilder\Table\Search;
 use VDM\Joomla\Componentbuilder\Compiler\Utilities\FieldHelper;
 use VDM\Joomla\Utilities\FormHelper;
+use VDM\Joomla\Componentbuilder\Utilities\FilterHelper;
+use VDM\Joomla\Data\Factory as DataFactory;
 use VDM\Joomla\Componentbuilder\Package\Factory as PackageFactory;
 use VDM\Joomla\Componentbuilder\Fieldtype\Factory as FieldtypeFactory;
 use VDM\Joomla\Componentbuilder\JoomlaPower\Factory as JoomlaPowerFactory;
@@ -4870,6 +4872,237 @@ class AjaxModel extends ListModel
 			}
 		}
 		return $xml;
+	}
+
+	// Used in language_translation
+	/**
+	 * Export language translation data by filtering records based on extension, translated, and untranslated tags.
+	 *
+	 * This method loads translation records from the database and structures them into an array
+	 * with language-tagged headers (e.g., `en-GB`, `de-DE`). It supports filtering for a specific
+	 * extension, already translated languages, and missing translations. All matching records are
+	 * padded with empty values for missing languages, and returned with a size count or errors.
+	 *
+	 * @param   string  $extension      The extension identifier in format "type__name" (e.g., "com_example__field").
+	 * @param   string  $translated     Comma-separated list of language tags that must have translations.
+	 * @param   string  $notTranslated  Comma-separated list of language tags that must not yet have translations.
+	 *
+	 * @return  array<string, mixed>  Returns an array with:
+	 *                                - 'data' (array<int, array<string, string>>): The exportable translation rows.
+	 *                                - 'size' (int): Number of rows (if successful).
+	 *                                - 'errors' (string): Error message (if an error occurred).
+	 *
+	 * @throws  \Throwable  If any unexpected exception occurs during data fetching or parsing.
+	 * @since   5.1.1
+	 */
+	public function exportLanguageTranslations(string $extension, string $translated, string $notTranslated): array
+	{
+		try {
+			$ids = $this->resolveLanguageTranslationFilterIds($extension, $translated, $notTranslated);
+			$where = $this->buildLanguageTranslationWhereClause($ids);
+			$records = $this->loadLanguageTranslationRows($where);
+			$headers = $this->getLanguageTranslationHeaders();
+
+			if (empty($records))
+			{
+				return $this->errorLanguageTranslationResponse(Text::_('COM_COMPONENTBUILDER_NO_LANGUAGE_STRINGS_FOUND'));
+			}
+
+			$data = $this->normalizeLanguageTranslationData($records, $headers);
+
+			return [
+				'data' => $data,
+				'size' => count($data),
+			];
+		} catch (\Throwable $e) {
+			return $this->errorLanguageTranslationResponse($e->getMessage());
+		}
+	}
+
+	/**
+	 * Resolve all relevant record IDs from the given filters.
+	 *
+	 * @param   string  $extension      Extension string in format "type__name".
+	 * @param   string  $translated     Comma-separated list of translated language tags.
+	 * @param   string  $notTranslated  Comma-separated list of untranslated language tags.
+	 *
+	 * @return  array<int>|null  Array of record IDs, or empty array to load all or null to force a skip all.
+	 * @since   5.1.1
+	 */
+	protected function resolveLanguageTranslationFilterIds(string $extension, string $translated, string $notTranslated): ?array
+	{
+		$ids = [];
+		$forceEmpty = false;
+
+		// Extension IDs
+		if (!empty($extension) && strpos($extension, '__') !== false)
+		{
+			[$type, $name] = explode('__', $extension, 2);
+			$extIds = FilterHelper::translation($name, $type);
+			if (!empty($extIds))
+			{
+				$ids = array_merge($ids, $extIds);
+			}
+			else
+			{
+				$forceEmpty = true;
+			}
+		}
+
+		// Translated IDs
+		if (!empty($translated))
+		{
+			$trIds = FilterHelper::translations($translated);
+			if (!empty($trIds))
+			{
+				$ids = array_merge($ids, $trIds);
+			}
+			else
+			{
+				$forceEmpty = true;
+			}
+		}
+
+		// Not translated IDs
+		if (!empty($notTranslated))
+		{
+			$untrIds = FilterHelper::translations($notTranslated, false);
+			if (!empty($untrIds))
+			{
+				$ids = array_merge($ids, $untrIds);
+			}
+			else
+			{
+				$forceEmpty = true;
+			}
+		}
+
+		if ($ids === [] && !$forceEmpty)
+		{
+			return [];
+		}
+
+		return $forceEmpty ? null : array_unique($ids);
+	}
+
+	/**
+	 * Build a SQL WHERE clause using resolved IDs.
+	 *
+	 * @param   array<int>|null  $ids  The record IDs to include in the query.
+	 *
+	 * @return  array<string, array<string, mixed>>  A structured WHERE clause.
+	 * @since   5.1.1
+	 */
+	protected function buildLanguageTranslationWhereClause(?array $ids): array
+	{
+		if ($ids === [])
+		{
+			// return all published
+			return ['published' => ['value' => 1, 'operator' => '=', 'quote' => false]];
+		}
+		elseif ($ids === null)
+		{
+			// return none
+			return ['id' => ['value' => 0, 'operator' => '=', 'quote' => false]];
+		}
+
+		// return selected and published
+		return [
+			'id' => ['value' => $ids, 'operator' => 'IN', 'quote' => false],
+			'published' => ['value' => 1, 'operator' => '=', 'quote' => false]
+		];
+	}
+
+	/**
+	 * Load translation rows from the database based on the given WHERE clause.
+	 *
+	 * @param   array<string, array<string, mixed>>|null  $where  Optional WHERE clause.
+	 *
+	 * @return  array<int, array<string, mixed>>  Loaded records with 'source' and 'translation' keys.
+	 * @since   5.1.1
+	 */
+	protected function loadLanguageTranslationRows(?array $where): array
+	{
+		return DataFactory::_('Load')->rows(
+			['source', 'translation'],
+			['language_translation'],
+			$where,
+			['source' => 'ASC']
+		);
+	}
+
+	/**
+	 * Get the list of available language headers (e.g., ['en-GB' => 'en-GB']).
+	 *
+	 * This includes a default 'source' => 'source' entry.
+	 *
+	 * @return  array<string, string>  Associative list of language tags.
+	 * @since   5.1.1
+	 */
+	protected function getLanguageTranslationHeaders(): array
+	{
+		return ComponentbuilderHelper::getLanguageTranslationsHeaders() ?? ['source' => 'source'];
+	}
+
+	/**
+	 * Normalize translation records by mapping language keys and padding missing headers.
+	 *
+	 * @param   array<int, array<string, mixed>>  $rows     Raw translation rows from the database.
+	 * @param   array<string, string>             $headers  Valid language header list.
+	 *
+	 * @return  array<int, array<string, string>>  Structured translation data ready for export.
+	 * @since   5.1.1
+	 */
+	protected function normalizeLanguageTranslationData(array $rows, array $headers): array
+	{
+		$normalized = [];
+
+		foreach ($rows as $row)
+		{
+			$translations = json_decode($row['translation'] ?? '[]', true) ?: [];
+			unset($row['translation']);
+
+			// Pad all expected language headers
+			foreach ($headers as $lang => $_)
+			{
+				if ($lang === 'source')
+				{
+					continue;
+				}
+				$row[$lang] = '';
+			}
+
+			foreach ($translations as $entry)
+			{
+				$lang = $entry['language'] ?? '';
+				$text = trim(($entry['translation'] ?? ''));
+
+				if (isset($headers[$lang]) && trim($text) !== '')
+				{
+					$row[$lang] = $text;
+				}
+			}
+
+			$normalized[] = $row;
+		}
+
+		return $normalized;
+	}
+
+	/**
+	 * Build a standardized error response with message.
+	 *
+	 * @param   string  $message  Error message to return.
+	 *
+	 * @return  array<string, mixed>  Error response with 'data' as empty array and 'errors' as message.
+	 * @since   5.1.1
+	 */
+	protected function errorLanguageTranslationResponse(string $message): array
+	{
+		return [
+			'data' => [],
+			'errors' => $message,
+		];
 	}
 
 	// Used in admin_fields_relations

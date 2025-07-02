@@ -1,8 +1,4 @@
-# v5.1.1-beta6
-
-- Fix bug in the filter of Languages by linked entities. #1230
-
-# v5.1.1-beta
+# v5.1.1-rc1
 
 - Move all banners to GitHub.
 - Adds library phpspreadsheet to JCB.
@@ -27,6 +23,7 @@
 - Fix the FieldXML interface mismatch. #1228
 - Adds Initialize, Reset, and Push functionality to the Repository entities.
 - Completely refactors the SQL tweaks and SQL dump classes.
+- Fix bug in the filter of Languages by linked entities. #1230
 
 # v5.1.0
 

@@ -28,7 +28,6 @@ use VDM\Joomla\Componentbuilder\Utilities\FilterHelper as JCBFilterHelper;
 use VDM\Joomla\Utilities\ArrayHelper as UtilitiesArrayHelper;
 use VDM\Joomla\Utilities\ObjectHelper;
 use VDM\Joomla\Utilities\StringHelper;
-use VDM\Joomla\Utilities\JsonHelper;
 use Joomla\CMS\Form\Form;
 
 // No direct access to this file
@@ -282,55 +281,6 @@ class Language_translationsModel extends ListModel
 				}
 			}
 		}
-			// prep the lang strings for export
-			if (isset($_export) && $_export && UtilitiesArrayHelper::check($items))
-			{
-				// insure we have the same order in the languages
-				$languages = ComponentbuilderHelper::getVars('language', 1, 'published', 'langtag');
-				foreach ($items as $nr => &$item)
-				{
-					// remove some values completely
-					unset($item->components);
-					unset($item->modules);
-					unset($item->plugins);
-					unset($item->params);
-					unset($item->published);
-					unset($item->created_by);
-					unset($item->modified_by);
-					unset($item->created);
-					unset($item->modified);
-					unset($item->version);
-					unset($item->hits);
-					unset($item->access);
-					unset($item->ordering);
-					// set the lang order
-					if ($nr != 0)
-					{
-						foreach ($languages as $lanTag)
-						{
-							$item->{$lanTag} = '';
-						}
-						// now adapt the source
-						if (isset($item->translation) && JsonHelper::check($item->translation))
-						{
-							$translations = json_decode($item->translation, true);
-							if (UtilitiesArrayHelper::check($translations))
-							{
-								foreach ($translations as $language)
-								{
-									if (isset($language['translation']) && StringHelper::check($language['translation'])
-									&& isset($language['language']) && StringHelper::check($language['language']))
-									{
-										$item->{$language['language']} = $language['translation'];
-									}
-								}
-							}
-						}
-					}
-					// remove translation
-					unset($item->translation);
-				}
-			}
 
 		// return items
 		return $items;
@@ -606,56 +556,6 @@ class Language_translationsModel extends ListModel
 				{
 					array_unshift($items,$headers);
 				}
-
-					// prep the lang strings for export
-			if (isset($_export) && $_export && UtilitiesArrayHelper::check($items))
-			{
-				// insure we have the same order in the languages
-				$languages = ComponentbuilderHelper::getVars('language', 1, 'published', 'langtag');
-				foreach ($items as $nr => &$item)
-				{
-					// remove some values completely
-					unset($item->components);
-					unset($item->modules);
-					unset($item->plugins);
-					unset($item->params);
-					unset($item->published);
-					unset($item->created_by);
-					unset($item->modified_by);
-					unset($item->created);
-					unset($item->modified);
-					unset($item->version);
-					unset($item->hits);
-					unset($item->access);
-					unset($item->ordering);
-					// set the lang order
-					if ($nr != 0)
-					{
-						foreach ($languages as $lanTag)
-						{
-							$item->{$lanTag} = '';
-						}
-						// now adapt the source
-						if (isset($item->translation) && JsonHelper::check($item->translation))
-						{
-							$translations = json_decode($item->translation, true);
-							if (UtilitiesArrayHelper::check($translations))
-							{
-								foreach ($translations as $language)
-								{
-									if (isset($language['translation']) && StringHelper::check($language['translation'])
-									&& isset($language['language']) && StringHelper::check($language['language']))
-									{
-										$item->{$language['language']} = $language['translation'];
-									}
-								}
-							}
-						}
-					}
-					// remove translation
-					unset($item->translation);
-				}
-			}
 				return $items;
 			}
 		}
