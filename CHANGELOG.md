@@ -1,4 +1,4 @@
-# v5.1.1-rc1
+# v5.1.1
 
 - Move all banners to GitHub.
 - Adds library phpspreadsheet to JCB.
@@ -24,6 +24,7 @@
 - Adds Initialize, Reset, and Push functionality to the Repository entities.
 - Completely refactors the SQL tweaks and SQL dump classes.
 - Fix bug in the filter of Languages by linked entities. #1230
+- Adds option to export Language Translations.
 
 # v5.1.0
 
@@ -168,34 +169,29 @@
 - Add the BaseDatabaseModel use statement to custom site view controller. #1119
 - Fix the customfolderlist field. #1120
 
-# v4.1.0
+# v4.1.1
 
-- Add [AllowDynamicProperties] in the base view class for J5
-- Move the _prepareDocument  above the display call in the base view class
-- Remove all backward compatibility issues, so JCB will not need the [Backward Compatibility] plugin to run.
-- Added new import powers for custom import of spreadsheets.
-- Move the setDocument and _prepareDocument above the display in the site view and custom admin view.
-- Update the trashhelper layout to work in Joomla 5.
-- Add AllowDynamicProperties (Joomla 4+5) to view class to allow Custom Dynamic Get methods to work without issues.
-- Fix Save failed issue in dynamicGet. #1148
-- Move all [TEXT, EDITOR, TEXTAREA] fields from [NOT NULL] to [NULL]
-- Add the DateHelper class and improve the date methods.
-- Add simple SessionHelper class.
-- Add first classes for the new import engine.
-- Improve the [VDM Registry] to be Joomla Registry Compatible
-- Move all registries to the [VDM Registry] class
-- Fix Checked Out to be null and not 0. (#1194)
-- Fix created_by, modified_by, checked_out fields in the compiler of the SQL. (#1194)
-- Update all core date fields in table class. (#1188)
-- Update created_by, modified_by, checked_out fields in table class.
-- Implementation of the decentralized Super-Power CORE repository network. (#1190)
-- Fix the noticeboard to display Llewellyn's Joomla Social feed
-- Started compiling JCB4 on Joomla 5 with PHP 8.2
-- Add init_defaults option for dynamic form selection setup (to int new items with default values dynamically)
-- Update all JCB 4 tables to utf8mb4_unicode_ci collation if misaligned
-- Move all internal ID linking to GUID inside of JCB 4
-- Updated the admin-tab-fields in add-fields view. #1205
-- Remove Custom Import Tab from admin view
+- Move all banners to GitHub.
+- Adds library phpspreadsheet to JCB.
+- Add import item example to demo component.
+- Updates the Superpower class with the GetRemote class in the plugin.
+- Ensures the super power autoloader triggers the correct repositories.
+- Adds the Import Function to the Demo Component.
+- Resolves the Database Updating issue in the compiler. #1212,#1209
+- Adds the Component Commands Plugin to the  CLI for Import of spreadsheet data-sets.
+- Add all needed Powers to the release package, to speed-up the build of the demo component.
+- Refactored initialization flow to accommodate future scalability and integration with all designated areas.
+- Refactor the Creator Builders class.
+- Adds new JCB package engine.
+- Fix issue with loading the Component Builder Wiki.
+- Adds advanced version update notice to the Component Builder Dashboard.
+- Completely refactors the class that builds the Component Dashboard. #1134
+- Adds Initialize, Reset, and Push functionality to the Repository entities.
+- Completely refactors the SQL teaks and SQL dump classes.
+- Changes J4 fields to allow NULL.
+- Fix a bug in Dynamic Get JavaScript that causes table columns to not load.
+- Refactor the FieldString and FieldXML classes.
+- Adds option to export Language Translations.
 
 # v3.2.5
 
