@@ -18,45 +18,57 @@ use VDM\Component\Componentbuilder\Administrator\Helper\ComponentbuilderHelper;
 defined('_JEXEC') or die;
 
 ?>
-<div id="j-main-container">
-	<div class="main-card">
-	<?php echo Html::_('uitab.startTabSet', 'cpanel_tab', array('active' => 'cpanel')); ?>
+<div id="j-main-container" class="container-fluid">
+	<div class="main-card jcb-dashboard">
+		<div class="jcb-dashboard__content">
+		<?php echo Html::_('uitab.startTabSet', 'cpanel_tab', array('active' => 'cpanel')); ?>
 
-		<?php echo Html::_('uitab.addTab', 'cpanel_tab', 'cpanel', Text::_('cPanel', true)); ?>
-		<div class="row">
-			<div class="col-md-9">
-				<?php echo $this->loadTemplate('main');?>
+			<?php echo Html::_('uitab.addTab', 'cpanel_tab', 'cpanel', Text::_('cPanel', true)); ?>
+			<div class="row g-4 align-items-start">
+			<div class="col-12 col-xxl-9">
+				<div class="jcb-dashboard__main d-flex flex-column gap-4">
+					<?php echo $this->loadTemplate('main');?>
+				</div>
 			</div>
-			<div class="col-md-3">
-				<?php echo $this->loadTemplate('vdm');?>
+			<div class="col-12 col-xxl-3">
+				<div class="jcb-dashboard__sidebar d-flex flex-column gap-4">
+					<?php echo $this->loadTemplate('vdm');?>
+				</div>
 			</div>
+			</div>
+			<?php echo Html::_('uitab.endTab'); ?>
+
+			<?php echo Html::_('uitab.addTab', 'cpanel_tab', 'doc', Text::_('Doc', true)); ?>
+			<div class="row g-4 align-items-start">
+			<div class="col-12">
+				<div class="jcb-dashboard__tab d-flex flex-column gap-4">
+					<?php echo $this->loadTemplate('doc_start_here');?>
+				</div>
+			</div>
+			</div>
+			<?php echo Html::_('uitab.endTab'); ?>
+
+			<?php echo Html::_('uitab.addTab', 'cpanel_tab', 'notice_board', Text::_('Notice Board', true)); ?>
+			<div class="row g-4 align-items-start">
+			<div class="col-12">
+				<div class="jcb-dashboard__tab d-flex flex-column gap-4">
+					<?php echo $this->loadTemplate('notice_board_vast_development_method');?>
+				</div>
+			</div>
+			</div>
+			<?php echo Html::_('uitab.endTab'); ?>
+
+			<?php echo Html::_('uitab.addTab', 'cpanel_tab', 'readme', Text::_('Readme', true)); ?>
+			<div class="row g-4 align-items-start">
+			<div class="col-12">
+				<div class="jcb-dashboard__tab d-flex flex-column gap-4">
+					<?php echo $this->loadTemplate('readme_information');?>
+				</div>
+			</div>
+			</div>
+			<?php echo Html::_('uitab.endTab'); ?>
+
+		<?php echo Html::_('uitab.endTabSet'); ?>
 		</div>
-		<?php echo Html::_('uitab.endTab'); ?>
-
-		<?php echo Html::_('uitab.addTab', 'cpanel_tab', 'doc', Text::_('Doc', true)); ?>
-		<div class="row">
-			<div class="col-md-12">
-				<?php echo $this->loadTemplate('doc_start_here');?>
-			</div>
-		</div>
-		<?php echo Html::_('uitab.endTab'); ?>
-
-		<?php echo Html::_('uitab.addTab', 'cpanel_tab', 'notice_board', Text::_('Notice Board', true)); ?>
-		<div class="row">
-			<div class="col-md-12">
-				<?php echo $this->loadTemplate('notice_board_vast_development_method');?>
-			</div>
-		</div>
-		<?php echo Html::_('uitab.endTab'); ?>
-
-		<?php echo Html::_('uitab.addTab', 'cpanel_tab', 'readme', Text::_('Readme', true)); ?>
-		<div class="row">
-			<div class="col-md-12">
-				<?php echo $this->loadTemplate('readme_information');?>
-			</div>
-		</div>
-		<?php echo Html::_('uitab.endTab'); ?>
-
-	<?php echo Html::_('uitab.endTabSet'); ?>
 	</div>
 </div>
