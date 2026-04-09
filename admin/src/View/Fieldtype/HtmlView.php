@@ -459,59 +459,16 @@ class HtmlView extends BaseHtmlView
 			Html::_('script', $script, ['version' => 'auto']);
 		}
 
-		// get Uikit Version
-		$this->uikitVersion = $this->params->get('uikit_version', 2);
-		// Load uikit options.
-		$uikit = $this->params->get('uikit_load');
-		$isAdmin = Factory::getApplication()->isClient('administrator');
-		// Set script size.
-		$size = $this->params->get('uikit_min');
-		// Use Uikit Version 2
-		if (2 == $this->uikitVersion && ($isAdmin || $uikit != 2))
-		{
-			// Set css style.
-			$style = $this->params->get('uikit_style');
-			// only load if needed
-			if ($isAdmin || $uikit != 3)
-			{
-				// add the style sheets
-				Html::_('stylesheet', 'media/com_componentbuilder/uikit-v2/css/uikit' . $style . $size . '.css' , ['version' => 'auto']);
-			}
-			// add the style sheets
-			Html::_('stylesheet', 'media/com_componentbuilder/uikit-v2/css/components/accordion' . $style . $size . '.css' , ['version' => 'auto']);
-			Html::_('stylesheet', 'media/com_componentbuilder/uikit-v2/css/components/tooltip' . $style . $size . '.css' , ['version' => 'auto']);
-			Html::_('stylesheet', 'media/com_componentbuilder/uikit-v2/css/components/notify' . $style . $size . '.css' , ['version' => 'auto']);
-			Html::_('stylesheet', 'media/com_componentbuilder/uikit-v2/css/components/form-file' . $style . $size . '.css' , ['version' => 'auto']);
-			Html::_('stylesheet', 'media/com_componentbuilder/uikit-v2/css/components/progress' . $style . $size . '.css' , ['version' => 'auto']);
-			Html::_('stylesheet', 'media/com_componentbuilder/uikit-v2/css/components/placeholder' . $style . $size . '.css' , ['version' => 'auto']);
-			Html::_('stylesheet', 'media/com_componentbuilder/uikit-v2//css/components/upload' . $style . $size . '.css' , ['version' => 'auto']);
-			// only load if needed
-			if ($isAdmin || $uikit != 3)
-			{
-				// add JavaScripts
-				Html::_('script', 'media/com_componentbuilder/uikit-v2/js/uikit' . $size . '.js', ['version' => 'auto']);
-			}
-			// add JavaScripts
-			Html::_('script', 'media/com_componentbuilder/uikit-v2/js/components/accordion' . $size . '.js', ['version' => 'auto']);
-			Html::_('script', 'media/com_componentbuilder/uikit-v2/js/components/tooltip' . $size . '.js', ['version' => 'auto']);
-			Html::_('script', 'media/com_componentbuilder/uikit-v2/js/components/lightbox' . $size . '.js', ['version' => 'auto']);
-			Html::_('script', 'media/com_componentbuilder/uikit-v2/js/components/notify' . $size . '.js', ['version' => 'auto']);
-			Html::_('script', 'media/com_componentbuilder/uikit-v2/js/components/upload' . $size . '.js', ['version' => 'auto']);
-		}
-		// Use Uikit Version 3
-		elseif (3 == $this->uikitVersion && ($isAdmin || $uikit != 2))
-		{
-			// add the style sheets
-			Html::_('stylesheet', 'media/com_componentbuilder/uikit-v3/css/uikit'.$size.'.css', ['version' => 'auto']);
-			// add JavaScripts
-			Html::_('script', 'media/com_componentbuilder/uikit-v3/js/uikit'.$size.'.js', ['version' => 'auto']);
-			// add icons
-			Html::_('script', 'media/com_componentbuilder/uikit-v3/js/uikit-icons'.$size.'.js', ['version' => 'auto']);
-		}
+		// get Model
+		$model = $this->getModel();
+		// get the web asset manager :(
+		$web = $this -> getDocument() -> getWebAssetManager();
 		// add var key
-		$this->getDocument()->getWebAssetManager()->addInlineScript("var vastDevMod = '" . $this->get('VDM') . "';");
+		$web->addInlineScript("var vastDevMod = '" . $model->getVDM() . "';")
 		// add return_here
-		$this->getDocument()->getWebAssetManager()->addInlineScript("var return_here = '" . urlencode(base64_encode((string) Uri::getInstance())) . "';");
+		->addInlineScript("var return_here = '" . urlencode(base64_encode((string) Uri::getInstance())) . "';")
+		// add joomla dialog
+		->useScript('core')->useScript('joomla.dialog');
 	}
 
 	/**

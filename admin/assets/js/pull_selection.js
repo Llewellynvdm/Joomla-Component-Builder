@@ -10,77 +10,282 @@
 
 /* JS Document */
 
-const memorypull = [];
+const memorypull = {};
 
-function setSessionMemory(key, values, merge = true) {
-	if (merge) {
-		values = mergeSessionMemory(key, values);
-	} else {
-		values = JSON.stringify(values);
+/**
+ * Check whether a value looks like a plain object.
+ *
+ * @param   {*}  value  The value to inspect.
+ *
+ * @returns {boolean} True if the value is a plain object.
+ */
+function isPlainObject(value) {
+	return Object.prototype.toString.call(value) === '[object Object]';
+}
+
+/**
+ * Check whether a value is valid JSON text.
+ *
+ * @param   {*}  value  The value to test.
+ *
+ * @returns {boolean} True if the value can be JSON parsed.
+ */
+function isJsonString(value) {
+	if (typeof value !== 'string' || value === '') {
+		return false;
 	}
 
-	if (typeof Storage !== "undefined") {
-		sessionStorage.setItem(key, values);
-	} else {
-		memorypull[key] = values;
+	try {
+		JSON.parse(value);
+		return true;
+	} catch (error) {
+		return false;
 	}
 }
 
-function mergeSessionMemory(key, values) {
-	const oldValues = getSessionMemory(key);
-
-	if (oldValues) {
-		values = { ...oldValues, ...values };
+/**
+ * Convert a value to JSON text.
+ *
+ * @param   {*}  value  The value to encode.
+ *
+ * @returns {string|null} The JSON text, or null on failure.
+ */
+function encodeSessionValue(value) {
+	try {
+		return JSON.stringify(value);
+	} catch (error) {
+		console.error('Failed to encode session value:', error);
+		return null;
 	}
-
-	return JSON.stringify(values);
 }
 
+/**
+ * Decode JSON text from session memory.
+ *
+ * @param   {*}  value         The stored JSON text.
+ * @param   {*}  defaultValue  The fallback value.
+ *
+ * @returns {*} The decoded value or default.
+ */
+function decodeSessionValue(value, defaultValue = null) {
+	if (!isJsonString(value)) {
+		return defaultValue;
+	}
+
+	try {
+		return JSON.parse(value);
+	} catch (error) {
+		console.error('Failed to decode session value:', error);
+		return defaultValue;
+	}
+}
+
+/**
+ * Cached session storage availability flag.
+ *
+ * Evaluated once at load time to avoid repeated write-tests
+ * on every get/set call.
+ *
+ * @type {boolean}
+ */
+const _sessionStorageAvailable = (() => {
+	try {
+		if (typeof window === 'undefined' || !window.sessionStorage) {
+			return false;
+		}
+
+		const testKey = '__jcb_session_test__';
+		window.sessionStorage.setItem(testKey, '1');
+		window.sessionStorage.removeItem(testKey);
+
+		return true;
+	} catch (error) {
+		return false;
+	}
+})();
+
+/**
+ * Determine whether session storage is usable.
+ *
+ * @returns {boolean} True when sessionStorage is available.
+ */
+function hasSessionStorage() {
+	return _sessionStorageAvailable;
+}
+
+/**
+ * Retrieve a parsed value from session storage.
+ *
+ * @param   {string}  key           The storage key.
+ * @param   {*}       defaultValue  The fallback value.
+ *
+ * @returns {*} The stored value or default.
+ */
 function getSessionMemory(key, defaultValue = null) {
-	if (typeof Storage !== "undefined") {
-		const localValue = sessionStorage.getItem(key);
+	if (typeof key !== 'string' || key === '') {
+		return defaultValue;
+	}
 
-		if (isJsonString(localValue)) {
-			defaultValue = JSON.parse(localValue);
+	if (hasSessionStorage()) {
+		try {
+			return decodeSessionValue(window.sessionStorage.getItem(key), defaultValue);
+		} catch (error) {
+			console.error('Failed to read session storage:', error);
+			return defaultValue;
 		}
-	} else if (typeof memorypull[key] !== "undefined") {
-		const localValue = memorypull[key];
+	}
 
-		if (isJsonString(localValue)) {
-			defaultValue = JSON.parse(localValue);
-		}
+	if (typeof memorypull[key] !== 'undefined') {
+		return decodeSessionValue(memorypull[key], defaultValue);
 	}
 
 	return defaultValue;
 }
 
-function isJsonString(str) {
-	try {
-		JSON.parse(str);
-	} catch (e) {
+/**
+ * Merge new values into an existing session storage entry.
+ *
+ * @param   {string}  key     The storage key.
+ * @param   {*}       values  The values to merge.
+ *
+ * @returns {string|null} Encoded merged value.
+ */
+function mergeSessionMemory(key, values) {
+	const oldValues = getSessionMemory(key, null);
+
+	if (isPlainObject(oldValues) && isPlainObject(values)) {
+		return encodeSessionValue({ ...oldValues, ...values });
+	}
+
+	return encodeSessionValue(values);
+}
+
+/**
+ * Store a value in session storage.
+ *
+ * @param   {string}   key     The storage key.
+ * @param   {*}        values  The values to store.
+ * @param   {boolean}  merge   Whether to merge plain objects with existing data.
+ *
+ * @returns {boolean} True on success.
+ */
+function setSessionMemory(key, values, merge = true) {
+	if (typeof key !== 'string' || key === '') {
 		return false;
 	}
+
+	const payload = merge ? mergeSessionMemory(key, values) : encodeSessionValue(values);
+
+	if (payload === null) {
+		return false;
+	}
+
+	if (hasSessionStorage()) {
+		try {
+			window.sessionStorage.setItem(key, payload);
+			return true;
+		} catch (error) {
+			console.error('Failed to write session storage:', error);
+		}
+	}
+
+	memorypull[key] = payload;
 
 	return true;
 }
 
+/**
+ * Ensure a value is returned as an array.
+ *
+ * @param   {*}  items  The value to normalize.
+ *
+ * @returns {Array} The normalized array.
+ */
 function getArrayFormat(items) {
-	// Check if items is an object and not an array
-	if (typeof items === 'object' && !Array.isArray(items)) {
+	if (Array.isArray(items)) {
+		return items;
+	}
+
+	if (isPlainObject(items)) {
 		return Object.values(items);
 	}
-	return items;
+
+	return [];
+}
+
+/**
+ * Get a translated string safely.
+ *
+ * @param   {string}  key           The translation key.
+ * @param   {string}  fallbackText  The fallback text.
+ *
+ * @returns {string} The translated or fallback text.
+ */
+function translate(key, fallbackText = '') {
+	if (
+		typeof Joomla !== 'undefined'
+		&& Joomla.Text
+		&& typeof Joomla.Text._ === 'function'
+	) {
+		const translated = Joomla.Text._(key);
+
+		if (typeof translated === 'string' && translated !== '') {
+			return translated;
+		}
+	}
+
+	return fallbackText || key;
 }
 class PullManager {
+	/** @type {HTMLElement|null} */
 	#repoArea = document.getElementById('select-repo-area');
-	#powersArea = document.getElementById('select-powers-area');
-	#pullButton = document.getElementById('pull-selected-powers');
-	#backButton = document.getElementById('back-to-select-repo');
-	#loadingDiv = window.loadingDiv || null;
-	#buildTable = typeof buildPowerSelectionTable === 'function' ? buildPowerSelectionTable : null;
-	#drawTable = typeof drawPowerSelectionTable === 'function' ? drawPowerSelectionTable : null;
 
+	/** @type {HTMLElement|null} */
+	#powersArea = document.getElementById('select-powers-area');
+
+	/** @type {HTMLButtonElement|null} */
+	#pullButton = document.getElementById('pull-selected-powers');
+
+	/** @type {HTMLButtonElement|null} */
+	#backButton = document.getElementById('back-to-select-repo');
+
+	/** @type {HTMLElement|null} */
+	#loadingDiv = window.loadingDiv || null;
+
+	/** @type {Function|null} */
+	#buildTable = typeof window.buildPowerSelectionTable === 'function'
+		? window.buildPowerSelectionTable
+		: null;
+
+	/** @type {Function|null} */
+	#drawTable = typeof window.drawPowerSelectionTable === 'function'
+		? window.drawPowerSelectionTable
+		: null;
+
+	/** @type {AbortController|null} */
+	#repoRequestController = null;
+
+	/** @type {AbortController|null} */
+	#pullRequestController = null;
+
+	/** @type {boolean} */
+	#isLoadingRepo = false;
+
+	/** @type {boolean} */
+	#isPulling = false;
+
+	/**
+	 * The current repository GUID.
+	 *
+	 * @type {string|null}
+	 */
 	currentRepo = null;
+
+	/**
+	 * The current area key.
+	 *
+	 * @type {string|null}
+	 */
 	currentArea = null;
 
 	constructor() {
@@ -89,29 +294,49 @@ class PullManager {
 		this._updatePullButtonState();
 	}
 
-	/** Getter for selected items using global window reference. */
+	/**
+	 * Get the shared selected items collection.
+	 *
+	 * @returns {Array<Object>} The selected items.
+	 */
 	get selectedItems() {
 		if (!Array.isArray(window.selectedPowerItems)) {
 			window.selectedPowerItems = [];
 		}
+
 		return window.selectedPowerItems;
 	}
 
-	/** Setter for selected items with sync to window and button state update. */
+	/**
+	 * Set the shared selected items collection.
+	 *
+	 * @param   {Array<Object>}  items  The selected items.
+	 *
+	 * @returns {void}
+	 */
 	set selectedItems(items) {
-		window.selectedPowerItems = items;
+		window.selectedPowerItems = Array.isArray(items) ? items : [];
 		this._updatePullButtonState();
 	}
 
-	/** Add items to selection if not already selected. */
+	/**
+	 * Add items not already selected.
+	 *
+	 * @param   {Array<Object>|Object}  data  The items to add.
+	 *
+	 * @returns {void}
+	 */
 	addSelectedItems(data) {
-		if (!data || typeof data.length !== 'number') return;
+		const items = getArrayFormat(data);
+
+		if (items.length === 0) {
+			return;
+		}
 
 		const updated = [...this.selectedItems];
 
-		for (let i = 0; i < data.length; i++) {
-			const item = data[i];
-			if (!updated.some(existing => this.#isSameItem(existing, item))) {
+		for (const item of items) {
+			if (!updated.some((existing) => this.#isSameItem(existing, item))) {
 				updated.push(item);
 			}
 		}
@@ -119,284 +344,624 @@ class PullManager {
 		this.selectedItems = updated;
 	}
 
-	/** Remove items from selection based on identity comparison. */
+	/**
+	 * Remove items from the selection.
+	 *
+	 * @param   {Array<Object>|Object}  data  The items to remove.
+	 *
+	 * @returns {void}
+	 */
 	removeSelectedItems(data) {
-		if (!data || typeof data.length !== 'number') return;
+		const items = getArrayFormat(data);
 
-		const updated = this.selectedItems.filter(existing => {
-			for (let i = 0; i < data.length; i++) {
-				if (this.#isSameItem(existing, data[i])) {
-					return false;
-				}
-			}
-			return true;
+		if (items.length === 0) {
+			return;
+		}
+
+		this.selectedItems = this.selectedItems.filter((existing) => {
+			return !items.some((item) => this.#isSameItem(existing, item));
 		});
-
-		this.selectedItems = updated;
 	}
 
-	/** Check if two items are the same using GUID. */
+	/**
+	 * Compare two items by GUID.
+	 *
+	 * @param   {Object}  a  First item.
+	 * @param   {Object}  b  Second item.
+	 *
+	 * @returns {boolean} True if both items match.
+	 */
 	#isSameItem(a, b) {
-		return a?.guid && b?.guid && a.guid === b.guid;
+		return Boolean(a?.guid && b?.guid && a.guid === b.guid);
 	}
 
-	/** Enable/disable the pull button based on selection state. */
+	/**
+	 * Update action button state.
+	 *
+	 * @returns {void}
+	 */
 	_updatePullButtonState() {
 		if (this.#pullButton) {
-			this.#pullButton.disabled = this.selectedItems.length === 0;
+			this.#pullButton.disabled = (
+				this.selectedItems.length === 0
+				|| this.#isPulling
+				|| this.#isLoadingRepo
+			);
+		}
+
+		if (this.#backButton) {
+			this.#backButton.disabled = this.#isPulling || this.#isLoadingRepo;
 		}
 	}
 
-	_bindRepoButtons() {
-		document.querySelectorAll('.select-repo-to-load').forEach(button => {
-			button.addEventListener('click', (e) => this._handleRepoClick(e));
+	/**
+	 * Toggle repository buttons disabled state.
+	 *
+	 * @param   {boolean}  disabled  Whether buttons should be disabled.
+	 *
+	 * @returns {void}
+	 */
+	_setRepoButtonsDisabled(disabled) {
+		document.querySelectorAll('.select-repo-to-load').forEach((button) => {
+			button.disabled = disabled;
 		});
 	}
 
+	/**
+	 * Bind repository buttons.
+	 *
+	 * @returns {void}
+	 */
+	_bindRepoButtons() {
+		document.querySelectorAll('.select-repo-to-load').forEach((button) => {
+			button.addEventListener('click', (event) => this._handleRepoClick(event));
+		});
+	}
+
+	/**
+	 * Bind pull and back buttons.
+	 *
+	 * @returns {void}
+	 */
 	_bindPullSelectedPowers() {
 		if (this.#pullButton) {
 			this.#pullButton.addEventListener('click', () => this._handlePullSelectedPowers());
 		}
+
 		if (this.#backButton) {
 			this.#backButton.addEventListener('click', () => this._handleBackToRepos());
 		}
 	}
 
+	/**
+	 * Handle repository click.
+	 *
+	 * @param   {Event}  event  The click event.
+	 *
+	 * @returns {Promise<void>}
+	 */
 	async _handleRepoClick(event) {
+		if (this.#isLoadingRepo || this.#isPulling) {
+			return;
+		}
+
 		const button = event.currentTarget;
 		const repo = button?.dataset?.repo;
 		const area = button?.dataset?.area;
 
 		if (!repo || !area) {
-			this._notify(Joomla.Text._("COM_COMPONENTBUILDER_MISSING_REPOSITORY_OR_AREA_DATA"), "danger");
+			this._notify(
+				translate('COM_COMPONENTBUILDER_MISSING_REPOSITORY_OR_AREA_DATA'),
+				'danger'
+			);
 			return;
 		}
 
+		this.#isLoadingRepo = true;
+		this._updatePullButtonState();
+		this._setRepoButtonsDisabled(true);
 		this._showLoading();
-		clearPowerSelectionTable();
+		this._abortRepoRequest();
+
+		// Reset previous selection when switching repositories.
+		this.selectedItems = [];
+
+		if (typeof window.clearPowerSelectionTable === 'function') {
+			window.clearPowerSelectionTable();
+		}
+
+		this.#repoRequestController = new AbortController();
 
 		const url = `${UrlAjax}getRepoIndex&repo=${encodeURIComponent(repo)}&area=${encodeURIComponent(area)}`;
 
 		try {
-			const response = await fetch(url);
+			const response = await fetch(url, {
+				method: 'GET',
+				signal: this.#repoRequestController.signal,
+				headers: {
+					'X-Requested-With': 'XMLHttpRequest',
+					'Accept': 'application/json'
+				}
+			});
 
-			if (!response.ok) throw new Error(`HTTP ${response.status}`);
+			if (!response.ok) {
+				throw new Error(`HTTP ${response.status}`);
+			}
 
 			const data = await response.json();
 
-			if (data.success && data.index && this.#buildTable) {
-				const repoData = data.index[0];
-				const {
-					path = 'joomla/super-powers',
-					read_branch = 'master',
-					target,
-					base = 'https://git.vdm.dev'
-				} = repoData;
+			if (!data?.success || !data?.index || !this.#buildTable) {
+				this._notify(
+					data?.message || translate('COM_COMPONENTBUILDER_FAILED_TO_RETRIEVE_REPOSITORY_INDEX'),
+					'danger'
+				);
+				return;
+			}
 
-				const repo_base = (target === 'github') ? 'https://github.com' : base;
-				const repo_path = (target === 'github') ? 'tree' : 'src/branch';
+			const repoData = Array.isArray(data.index) ? data.index[0] : data.index;
 
-				window.targetPowerRepoUrl = `${repo_base}/${path}/${repo_path}/${read_branch}/`;
+			if (!repoData || typeof repoData !== 'object') {
+				this._notify(
+					translate('COM_COMPONENTBUILDER_FAILED_TO_RETRIEVE_REPOSITORY_INDEX'),
+					'danger'
+				);
+				return;
+			}
 
-				this.#buildTable(repoData.index);
+			const {
+				path = 'joomla/super-powers',
+				read_branch = 'master',
+				target = '',
+				base = 'https://git.vdm.dev',
+				guid = null,
+				index = []
+			} = repoData;
 
-				setTimeout(() => {
-					this._transitionTo(this.#repoArea, this.#powersArea);
-					this._hideLoading();
-				}, 500);
+			const repoBase = target === 'github' ? 'https://github.com' : base;
+			const repoPath = target === 'github' ? 'tree' : 'src/branch';
 
-				this.currentRepo = repoData.guid;
-				this.currentArea = area;
-			} else {
-				this._notify(data.message || Joomla.Text._("COM_COMPONENTBUILDER_FAILED_TO_RETRIEVE_REPOSITORY_INDEX"), "danger");
-				this._hideLoading();
+			window.targetPowerRepoUrl = `${repoBase}/${path}/${repoPath}/${read_branch}/`;
+
+			// The index may be an array or an object keyed by GUID.
+			this.#buildTable(index);
+
+			this.currentRepo = guid;
+			this.currentArea = area;
+
+			await this._transitionTo(this.#repoArea, this.#powersArea);
+
+			if (this.#drawTable) {
+				this.#drawTable();
 			}
 		} catch (error) {
-			console.error("Fetch error:", error);
+			if (error.name !== 'AbortError') {
+				console.error('Fetch error:', error);
+				this._notify(
+					translate('COM_COMPONENTBUILDER_NETWORK_OR_SERVER_ERROR_OCCURRED_WHILE_FETCHING_INDEX'),
+					'danger'
+				);
+			}
+		} finally {
+			this.#isLoadingRepo = false;
 			this._hideLoading();
-			this._notify(Joomla.Text._("COM_COMPONENTBUILDER_NETWORK_OR_SERVER_ERROR_OCCURRED_WHILE_FETCHING_INDEX"), "danger");
+			this._setRepoButtonsDisabled(false);
+			this._updatePullButtonState();
 		}
 	}
 
+	/**
+	 * Go back to repository selection.
+	 *
+	 * @returns {void}
+	 */
 	_handleBackToRepos() {
-		this._transitionTo(this.#powersArea, this.#repoArea);
-	}
-
-	async _handlePullSelectedPowers() {
-		if (!Array.isArray(this.selectedItems) || this.selectedItems.length === 0) {
-			this._notify(Joomla.Text._("COM_COMPONENTBUILDER_NO_ITEMS_SELECTED"), "warning");
+		if (this.#isLoadingRepo || this.#isPulling) {
 			return;
 		}
 
+		this._transitionTo(this.#powersArea, this.#repoArea)
+			.then(() => {
+				if (this.#drawTable) {
+					this.#drawTable();
+				}
+			})
+			.catch((error) => {
+				console.error('Transition error:', error);
+			});
+	}
+
+	/**
+	 * Submit selected powers.
+	 *
+	 * @returns {Promise<void>}
+	 */
+	async _handlePullSelectedPowers() {
+		if (this.#isPulling || this.#isLoadingRepo) {
+			return;
+		}
+
+		if (!Array.isArray(this.selectedItems) || this.selectedItems.length === 0) {
+			this._notify(
+				translate('COM_COMPONENTBUILDER_NO_ITEMS_SELECTED'),
+				'warning'
+			);
+			return;
+		}
+
+		const area = this.currentArea;
+		const repo = this.currentRepo;
+
+		if (!area || !repo) {
+			this._notify(
+				translate('COM_COMPONENTBUILDER_MISSING_REPOSITORY_OR_AREA_DATA'),
+				'danger'
+			);
+			return;
+		}
+
+		this.#isPulling = true;
+		this._updatePullButtonState();
+		this._setRepoButtonsDisabled(true);
 		this._showLoading();
+		this._abortPullRequest();
 
-		const area = this.currentArea || 'error';
-		const repo = this.currentRepo || 'error';
-
-		const func = 'pullSelectedPackages';
+		this.#pullRequestController = new AbortController();
 
 		try {
-			// Convert selected items to form data
 			const formData = new FormData();
 
-			// Assuming Joomla expects `selected[]` for multiple values
 			for (const item of this.selectedItems) {
-				formData.append('selected[]', item.guid); // Only sending GUIDs
+				if (item?.guid) {
+					formData.append('selected[]', item.guid);
+				}
 			}
+
 			formData.append('area', area);
 			formData.append('repo', repo);
 
-			const response = await fetch(`${UrlAjax}${func}`, {
+			const response = await fetch(`${UrlAjax}pullSelectedPackages`, {
 				method: 'POST',
-				body: formData
+				body: formData,
+				signal: this.#pullRequestController.signal,
+				headers: {
+					'X-Requested-With': 'XMLHttpRequest',
+					'Accept': 'application/json'
+				}
 			});
 
-			if (!response.ok) throw new Error(`HTTP ${response.status}`);
+			if (!response.ok) {
+				throw new Error(`HTTP ${response.status}`);
+			}
 
 			const data = await response.json();
 
-			if (!data.success) {
-				this._notify(data.message || Joomla.Text._("COM_COMPONENTBUILDER_FAILED_TO_PULL_SELECTED_POWERS"), "danger");
-			} else {
-				this._handleResultLog(data.result_log || {});
+			if (!data?.success) {
+				this._notify(
+					data?.message || translate('COM_COMPONENTBUILDER_FAILED_TO_PULL_SELECTED_POWERS'),
+					'danger'
+				);
+				return;
 			}
 
-			this._hideLoading();
-			this._transitionTo(this.#powersArea, this.#repoArea);
-		} catch (error) {
-			console.error("Submission error:", error);
-			this._notify(Joomla.Text._("COM_COMPONENTBUILDER_ERROR_OCCURRED_WHILE_PULLING_POWERS"), "danger");
+			// Process result log before clearing selection,
+			// since _getNamesFromGuids reads from selectedItems.
+			this._handleResultLog(data.result_log || {});
+			this.selectedItems = [];
 
+			await this._transitionTo(this.#powersArea, this.#repoArea);
+		} catch (error) {
+			if (error.name !== 'AbortError') {
+				console.error('Submission error:', error);
+				this._notify(
+					translate('COM_COMPONENTBUILDER_ERROR_OCCURRED_WHILE_PULLING_POWERS'),
+					'danger'
+				);
+			}
+		} finally {
+			this.#isPulling = false;
 			this._hideLoading();
-			this._transitionTo(this.#powersArea, this.#repoArea);
+			this._setRepoButtonsDisabled(false);
+			this._updatePullButtonState();
 		}
 	}
 
+	/**
+	 * Process pull result log.
+	 *
+	 * @param   {Object}  resultLog  The result log object.
+	 *
+	 * @returns {void}
+	 */
 	_handleResultLog(resultLog) {
 		const localGuids = this._normalizeGuids(resultLog.local);
 		const notFoundGuids = this._normalizeGuids(resultLog.not_found);
 		const addedGuids = this._normalizeGuids(resultLog.added);
 
 		if (localGuids.length > 0) {
-			this._notify(
-				this._generateResultMessage(localGuids, 'local'),
+			this._notifyList(
+				translate('COM_COMPONENTBUILDER_THESE_ITEMS_WERE_ALREADY_PRESENT_LOCALLY_AND_WERE_NOT_PULLED'),
+				this._getNamesFromGuids(localGuids),
 				'info'
 			);
 		}
 
 		if (notFoundGuids.length > 0) {
-			this._notify(
-				this._generateResultMessage(notFoundGuids, 'not_found'),
-				'info'
+			this._notifyList(
+				translate('COM_COMPONENTBUILDER_THESE_ITEMS_COULD_NOT_BE_FOUND_IN_THE_REMOTE_REPOSITORY_AND_WERE_NOT_PULLED'),
+				this._getNamesFromGuids(notFoundGuids),
+				'warning'
 			);
 		}
 
 		if (addedGuids.length > 0) {
-			this._notify(
-				this._generateResultMessage(addedGuids, 'added'),
+			this._notifyList(
+				translate('COM_COMPONENTBUILDER_THESE_ITEMS_WERE_SUCCESSFULLY_PULLED'),
+				this._getNamesFromGuids(addedGuids),
 				'success'
 			);
 		}
 	}
 
+	/**
+	 * Normalize log values to GUID arrays.
+	 *
+	 * @param   {*}  value  The raw value.
+	 *
+	 * @returns {Array<string>} The GUID array.
+	 */
 	_normalizeGuids(value) {
-		if (!value) return [];
-
-		if (Array.isArray(value)) {
-			return value;
+		if (!value) {
+			return [];
 		}
 
-		if (typeof value === 'object') {
+		if (Array.isArray(value)) {
+			return value.filter((item) => typeof item === 'string' && item !== '');
+		}
+
+		if (isPlainObject(value)) {
 			return Object.keys(value);
 		}
 
 		return [];
 	}
 
-	_generateResultMessage(guids, type) {
-		const messages = {
-			local: Joomla.Text._('COM_COMPONENTBUILDER_THESE_ITEMS_WERE_ALREADY_PRESENT_LOCALLY_AND_WERE_NOT_PULLED'),
-			not_found: Joomla.Text._('COM_COMPONENTBUILDER_THESE_ITEMS_COULD_NOT_BE_FOUND_IN_THE_REMOTE_REPOSITORY_AND_WERE_NOT_PULLED'),
-			added: Joomla.Text._('COM_COMPONENTBUILDER_THESE_ITEMS_WERE_SUCCESSFULLY_PULLED')
-		};
-
+	/**
+	 * Resolve item names from GUIDs.
+	 *
+	 * @param   {Array<string>}  guids  The GUIDs.
+	 *
+	 * @returns {Array<string>} The item names.
+	 */
+	_getNamesFromGuids(guids) {
 		const names = [];
 
 		for (const guid of guids) {
-			const item = this.selectedItems.find(i => i.guid === guid);
-			if (item?.name) {
+			const item = this.selectedItems.find((entry) => entry?.guid === guid);
+
+			if (typeof item?.name === 'string' && item.name !== '') {
 				names.push(item.name);
 			}
 		}
 
-		if (names.length === 0) {
-			return null;
-		}
-
-		return `${messages[type]}\n<br>- ${names.join('\n<br>- ')}`;
+		return names;
 	}
 
-	_transitionTo(hideEl, showEl) {
-		if (hideEl && showEl) {
-			UIkit.util.ready(() => {
-				UIkit.util.removeClass(hideEl, 'uk-animation-slide-top-small');
-				UIkit.util.removeClass(showEl, 'uk-animation-slide-bottom-small');
-				UIkit.util.addClass(hideEl, 'uk-animation-slide-top-small');
+	/**
+	 * Abort any running repository request.
+	 *
+	 * @returns {void}
+	 */
+	_abortRepoRequest() {
+		if (this.#repoRequestController) {
+			this.#repoRequestController.abort();
+			this.#repoRequestController = null;
+		}
+	}
 
-				setTimeout(() => {
+	/**
+	 * Abort any running pull request.
+	 *
+	 * @returns {void}
+	 */
+	_abortPullRequest() {
+		if (this.#pullRequestController) {
+			this.#pullRequestController.abort();
+			this.#pullRequestController = null;
+		}
+	}
+
+	/**
+	 * Transition between two elements.
+	 *
+	 * @param   {HTMLElement|null}  hideEl  The element to hide.
+	 * @param   {HTMLElement|null}  showEl  The element to show.
+	 *
+	 * @returns {Promise<void>} Resolves after transition completes.
+	 */
+	_transitionTo(hideEl, showEl) {
+		if (!hideEl || !showEl || hideEl === showEl) {
+			return Promise.resolve();
+		}
+
+		const duration = 250;
+
+		return new Promise((resolve) => {
+			hideEl.style.transition = `opacity ${duration}ms ease`;
+			showEl.style.transition = `opacity ${duration}ms ease`;
+
+			hideEl.style.opacity = '1';
+			showEl.style.display = 'none';
+			showEl.style.opacity = '0';
+
+			requestAnimationFrame(() => {
+				hideEl.style.opacity = '0';
+
+				window.setTimeout(() => {
 					hideEl.style.display = 'none';
 					showEl.style.display = '';
-					UIkit.util.addClass(showEl, 'uk-animation-slide-bottom-small');
-					if (this.#drawTable) this.#drawTable();
-				}, 300);
+					showEl.style.opacity = '0';
+
+					requestAnimationFrame(() => {
+						showEl.style.opacity = '1';
+
+						window.setTimeout(() => {
+							hideEl.style.transition = '';
+							hideEl.style.opacity = '';
+							showEl.style.transition = '';
+							showEl.style.opacity = '';
+							resolve();
+						}, duration);
+					});
+				}, duration);
 			});
+		});
+	}
+
+	/**
+	 * Show the loading overlay.
+	 *
+	 * @returns {void}
+	 */
+	_showLoading() {
+		if (this.#loadingDiv) {
+			this.#loadingDiv.style.display = 'block';
 		}
 	}
 
-	_showLoading() {
-		if (this.#loadingDiv) this.#loadingDiv.style.display = 'block';
-	}
-
+	/**
+	 * Hide the loading overlay.
+	 *
+	 * @returns {void}
+	 */
 	_hideLoading() {
-		if (this.#loadingDiv) this.#loadingDiv.style.display = 'none';
+		if (this.#loadingDiv) {
+			this.#loadingDiv.style.display = 'none';
+		}
 	}
 
+	/**
+	 * Notify with a simple message.
+	 *
+	 * @param   {string}  message  The message.
+	 * @param   {string}  type     The alert type.
+	 *
+	 * @returns {void}
+	 */
 	_notify(message, type = 'info') {
-		const alertTypes = {
-			primary: 'alert-primary',
-			info: 'alert-info',
-			success: 'alert-success',
-			warning: 'alert-warning',
-			danger: 'alert-danger',
-		};
+		if (typeof message !== 'string' || message.trim() === '') {
+			return;
+		}
 
-		const alertClass = alertTypes[type] || alertTypes.primary;
+		const body = document.createElement('div');
+		body.textContent = message;
+
+		this._renderAlert(body, type);
+	}
+
+	/**
+	 * Notify with a heading and a list.
+	 *
+	 * @param   {string}        heading  The heading text.
+	 * @param   {Array<string>} items    The item names.
+	 * @param   {string}        type     The alert type.
+	 *
+	 * @returns {void}
+	 */
+	_notifyList(heading, items, type = 'info') {
+		if (!heading && (!Array.isArray(items) || items.length === 0)) {
+			return;
+		}
+
+		const fragment = document.createDocumentFragment();
+
+		if (heading) {
+			const headingNode = document.createElement('div');
+			headingNode.textContent = heading;
+			fragment.appendChild(headingNode);
+		}
+
+		if (Array.isArray(items) && items.length > 0) {
+			const list = document.createElement('ul');
+			list.className = 'mb-0 mt-2';
+
+			for (const item of items) {
+				const li = document.createElement('li');
+				li.textContent = item;
+				list.appendChild(li);
+			}
+
+			fragment.appendChild(list);
+		}
+
+		const wrapper = document.createElement('div');
+		wrapper.appendChild(fragment);
+
+		this._renderAlert(wrapper, type);
+	}
+
+	/**
+	 * Render a Bootstrap alert.
+	 *
+	 * @param   {Node}    contentNode  The content node.
+	 * @param   {string}  type         The alert type.
+	 *
+	 * @returns {void}
+	 */
+	_renderAlert(contentNode, type = 'info') {
+		const allowedTypes = ['primary', 'info', 'success', 'warning', 'danger'];
+		const alertType = allowedTypes.includes(type) ? type : 'primary';
 
 		let container = document.getElementById('alert-container');
+
 		if (!container) {
 			container = document.createElement('div');
 			container.id = 'alert-container';
 			container.className = 'position-fixed top-0 start-50 translate-middle-x p-3';
 			container.style.zIndex = '1060';
+			container.style.maxWidth = 'min(92vw, 720px)';
+			container.style.width = '100%';
 			document.body.appendChild(container);
 		}
 
 		const alert = document.createElement('div');
-		alert.className = `alert ${alertClass} alert-dismissible fade show`;
+		alert.className = `alert alert-${alertType} alert-dismissible fade show shadow`;
 		alert.setAttribute('role', 'alert');
-		alert.innerHTML = `
-			${message}
-			<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-		`;
 
+		const body = document.createElement('div');
+		body.appendChild(contentNode);
+
+		const closeButton = document.createElement('button');
+		closeButton.type = 'button';
+		closeButton.className = 'btn-close';
+		closeButton.setAttribute('data-bs-dismiss', 'alert');
+		closeButton.setAttribute('aria-label', 'Close');
+
+		alert.appendChild(body);
+		alert.appendChild(closeButton);
 		container.appendChild(alert);
 
-		setTimeout(() => {
-			alert.classList.remove('show');
-			alert.classList.add('hide');
-			alert.addEventListener('transitionend', () => {
-				alert.remove();
-			});
+		if (
+			typeof bootstrap !== 'undefined'
+			&& bootstrap.Alert
+			&& typeof bootstrap.Alert.getOrCreateInstance === 'function'
+		) {
+			const instance = bootstrap.Alert.getOrCreateInstance(alert);
+
+			window.setTimeout(() => {
+				try {
+					instance.close();
+				} catch (error) {
+					if (alert.parentNode) {
+						alert.remove();
+					}
+				}
+			}, 5000);
+
+			return;
+		}
+
+		window.setTimeout(() => {
+			alert.remove();
 		}, 5000);
 	}
 }

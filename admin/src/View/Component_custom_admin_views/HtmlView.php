@@ -437,11 +437,16 @@ class HtmlView extends BaseHtmlView
 			Html::_('script', $script, ['version' => 'auto']);
 		}
 
-		// add the Uikit v2 style sheets
-		Html::_('stylesheet', 'media/com_componentbuilder/uikit-v2/css/uikit.gradient.min.css', ['version' => 'auto']);
-		// add Uikit v2 JavaScripts
-		Html::_('script', 'media/com_componentbuilder/uikit-v2/js/uikit.min.js', ['version' => 'auto']);
-
+		// get Model
+		$model = $this->getModel();
+		// get the web asset manager :(
+		$web = $this -> getDocument() -> getWebAssetManager();
+		// add var key
+		$web->addInlineScript("var vastDevMod = '" . $model->getVDM() . "';")
+		// add return_here
+		->addInlineScript("var return_here = '" . urlencode(base64_encode((string) Uri::getInstance())) . "';")
+		// add joomla dialog
+		->useScript('core')->useScript('joomla.dialog');
 	}
 
 	/**

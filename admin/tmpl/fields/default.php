@@ -73,6 +73,7 @@ if ($this->saveOrder)
 
 	// add to page body
 	outerBodyDiv.appendChild(loadingDiv);
+
     document.addEventListener('DOMContentLoaded', function () {
         const form = document.adminForm;
         // Hook into the form's submit event

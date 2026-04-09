@@ -283,6 +283,7 @@ jQuery('#adminForm').on('change', '#jform_add_javascript_views_footer',function 
 
 
 
+
 /**
  * Initialize form listeners and code block click handlers.
  *

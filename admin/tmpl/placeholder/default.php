@@ -113,13 +113,15 @@ $tmpl    = $tmpl ? '&tmpl=' . $tmpl : '';
 
 
 
-jQuery('#adminForm').on('change', '#jform_target',function (e)
-{
-	e.preventDefault();
-	jQuery('#placedin').show();
-	var placeholderName = jQuery('#jform_target').val();
-	// check if this function name is taken
-	checkPlaceholderName(placeholderName);
+document.getElementById('adminForm').addEventListener('change', function (e) {
+	var el = e.target;
+
+	if (el.closest('#jform_target')) {
+		document.getElementById('placedin').style.display = '';
+		var placeholderName = document.getElementById('jform_target').value;
+		// check if this function name is taken
+		checkPlaceholderName(placeholderName);
+	}
 });
 
 document.addEventListener("DOMContentLoaded", function() {

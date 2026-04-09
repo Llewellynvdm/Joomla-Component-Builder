@@ -1197,6 +1197,7 @@ abstract class ComponentbuilderHelper
 		}
 		return false;
 	}
+
 	/**
 	 * The array of dynamic content
 	 *
@@ -1439,8 +1440,6 @@ abstract class ComponentbuilderHelper
 		return $default;
 	}
 
-
-
 	/**
 	 * Tab/spacer bucket (to speed-up the build)
 	 * 
@@ -1543,174 +1542,361 @@ abstract class ComponentbuilderHelper
 	}
 
 	/**
-	 * get field type properties
+	 * Get field type properties.
 	 *
-	 * @return  array   on success
-	 * @since  3.0.0
+	 * @param   string       $value       The lookup value.
+	 * @param   string       $type        The field type lookup column.
+	 * @param   array|null   $settings    The field settings override values.
+	 * @param   string|null  $xml         The XML string to inspect for current values.
+	 * @param   bool         $dbDefaults  Whether database defaults should be loaded.
+	 *
+	 * @return  array|null  The field type properties on success.
+	 * @since   3.0.0
 	 */
-	public static function getFieldTypeProperties($value, $type, $settings = [], $xml = null, bool $dbDefaults = false): ?array
+	public static function getFieldTypeProperties(
+		string $value,
+		string $type,
+		?array $settings = [],
+		?string $xml = null,
+		bool $dbDefaults = false
+	): ?array
 	{
-		// Get a db connection.
-		$db = Factory::getContainer()->get(DatabaseInterface::class);
+		// Get a db connection
+		$db = Factory::getContainer()
+			->get(DatabaseInterface::class);
 
 		// Create a new query object.
-		$query = $db->getQuery(true);
-		$query->select($db->quoteName(['properties', 'short_description', 'description']));
-		// load database default values
+		$query = $db->getQuery(true)
+			->select(
+				$db->quoteName(
+					[
+						'properties',
+						'short_description',
+						'description'
+					]
+				)
+			)
+			->from($db->quoteName('#__componentbuilder_fieldtype'))
+			->where($db->quoteName('published') . ' = 1')
+			->where($db->quoteName($type) . ' = ' . $db->quote($value));
+
+		// Load database default values.
 		if ($dbDefaults)
 		{
-			$query->select($db->quoteName(['datadefault', 'datadefault_other', 'datalenght', 'datalenght_other', 'datatype', 'has_defaults', 'indexes', 'null_switch', 'store']));
+			$query->select(
+				$db->quoteName(
+					[
+						'datadefault',
+						'datadefault_other',
+						'datalenght',
+						'datalenght_other',
+						'datatype',
+						'has_defaults',
+						'indexes',
+						'null_switch',
+						'store'
+					]
+				)
+			);
 		}
-		$query->from($db->quoteName('#__componentbuilder_fieldtype'));
-		$query->where($db->quoteName('published') . ' = 1');
-		$query->where($db->quoteName($type) . ' = ' . $db->quote($value));
 
-		// Reset the query using our newly populated query object.
 		$db->setQuery($query);
-		$db->execute();
-		if ($db->getNumRows())
+		$result = $db->loadObject();
+
+		if (!$result)
 		{
-			$result = $db->loadObject();
-			$properties = json_decode($result->properties, true);
-			$field = [
-				'subform' => [],
-				'nameListOptions' => [],
-				'php' => [],
-				'values' => "<field ", 
-				'values_description' => '<table class="uk-table uk-table-hover uk-table-striped uk-table-condensed">', 
-				'short_description' => $result->short_description, 
-				'description' => $result->description
-			];
-			// number pointer
-			$nr = 0;
-			// php tracker (we must try to load alteast 17 rows
-			$phpTracker = [];
-			// force load all properties
-			$forceAll = false;
-			if ($xml && strpos($xml, '..__FORCE_LOAD_ALL_PROPERTIES__..') !== false)
-			{
-				$forceAll = true;
-			}
-			// value to check since there are false and null values even 0 in the values returned
-			$confirmation = '8qvZHoyuFYQqpj0YQbc6F3o5DhBlmS-_-a8pmCZfOVSfANjkmV5LG8pCdAY2JNYu6cB';
-			// set the headers
-			$field['values_description'] .= '<thead><tr><th class="uk-text-right">' . Text::_('COM_COMPONENTBUILDER_PROPERTY') . '</th><th>' . Text::_('COM_COMPONENTBUILDER_EXAMPLE') . '</th><th>' . Text::_('COM_COMPONENTBUILDER_DESCRIPTION') . '</th></thead><tbody>';
-			foreach ($properties as $property)
-			{
-				$example = (isset($property['example']) && UtilitiesStringHelper::check($property['example'])) ? $property['example'] : '';
-				$field['values_description'] .= '<tr><td class="uk-text-right"><code>' . $property['name'] . '</code></td><td>' . $example . '</td><td>' . $property['description'] . '</td></tr>';
-				// check if we should load the value
-				$value = FieldHelper::getValue($xml, $property['name'], $confirmation);
-				// check if this is a php field
-				$addPHP = false;
-				if (strpos($property['name'], 'type_php') !== false)
-				{
-					$addPHP = true;
-					// set the line number
-					$phpLine = (int) preg_replace('/[^0-9]/', '', $property['name']);
-					// set the key
-					$phpKey = trim(preg_replace('/[0-9]+/', '', $property['name']), '_');
-					// start array if not already set
-					if (!isset($field['php'][$phpKey]))
-					{
-						$field['php'][$phpKey] = [];
-						$field['php'][$phpKey]['value'] = [];
-						$field['php'][$phpKey]['desc'] = $property['description'];
-						// start tracker
-						$phpTracker[$phpKey] = 1;
-					}
-				}
-				// was the settings for the property passed
-				if(UtilitiesArrayHelper::check($settings) && isset($settings[$property['name']]))
-				{
-					// add the xml values
-					$field['values'] .= PHP_EOL . "\t" . $property['name'] . '="'. $settings[$property['name']] . '" ';
-					// add the json values
-					if ($addPHP)
-					{
-						$field['php'][$phpKey]['value'][$phpLine] = $settings[$property['name']];
-						$phpTracker[$phpKey]++;
-					}
-					else
-					{
-						$field['subform']['properties'.$nr] = array('name' => $property['name'], 'value' => $settings[$property['name']], 'desc' => $property['description']);
-					}
-				}
-				elseif ($forceAll || !$xml || $confirmation !== $value)
-				{
-					// add the xml values
-					$field['values'] .= PHP_EOL."\t" . $property['name'] . '="' . ($confirmation !== $value) ? $value : $example .'" ';
-					// add the json values
-					if ($addPHP)
-					{
-						$field['php'][$phpKey]['value'][$phpLine] = ($confirmation !== $value) ? $value : $example;
-						$phpTracker[$phpKey]++;
-					}
-					else
-					{
-						$field['subform']['properties' . $nr] = array('name' => $property['name'], 'value' => ($confirmation !== $value) ? $value : $example, 'desc' => $property['description']);
-					}
-				}
-				// add the name List Options
-				if (!$addPHP)
-				{
-					$field['nameListOptions'][$property['name']] = $property['name'];
-				}
-				// increment the number
-				$nr++;
-			}
-			// check if all php is loaded using the tracker
-			if (UtilitiesStringHelper::check($xml) && isset($phpTracker) && UtilitiesArrayHelper::check($phpTracker))
-			{
-				foreach ($phpTracker as $phpKey => $start)
-				{
-					if ($start < 30)
-					{
-						// we must search for more code in the xml just incase
-						foreach(range(2, 30) as $t_nr)
-						{
-							$get_ = $phpKey . '_' . $t_nr;
-							if (!isset($field['php'][$phpKey]['value'][$t_nr]) && ($value = FieldHelper::getValue($xml, $get_, $confirmation)) !== $confirmation)
-							{
-								$field['php'][$phpKey]['value'][$t_nr] = $value;
-							}
-						}
-					}
-				}
-			}
-			$field['values'] .= PHP_EOL . "/>";
-			$field['values_description'] .= '</tbody></table>';
-			// load the database defaults if set and wanted
-			if ($dbDefaults && isset($result->has_defaults) && $result->has_defaults == 1)
-			{
-				$field['database'] = [
-					'datatype' => $result->datatype,
-					'datadefault' => $result->datadefault,
-					'datadefault_other' => $result->datadefault_other,
-					'datalenght' => $result->datalenght,
-					'datalenght_other' => $result->datalenght_other,
-					'indexes' => $result->indexes,
-					'null_switch' => $result->null_switch,
-					'store' => $result->store
-				];
-			}
-			// return found field options
-			return $field;
+			return null;
 		}
-		return null;
+
+		$properties = json_decode((string) $result->properties, true);
+
+		if (!is_array($properties) || $properties === [])
+		{
+			return null;
+		}
+
+		$field = [
+			'subform' => [],
+			'nameListOptions' => [],
+			'php' => [],
+			'values' => '<field',
+			'values_description' => self::buildFieldTypePropertiesTableStart(),
+			'short_description' => (string) $result->short_description,
+			'description' => (string) $result->description
+		];
+
+		$nr = 0;
+		$phpTracker = [];
+		$forceAll = self::shouldForceLoadAllProperties($xml);
+		$confirmation = '8qvZHoyuFYQqpj0YQbc6F3o5DhBlmS-_-a8pmCZfOVSfANjkmV5LG8pCdAY2JNYu6cB';
+
+		foreach ($properties as $property)
+		{
+			if (!is_array($property) || empty($property['name']))
+			{
+				continue;
+			}
+
+			$propertyName = (string) $property['name'];
+			$propertyDescription = isset($property['description']) ? (string) $property['description'] : '';
+			$example = self::getPropertyExample($property);
+
+			$field['values_description'] .= self::buildFieldTypePropertyRow(
+				$propertyName,
+				$example,
+				$propertyDescription
+			);
+
+			$currentValue = FieldHelper::getValue(
+				$xml,
+				$propertyName,
+				$confirmation
+			);
+
+			$isPhpProperty = false;
+			$phpLine = null;
+			$phpKey = null;
+
+			if (strpos($propertyName, 'type_php') !== false)
+			{
+				$isPhpProperty = true;
+				$phpLine = (int) preg_replace('/[^0-9]/', '', $propertyName);
+				$phpKey = trim((string) preg_replace('/[0-9]+/', '', $propertyName), '_');
+
+				if (!isset($field['php'][$phpKey]))
+				{
+					$field['php'][$phpKey] = [
+						'value' => [],
+						'desc' => $propertyDescription
+					];
+
+					$phpTracker[$phpKey] = 1;
+				}
+			}
+
+			$resolvedValue = null;
+
+			if (
+				UtilitiesArrayHelper::check($settings)
+				&& isset($settings[$propertyName])
+			)
+			{
+				$resolvedValue = (string) $settings[$propertyName];
+			}
+			elseif ($forceAll || !$xml || $confirmation !== $currentValue)
+			{
+				$resolvedValue = ($confirmation !== $currentValue)
+					? (string) $currentValue
+					: $example;
+			}
+
+			if ($resolvedValue !== null)
+			{
+				$field['values'] .= self::buildXmlAttributeLine($propertyName, $resolvedValue);
+
+				if ($isPhpProperty && $phpKey !== null && $phpLine !== null)
+				{
+					$field['php'][$phpKey]['value'][$phpLine] = $resolvedValue;
+					$phpTracker[$phpKey]++;
+				}
+				elseif (!$isPhpProperty)
+				{
+					$field['subform']['properties' . $nr] = [
+						'name' => $propertyName,
+						'value' => $resolvedValue,
+						'desc' => $propertyDescription
+					];
+				}
+			}
+
+			if (!$isPhpProperty)
+			{
+				$field['nameListOptions'][$propertyName] = $propertyName;
+			}
+
+			$nr++;
+		}
+
+		self::loadMissingPhpPropertyLines($field, $phpTracker, $xml, $confirmation);
+
+		$field['values'] .= PHP_EOL . '/>';
+		$field['values_description'] .= '</tbody></table>';
+
+		if (
+			$dbDefaults
+			&& isset($result->has_defaults)
+			&& (int) $result->has_defaults === 1
+		)
+		{
+			$field['database'] = [
+				'datatype' => $result->datatype,
+				'datadefault' => $result->datadefault,
+				'datadefault_other' => $result->datadefault_other,
+				'datalenght' => $result->datalenght,
+				'datalenght_other' => $result->datalenght_other,
+				'indexes' => $result->indexes,
+				'null_switch' => $result->null_switch,
+				'store' => $result->store
+			];
+		}
+
+		return $field;
 	}
 
 	/**
-	 * Get a field value from the XML stored string
+	 * Build the start of the Bootstrap field type properties table.
 	 *
-	 * @param   string     $xml           The xml string of the field
-	 * @param   string     $get           The value key to get from the string
-	 * @param   string     $confirmation  The value to confirm found value
-	 *
-	 * @return  string     The field value from xml
-	 * @deprecated 3.3 Use FieldHelper::getValue($xml, $get, $confirmation);
+	 * @return  string
+	 * @since   6.1.6
 	 */
-	public static function getValueFromXMLstring(&$xml, &$get, $confirmation = '')
+	protected static function buildFieldTypePropertiesTableStart(): string
+	{
+		return '<table class="table table-striped table-hover table-sm">'
+			. '<thead>'
+			. '<tr>'
+			. '<th class="text-end">' . Text::_('COM_COMPONENTBUILDER_PROPERTY') . '</th>'
+			. '<th>' . Text::_('COM_COMPONENTBUILDER_EXAMPLE') . '</th>'
+			. '<th>' . Text::_('COM_COMPONENTBUILDER_DESCRIPTION') . '</th>'
+			. '</tr>'
+			. '</thead>'
+			. '<tbody>';
+	}
+
+	/**
+	 * Build a single Bootstrap table row for a field property.
+	 *
+	 * @param   string  $name         The property name.
+	 * @param   string  $example      The example value.
+	 * @param   string  $description  The property description.
+	 *
+	 * @return  string
+	 * @since   6.1.6
+	 */
+	protected static function buildFieldTypePropertyRow(
+		string $name,
+		string $example,
+		string $description
+	): string
+	{
+		return '<tr>'
+			. '<td class="text-end"><code>' . htmlspecialchars($name, ENT_QUOTES, 'UTF-8') . '</code></td>'
+			. '<td>' . htmlspecialchars($example, ENT_QUOTES, 'UTF-8') . '</td>'
+			. '<td>' . htmlspecialchars($description, ENT_QUOTES, 'UTF-8') . '</td>'
+			. '</tr>';
+	}
+
+	/**
+	 * Build a formatted XML attribute line.
+	 *
+	 * @param   string  $name   The attribute name.
+	 * @param   string  $value  The attribute value.
+	 *
+	 * @return  string
+	 * @since   6.1.6
+	 */
+	protected static function buildXmlAttributeLine(string $name, string $value): string
+	{
+		return PHP_EOL . "\t"
+			. $name
+			. '="'
+			. $value
+			. '"';
+	}
+
+	/**
+	 * Get the example value for a property.
+	 *
+	 * @param   array  $property  The property array.
+	 *
+	 * @return  string
+	 * @since   6.1.6
+	 */
+	protected static function getPropertyExample(array $property): string
+	{
+		if (
+			isset($property['example'])
+			&& UtilitiesStringHelper::check($property['example'])
+		)
+		{
+			return (string) $property['example'];
+		}
+
+		return '';
+	}
+
+	/**
+	 * Check whether all properties should be force-loaded from the XML context.
+	 *
+	 * @param   string|null  $xml  The XML string.
+	 *
+	 * @return  bool
+	 * @since   6.1.6
+	 */
+	protected static function shouldForceLoadAllProperties(?string $xml): bool
+	{
+		return ($xml !== null && strpos($xml, '..__FORCE_LOAD_ALL_PROPERTIES__..') !== false);
+	}
+
+	/**
+	 * Load any missing PHP property lines from the XML.
+	 *
+	 * @param   array        $field         The field data array.
+	 * @param   array        $phpTracker    The PHP property tracker.
+	 * @param   string|null  $xml           The XML string.
+	 * @param   string       $confirmation  The confirmation token.
+	 *
+	 * @return  void
+	 * @since   6.1.6
+	 */
+	protected static function loadMissingPhpPropertyLines(
+		array &$field,
+		array $phpTracker,
+		?string $xml,
+		string $confirmation
+	): void
+	{
+		if (
+			!UtilitiesStringHelper::check($xml)
+			|| !UtilitiesArrayHelper::check($phpTracker)
+		)
+		{
+			return;
+		}
+
+		foreach ($phpTracker as $phpKey => $start)
+		{
+			if ($start >= 30)
+			{
+				continue;
+			}
+
+			foreach (range(2, 30) as $tNr)
+			{
+				$get = $phpKey . '_' . $tNr;
+
+				if (
+					!isset($field['php'][$phpKey]['value'][$tNr])
+					&& ($value = FieldHelper::getValue($xml, $get, $confirmation)) !== $confirmation
+				)
+				{
+					$field['php'][$phpKey]['value'][$tNr] = (string) $value;
+				}
+			}
+		}
+	}
+
+	/**
+	 * Get a field value from the XML stored string.
+	 *
+	 * @param   string  $xml           The xml string of the field.
+	 * @param   string  $get           The value key to get from the string.
+	 * @param   string  $confirmation  The value to confirm found value.
+	 *
+	 * @return  string  The field value from xml.
+	 * @deprecated  3.3  Use FieldHelper::getValue($xml, $get, $confirmation);
+	 * @since       6.1.6
+	 */
+	public static function getValueFromXMLstring(string &$xml, string &$get, string $confirmation = ''): string
 	{
 		return FieldHelper::getValue($xml, $get, $confirmation);
 	}
@@ -3965,16 +4151,16 @@ abstract class ComponentbuilderHelper
 	}
 
 	/**
-	 * Get an edit button
-	 * 
-	 * @param  mixed    $item       The item to edit
-	 * @param  string   $view       The type of item to edit
-	 * @param  string   $views      The list view controller name
-	 * @param  string   $ref        The return path
-	 * @param  string   $component  The component these views belong to
-	 * @param  string   $headsup    The message to show on click of button
+	 * Get an edit button.
 	 *
-	 * @return  string    On success the full html link
+	 * @param  mixed   $item       The item to edit.
+	 * @param  string  $view       The type of item to edit.
+	 * @param  string  $views      The list view controller name.
+	 * @param  string  $ref        The return path.
+	 * @param  string  $component  The component these views belong to.
+	 * @param  string  $headsup    The message to show on click of button.
+	 *
+	 * @return  string  On success the full HTML link.
 	 * @since   3.0.9
 	 */
 	public static function getEditButton(
@@ -3986,117 +4172,59 @@ abstract class ComponentbuilderHelper
 		string $headsup = 'COM_COMPONENTBUILDER_ALL_UNSAVED_WORK_ON_THIS_PAGE_WILL_BE_LOST_ARE_YOU_SURE_YOU_WANT_TO_CONTINUE'
 	): string
 	{
-		// get URL
 		$url = self::getEditURL($item, $view, $views, $ref, $component);
-		if ($url !== null)
+
+		if ($url === null)
 		{
-			// get the global settings
-			if (!ObjectHelper::check(self::$params))
-			{
-				self::$params = ComponentHelper::getParams('com_componentbuilder');
-			}
-
-			// get UIKIT version
-			$uikit = self::$params->get('uikit_version', 2);
-
-			// check that we have the ID
-			if (ObjectHelper::check($item) && isset($item->id))
-			{
-				// check if the checked_out is available
-				if (isset($item->checked_out))
-				{
-					$checked_out = (int) $item->checked_out;
-				}
-				else
-				{
-					$checked_out = GetHelper::var($view, $item->id, 'id', 'checked_out', '=', str_replace('com_', '', $component));
-				}
-			}
-			elseif (UtilitiesArrayHelper::check($item) && isset($item['id']))
-			{
-				// check if the checked_out is available
-				if (isset($item['checked_out']))
-				{
-					$checked_out = (int) $item['checked_out'];
-				}
-				else
-				{
-					$checked_out = GetHelper::var($view, $item['id'], 'id', 'checked_out', '=', str_replace('com_', '', $component));
-				}
-			}
-			elseif (is_numeric($item) && $item > 0)
-			{
-				$checked_out = GetHelper::var($view, $item, 'id', 'checked_out', '=', str_replace('com_', '', $component));
-			}
-
-			// set the link title
-			$title = UtilitiesStringHelper::safe(Text::_('COM_COMPONENTBUILDER_EDIT') . ' ' . $view, 'W');
-
-			// check that there is a check message
-			if (UtilitiesStringHelper::check($headsup))
-			{
-				if (3 == $uikit)
-				{
-					$href = 'onclick="UIkit.modal.confirm(\''.Text::_($headsup).'\').then( function(){ window.location.href = \'' . $url . '\' } )"  href="javascript:void(0)"';
-				}
-				else
-				{
-					$href = 'onclick="UIkit2.modal.confirm(\''.Text::_($headsup).'\', function(){ window.location.href = \'' . $url . '\' })"  href="javascript:void(0)"';
-				}
-			}
-			else
-			{
-				$href = 'href="' . $url . '"';
-			}
-
-			// return UIKIT version 3
-			if (3 == $uikit)
-			{
-				// check if it is checked out
-				if (isset($checked_out) && $checked_out > 0)
-				{
-					// is this user the one who checked it out
-					if ($checked_out == Factory::getApplication()->getIdentity()->id)
-					{
-						return ' <a ' . $href . ' uk-icon="icon: lock" title="' . $title . '"></a>';
-					}
-					return ' <a href="#" disabled uk-icon="icon: lock" title="' . Text::sprintf('COM_COMPONENTBUILDER__HAS_BEEN_CHECKED_OUT_BY_S', UtilitiesStringHelper::safe($view, 'W'), Factory::getApplication()->getIdentity($checked_out)->name) . '"></a>'; 
-				}
-				// return normal edit link
-				return ' <a ' . $href . ' uk-icon="icon: pencil" title="' . $title . '"></a>';
-			}
-
-			// check if it is checked out (return UIKIT version 2)
-			if (isset($checked_out) && $checked_out > 0)
-			{
-				// is this user the one who checked it out
-				if ($checked_out == Factory::getApplication()->getIdentity()->id)
-				{
-					return ' <a ' . $href . ' class="uk-icon-lock" title="' . $title . '"></a>';
-				}
-				return ' <a href="#" disabled class="uk-icon-lock" title="' . Text::sprintf('COM_COMPONENTBUILDER__HAS_BEEN_CHECKED_OUT_BY_S', UtilitiesStringHelper::safe($view, 'W'), Factory::getApplication()->getIdentity($checked_out)->name) . '"></a>'; 
-			}
-
-			// return normal edit link
-			return ' <a ' . $href . ' class="uk-icon-pencil" title="' . $title . '"></a>';
+			return '';
 		}
 
-		return '';
+		$checkedOut = self::getCheckedOut($item, $view, $component);
+		$title = UtilitiesStringHelper::safe(Text::_('COM_COMPONENTBUILDER_EDIT') . ' ' . $view, 'W');
+		$href = self::buildEditHref($url, $headsup);
+
+		$app = Factory::getApplication();
+		$user = $app->getIdentity();
+
+		if ($checkedOut > 0)
+		{
+			if ($checkedOut === (int) $user->id)
+			{
+				return ' <a ' . $href . ' class="btn btn-sm btn-outline-secondary" title="' . $title . '">'
+					. '<span class="icon-lock" aria-hidden="true"></span>'
+					. '<span class="visually-hidden">' . $title . '</span>'
+					. '</a>';
+			}
+
+			$lockedTitle = self::getCheckedOutTitle($checkedOut, $view);
+
+			return ' <a href="javascript:void(0)" class="btn btn-sm btn-outline-secondary disabled"'
+				. ' aria-disabled="true" tabindex="-1" role="button" title="' . $lockedTitle . '">'
+				. '<span class="icon-lock" aria-hidden="true"></span>'
+				. '<span class="visually-hidden">' . $lockedTitle . '</span>'
+				. '</a>';
+		}
+
+		return ' <a ' . $href . ' class="btn btn-sm btn-outline-primary" title="' . $title . '">'
+			. '<span class="icon-edit" aria-hidden="true"></span>'
+			. '<span class="visually-hidden">' . $title . '</span>'
+			. '</a>';
 	}
 
 	/**
-	 * Get an edit text button
-	 * 
-	 * @param  string   $text       The button text
-	 * @param  mixed    $item       The item|id to edit
-	 * @param  string   $view       The type of item to edit
-	 * @param  string   $views      The list view controller name
-	 * @param  string   $ref        The return path
-	 * @param  string   $component  The component these views belong to
-	 * @param  bool     $jRoute     The switch to use the Route class
-	 * @param  string   $headsup    The message to show on click of button
+	 * Get an edit text button.
 	 *
-	 * @return  string    On success the full html link
+	 * @param  string  $text       The button text.
+	 * @param  mixed   $item       The item|id to edit.
+	 * @param  string  $view       The type of item to edit.
+	 * @param  string  $views      The list view controller name.
+	 * @param  string  $ref        The return path.
+	 * @param  string  $component  The component these views belong to.
+	 * @param  bool    $jRoute     The switch to use the Route class.
+	 * @param  string  $class      The button class.
+	 * @param  string  $headsup    The message to show on click of button.
+	 *
+	 * @return  string  On success the full HTML link.
 	 * @since   3.0.9
 	 */
 	public static function getEditTextButton(
@@ -4107,116 +4235,58 @@ abstract class ComponentbuilderHelper
 		string $ref = '',
 		string $component = 'com_componentbuilder',
 		bool $jRoute = true,
-		string $class = 'uk-button',
+		string $class = 'btn btn-primary',
 		string $headsup = 'COM_COMPONENTBUILDER_ALL_UNSAVED_WORK_ON_THIS_PAGE_WILL_BE_LOST_ARE_YOU_SURE_YOU_WANT_TO_CONTINUE'
 	): string
 	{
-		// make sure we have text
 		if (!UtilitiesStringHelper::check($text))
 		{
 			return self::getEditButton($item, $view, $views, $ref, $component, $headsup);
 		}
-		// get URL
+
 		$url = self::getEditURL($item, $view, $views, $ref, $component, $jRoute);
-		if ($url !== null)
+
+		if ($url === null)
 		{
-			// get the global settings
-			if (!ObjectHelper::check(self::$params))
+			return '';
+		}
+
+		$checkedOut = self::getCheckedOut($item, $view, $component);
+		$title = UtilitiesStringHelper::safe(Text::_('COM_COMPONENTBUILDER_EDIT') . ' ' . $view, 'W');
+		$href = self::buildEditHref($url, $headsup);
+
+		$app = Factory::getApplication();
+		$user = $app->getIdentity();
+
+		if ($checkedOut > 0)
+		{
+			if ($checkedOut === (int) $user->id)
 			{
-				self::$params = ComponentHelper::getParams('com_componentbuilder');
-			}
-			// get UIKIT version
-			$uikit = self::$params->get('uikit_version', 2);
-			// check that we have the ID
-			if (ObjectHelper::check($item) && isset($item->id))
-			{
-				// check if the checked_out is available
-				if (isset($item->checked_out))
-				{
-					$checked_out = (int) $item->checked_out;
-				}
-				else
-				{
-					$checked_out = GetHelper::var($view, $item->id, 'id', 'checked_out', '=', str_replace('com_', '', $component));
-				}
-			}
-			elseif (UtilitiesArrayHelper::check($item) && isset($item['id']))
-			{
-				// check if the checked_out is available
-				if (isset($item['checked_out']))
-				{
-					$checked_out = (int) $item['checked_out'];
-				}
-				else
-				{
-					$checked_out = GetHelper::var($view, $item['id'], 'id', 'checked_out', '=', str_replace('com_', '', $component));
-				}
-			}
-			elseif (is_numeric($item) && $item > 0)
-			{
-				$checked_out = GetHelper::var($view, $item, 'id', 'checked_out', '=', str_replace('com_', '', $component));
-			}
-			// set the link title
-			$title = UtilitiesStringHelper::safe(Text::_('COM_COMPONENTBUILDER_EDIT') . ' ' . $view, 'W');
-			// check that there is a check message
-			if (UtilitiesStringHelper::check($headsup))
-			{
-				if (3 == $uikit)
-				{
-					$href = 'onclick="UIkit.modal.confirm(\''.Text::_($headsup).'\').then( function(){ window.location.href = \'' . $url . '\' } )"  href="javascript:void(0)"';
-				}
-				else
-				{
-					$href = 'onclick="UIkit2.modal.confirm(\''.Text::_($headsup).'\', function(){ window.location.href = \'' . $url . '\' })"  href="javascript:void(0)"';
-				}
-			}
-			else
-			{
-				$href = 'href="' . $url . '"';
-			}
-			// return UIKIT version 3
-			if (3 == $uikit)
-			{
-				// check if it is checked out
-				if (isset($checked_out) && $checked_out > 0)
-				{
-					// is this user the one who checked it out
-					if ($checked_out == Factory::getApplication()->getIdentity()->id)
-					{
-						return ' <a class="' . $class . '" ' . $href . ' title="' . $title . '">' . $text . '</a>';
-					}
-					return ' <a class="' . $class . '" href="#" disabled title="' . Text::sprintf('COM_COMPONENTBUILDER__HAS_BEEN_CHECKED_OUT_BY_S', UtilitiesStringHelper::safe($view, 'W'), Factory::getApplication()->getIdentity($checked_out)->name) . '">' . $text . '</a>'; 
-				}
-				// return normal edit link
 				return ' <a class="' . $class . '" ' . $href . ' title="' . $title . '">' . $text . '</a>';
 			}
-			// check if it is checked out (return UIKIT version 2)
-			if (isset($checked_out) && $checked_out > 0)
-			{
-				// is this user the one who checked it out
-				if ($checked_out == Factory::getApplication()->getIdentity()->id)
-				{
-					return ' <a class="' . $class . '" ' . $href . ' title="' . $title . '">' . $text . '</a>';
-				}
-				return ' <a class="' . $class . '" href="#" disabled title="' . Text::sprintf('COM_COMPONENTBUILDER__HAS_BEEN_CHECKED_OUT_BY_S', UtilitiesStringHelper::safe($view, 'W'), Factory::getApplication()->getIdentity($checked_out)->name) . '">' . $text . '</a>'; 
-			}
-			// return normal edit link
-			return ' <a class="' . $class . '" ' . $href . ' title="' . $title . '">' . $text . '</a>';
+
+			$lockedTitle = self::getCheckedOutTitle($checkedOut, $view);
+
+			return ' <a class="' . $class . ' disabled" href="javascript:void(0)"'
+				. ' aria-disabled="true" tabindex="-1" role="button" title="' . $lockedTitle . '">'
+				. $text
+				. '</a>';
 		}
-		return '';
+
+		return ' <a class="' . $class . '" ' . $href . ' title="' . $title . '">' . $text . '</a>';
 	}
 
 	/**
-	 * Get the edit URL
-	 * 
-	 * @param  int      $item        The item to edit
-	 * @param  string   $view        The type of item to edit
-	 * @param  string   $views       The list view controller name
-	 * @param  string   $ref         The return path
-	 * @param  string   $component   The component these views belong to
-	 * @param  bool     $jRoute      The switch to add use JRoute or not
+	 * Get the edit URL.
 	 *
-	 * @return  string|null    On success the edit url
+	 * @param  mixed   $item       The item to edit.
+	 * @param  string  $view       The type of item to edit.
+	 * @param  string  $views      The list view controller name.
+	 * @param  string  $ref        The return path.
+	 * @param  string  $component  The component these views belong to.
+	 * @param  bool    $jRoute     The switch to add use JRoute or not.
+	 *
+	 * @return  string|null  On success the edit URL.
 	 * @since   3.0.9
 	 */
 	public static function getEditURL(
@@ -4228,68 +4298,66 @@ abstract class ComponentbuilderHelper
 		bool $jRoute = true
 	): ?string
 	{
-		// build record
 		$record = new \stdClass();
 
-		// check if user can edit
 		if (self::canEditItem($record, $item, $view, $views, $component))
 		{
-			// set the edit link
+			$link = 'index.php?option=' . $component . '&view=' . $views . '&task=' . $view . '.edit&id=' . $record->id . $ref;
+
 			if ($jRoute)
 			{
-				return Route::_("index.php?option=" . $component . "&view=" . $views . "&task=" . $view . ".edit&id=" . $record->id . $ref);
+				return Route::_($link);
 			}
-			return "index.php?option=" . $component . "&view=" . $views . "&task=" . $view . ".edit&id=" . $record->id . $ref;
+
+			return $link;
 		}
 
 		return null;
 	}
 
 	/**
-	 * Can Edit (either any, or own)
-	 * 
-	 * @param  int      $item        The item to edit
-	 * @param  string   $view        The type of item to edit
-	 * @param  string   $views       The list view controller name
-	 * @param  string   $component   The component these views belong to
+	 * Can edit (either any, or own).
 	 *
-	 * @return  bool    if user can edit returns true
+	 * @param  mixed   $item       The item to edit.
+	 * @param  string  $view       The type of item to edit.
+	 * @param  string  $views      The list view controller name.
+	 * @param  string  $component  The component these views belong to.
+	 *
+	 * @return  bool  If user can edit returns true.
 	 * @since   3.0.9
 	 */
 	public static function allowEdit(&$item, string $view, string $views, string $component = 'com_componentbuilder'): bool
 	{
-		// build record
 		$record = new \stdClass();
+
 		return self::canEditItem($record, $item, $view, $views, $component);
 	}
 
 	/**
-	 * Can Edit (either any, or own)
-	 * 
-	 * @param  int      $item        The item to edit
-	 * @param  string   $view        The type of item to edit
-	 * @param  string   $views       The list view controller name
-	 * @param  string   $component   The component these views belong to
+	 * Can edit item (either any, or own).
 	 *
-	 * @return  bool    if user can edit returns true
+	 * @param  object  $record     The record object.
+	 * @param  mixed   $item       The item to edit.
+	 * @param  string  $view       The type of item to edit.
+	 * @param  string  $views      The list view controller name.
+	 * @param  string  $component  The component these views belong to.
+	 *
+	 * @return  bool  If user can edit returns true.
 	 * @since   3.0.9
 	 */
 	protected static function canEditItem(&$record, &$item, $view, $views, $component = 'com_componentbuilder')
 	{
-		// make sure the user has access to view
-		if (!Factory::getApplication()->getIdentity()->authorise($view. '.access', $component))
+		if (!Factory::getApplication()->getIdentity()->authorise($view . '.access', $component))
 		{
 			return false;
 		}
 
-		// we start with false.
 		$can_edit = false;
 
-		// check that we have the ID
 		if (ObjectHelper::check($item) && isset($item->id))
 		{
 			$record->id = (int) $item->id;
-			// check if created_by is available
+
 			if (isset($item->created_by) && $item->created_by > 0)
 			{
 				$record->created_by = (int) $item->created_by;
@@ -4298,7 +4366,7 @@ abstract class ComponentbuilderHelper
 		elseif (UtilitiesArrayHelper::check($item) && isset($item['id']))
 		{
 			$record->id = (int) $item['id'];
-			// check if created_by is available
+
 			if (isset($item['created_by']) && $item['created_by'] > 0)
 			{
 				$record->created_by = (int) $item['created_by'];
@@ -4309,20 +4377,120 @@ abstract class ComponentbuilderHelper
 			$record->id = (int) $item;
 		}
 
-		// check ID
 		if (isset($record->id) && $record->id > 0)
 		{
-			// get user action permission to edit
 			$action = self::getActions($view, $record, $views, 'edit', str_replace('com_', '', $component));
-			// check if the view permission is set
+
 			if (($can_edit = $action->get($view . '.edit', 'none-set')) === 'none-set')
 			{
-				// fall back on the core permission then (this can be an issue)
 				$can_edit = ($action->get('core.edit', false) || $action->get('core.edit.own', false));
 			}
 		}
 
-		return $can_edit;
+		return (bool) $can_edit;
+	}
+
+	/**
+	 * Get the checked out user ID for the item.
+	 *
+	 * @param  mixed   $item       The item or ID.
+	 * @param  string  $view       The view name.
+	 * @param  string  $component  The component option.
+	 *
+	 * @return  int  The checked out user ID or zero.
+	 * @since   6.1.6
+	 */
+	protected static function getCheckedOut($item, string $view, string $component): int
+	{
+		if (ObjectHelper::check($item) && isset($item->id))
+		{
+			if (isset($item->checked_out))
+			{
+				return (int) $item->checked_out;
+			}
+
+			return (int) GetHelper::var(
+				$view,
+				$item->id,
+				'id',
+				'checked_out',
+				'=',
+				str_replace('com_', '', $component)
+			);
+		}
+
+		if (UtilitiesArrayHelper::check($item) && isset($item['id']))
+		{
+			if (isset($item['checked_out']))
+			{
+				return (int) $item['checked_out'];
+			}
+
+			return (int) GetHelper::var(
+				$view,
+				$item['id'],
+				'id',
+				'checked_out',
+				'=',
+				str_replace('com_', '', $component)
+			);
+		}
+
+		if (is_numeric($item) && $item > 0)
+		{
+			return (int) GetHelper::var(
+				$view,
+				$item,
+				'id',
+				'checked_out',
+				'=',
+				str_replace('com_', '', $component)
+			);
+		}
+
+		return 0;
+	}
+
+	/**
+	 * Build the href attribute set for edit links.
+	 *
+	 * @param  string  $url      The target URL.
+	 * @param  string  $headsup  The confirmation message.
+	 *
+	 * @return  string  The rendered href/onclick attributes.
+	 * @since   6.1.6
+	 */
+	public static function buildEditHref(string $url, string $headsup): string
+	{
+		if (!UtilitiesStringHelper::check($headsup))
+		{
+			return 'href="' . $url . '"';
+		}
+
+		$onclick = '(customElements.get(\'joomla-dialog\')).confirm(\'' . Text::_($headsup) . '\')'
+			. '.then(function(result){'
+			. 'if(result){window.location.href=\'' . $url . '\';}});';
+
+		return 'href="javascript:void(0)" onclick="' . $onclick . '"';
+	}
+
+	/**
+	 * Get the checked out title.
+	 *
+	 * @param  int     $checkedOut  The user ID who checked out the item.
+	 * @param  string  $view        The view name.
+	 *
+	 * @return  string  The checked out title text.
+	 * @since   6.1.6
+	 */
+	protected static function getCheckedOutTitle(int $checkedOut, string $view): string
+	{
+		$user = Factory::getApplication()->getIdentity($checkedOut);
+
+		return Text::sprintf('COM_COMPONENTBUILDER_S_HAS_BEEN_CHECKED_OUT_BY_S',
+			UtilitiesStringHelper::safe($view, 'W'),
+			$user->name
+		);
 	}
 
 	/**
@@ -4385,7 +4553,7 @@ abstract class ComponentbuilderHelper
 		string $ref = '',
 		string $component = 'com_componentbuilder',
 		bool $jRoute = true, 
-		string $class = 'uk-button',
+		string $class = 'btn btn-primary',
 		string $headsup = 'COM_COMPONENTBUILDER_ALL_UNSAVED_WORK_ON_THIS_PAGE_WILL_BE_LOST_ARE_YOU_SURE_YOU_WANT_TO_CONTINUE'
 	): ?string
 	{
@@ -4426,44 +4594,48 @@ abstract class ComponentbuilderHelper
 		return false;
 	}
 
-
 	/**
-	 * set subform type table
+	 * Set subform type table.
 	 *
-	 * @param   array   $head    The header names
-	 * @param   array   $rows    The row values
-	 * @param   string  $idName  The prefix to the table id
+	 * @param  array   $head    The header names.
+	 * @param  array   $rows    The row values as prebuilt <td>...</td> strings.
+	 * @param  string  $idName  The prefix to the table id.
 	 *
 	 * @return string
-	 *
+	 * @since  6.1.6
 	 */
-	public static function setSubformTable($head, $rows, $idName)
+	public static function setSubformTable(array $head, array $rows, string $idName): string
 	{
-		$table[] = "<div class=\"row-fluid\" id=\"vdm_table_display_".$idName."\">";
+		$table = [];
+
+		$table[] = "<div id=\"vdm_table_display_" . $idName . "\">";
 		$table[] = "\t<div class=\"subform-repeatable-wrapper subform-table-layout subform-table-sublayout-section-byfieldsets\">";
 		$table[] = "\t\t<div class=\"subform-repeatable\">";
-		$table[] = "\t\t\t<table class=\"adminlist table table-striped table-bordered\">";
-		$table[] = "\t\t\t\t<thead>";
-		$table[] = "\t\t\t\t\t<tr>";
-		$table[] = "\t\t\t\t\t\t<th>" .  implode("</th><th>", $head) . "</th>";
-		$table[] = "\t\t\t\t\t</tr>";
-		$table[] = "\t\t\t\t</thead>";
-		$table[] = "\t\t\t\t<tbody>";
+		$table[] = "\t\t\t<div class=\"table-responsive\">";
+		$table[] = "\t\t\t\t<table class=\"adminlist table table-striped table-bordered table-hover table-sm align-middle\">";
+		$table[] = "\t\t\t\t\t<thead>";
+		$table[] = "\t\t\t\t\t\t<tr>";
+		$table[] = "\t\t\t\t\t\t\t<th>" . implode("</th><th>", $head) . "</th>";
+		$table[] = "\t\t\t\t\t\t</tr>";
+		$table[] = "\t\t\t\t\t</thead>";
+		$table[] = "\t\t\t\t\t<tbody>";
+
 		foreach ($rows as $row)
 		{
-			$table[] = "\t\t\t\t\t<tr class=\"subform-repeatable-group\">";
-			$table[] = "\t\t\t\t\t\t" . $row;
-			$table[] = "\t\t\t\t\t</tr>";
+			$table[] = "\t\t\t\t\t\t<tr class=\"subform-repeatable-group\">";
+			$table[] = "\t\t\t\t\t\t\t" . $row;
+			$table[] = "\t\t\t\t\t\t</tr>";
 		}
-		$table[] = "\t\t\t\t</tbody>";
-		$table[] = "\t\t\t</table>";
+
+		$table[] = "\t\t\t\t\t</tbody>";
+		$table[] = "\t\t\t\t</table>";
+		$table[] = "\t\t\t</div>";
 		$table[] = "\t\t</div>";
 		$table[] = "\t</div>";
 		$table[] = "</div>";
-		// return the table
+
 		return implode("\n", $table);
 	}
-
 
 	/**
 	 * Convert a date to a human-readable fancy format (e.g., "1st of January 2024").

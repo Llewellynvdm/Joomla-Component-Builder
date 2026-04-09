@@ -17,6 +17,7 @@ use Joomla\Utilities\ArrayHelper;
 use Joomla\CMS\Router\Route;
 use Joomla\CMS\Session\Session;
 use VDM\Component\Componentbuilder\Administrator\Helper\ComponentbuilderHelper;
+use VDM\Joomla\Componentbuilder\PHPConfigurationChecker;
 use VDM\Joomla\Componentbuilder\Package\Factory as PackageFactory;
 
 // No direct access to this file
@@ -94,6 +95,48 @@ class Joomla_componentsController extends AdminController
 		}
 		$this->setRedirect($redirect_url, $message, 'error');
 		return false;
+	}
+
+	/**
+	 * Perform a health check for the Componentbuilder.
+	 *
+	 * @return bool  True on success.
+	 * @since  6.1.6
+	 */
+	public function healthCheck(): bool
+	{
+		// Check for request forgeries.
+		Session::checkToken()
+			or exit(Text::_('JINVALID_TOKEN'));
+
+		// Prepare redirect target.
+		$redirectUrl = Route::_('index.php?option=com_componentbuilder&view=joomla_components', false);
+
+		// Get current user.
+		$user = $this->app->getIdentity();
+
+		// Verify permissions before running the health check.
+		if (
+			!$user->authorise('joomla_components.health_check', 'com_componentbuilder')
+			|| !$user->authorise('core.manage', 'com_componentbuilder')
+		)
+		{
+			$this->setRedirect(
+				$redirectUrl,
+				Text::_('COM_COMPONENTBUILDER_COULD_NOT_DO_A_HEALTH_CHECK_OF_COMPONENTBUILDER'),
+				'error'
+			);
+
+			return false;
+		}
+
+		// Run the health check process.
+		(new PHPConfigurationChecker($this->app))->run();
+
+		// Redirect back to the health check view.
+		$this->setRedirect($redirectUrl);
+
+		return true;
 	}
 
 	/**

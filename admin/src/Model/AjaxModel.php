@@ -47,6 +47,7 @@ use VDM\Joomla\Data\Factory as DataFactory;
 use VDM\Joomla\Componentbuilder\Factory as ComponentbuilderFactory;
 use VDM\Joomla\Componentbuilder\File\Factory as FileFactory;
 use VDM\Joomla\File\TypeDefinition;
+use Joomla\Database\DatabaseInterface;
 use Joomla\CMS\Form\FormHelper as FormFormHelper;
 
 // No direct access to this file
@@ -93,6 +94,7 @@ class AjaxModel extends ListModel
 	}
 
 	// Used in joomla_component
+
 	/**
 	 * Retrieves the component details as an HTML display and metadata.
 	 *
@@ -128,7 +130,7 @@ class AjaxModel extends ListModel
 
 		try {
 			// Need to find the asset id by the name of the component.
-			$db = Factory::getDbo();
+			$db = Factory::getContainer()->get(DatabaseInterface::class);
 			$query = $db->getQuery(true)
 				->select($db->quoteName([
 					'id','companyname','component_version','copyright','debug_linenr',
@@ -528,6 +530,7 @@ class AjaxModel extends ListModel
 	}
 
 	// Used in admin_view
+
 	/**
 	 * Defines the maximum number of rows allowed for specific item types.
 	 *
@@ -635,6 +638,7 @@ class AjaxModel extends ListModel
 		'history' => 'setYesNo',
 		'joomla_fields' => 'setYesNo',
 		'port' => 'setYesNo',
+		'add_api' => 'setAddApiType',
 		'edit_create_site_view' => 'setYesNo',
 		'icomoon' => 'setIcoMoon',
 		'customadminview' => 'setItemNames',
@@ -643,16 +647,6 @@ class AjaxModel extends ListModel
 		'siteview' => 'setItemNames',
 		'before' => 'setItemNames',
 	];
-
-	/**
-	 * Reference variable for internal operations.
-	 *
-	 * This string is used as a reference in various methods and mappings.
-	 *
-	 * @var    string
-	 * @since  3.0.0
-	 */
-	protected string $ref = '';
 
 	/**
 	 * Maps specific field types to their respective field handlers.
@@ -1626,10 +1620,11 @@ class AjaxModel extends ListModel
 	 */
 	protected function setYesNo(string $header, $value): string
 	{
-		if (1 == $value)
+		if (1 === (int) $value)
 		{
 			return '<span style="color: #46A546;" class="icon-ok"></span>';
 		}
+
 		return '<span style="color: #e6e6e6;" class="icon-delete"></span>';
 	}
 
@@ -1786,20 +1781,23 @@ class AjaxModel extends ListModel
 			return null;
 		}
 
+		// Get a db connection.
+		$db = $this->getDatabase();
+
 		// Create a new query object.
-		$query = $this->_db->getQuery(true);
-		$query->select($this->_db->quoteName(['a.xml', 'b.name']));
-		$query->from($this->_db->quoteName('#__componentbuilder_field', 'a'));
-		$query->join('LEFT', $this->_db->quoteName('#__componentbuilder_fieldtype', 'b') . ' ON (' . $this->_db->quoteName('a.fieldtype') . ' = ' . $this->_db->quoteName('b.id') . ')');
-		$query->where($this->_db->quoteName('a.published') . ' = 1');
-		$query->where($this->_db->quoteName('a.' . $key) . ' = ' . $this->_db->quote($target));
+		$query = $db->getQuery(true);
+		$query->select($db->quoteName(['a.xml', 'b.name']));
+		$query->from($db->quoteName('#__componentbuilder_field', 'a'));
+		$query->join('LEFT', $db->quoteName('#__componentbuilder_fieldtype', 'b') . ' ON (' . $db->quoteName('a.fieldtype') . ' = ' . $db->quoteName('b.id') . ')');
+		$query->where($db->quoteName('a.published') . ' = 1');
+		$query->where($db->quoteName('a.' . $key) . ' = ' . $db->quote($target));
 
 		// Reset the query using our newly populated query object.
-		$this->_db->setQuery($query);
-		$this->_db->execute();
-		if ($this->_db->getNumRows())
+		$db->setQuery($query);
+		$db->execute();
+		if ($db->getNumRows())
 		{
-			$result = $this->_db->loadObject();
+			$result = $db->loadObject();
 			$result->name = strtolower($result->name);
 			if (ComponentbuilderHelper::fieldCheck($result->name,'list'))
 			{
@@ -1878,359 +1876,876 @@ class AjaxModel extends ListModel
 	 */
 	public function getTableColumns(string $tableName): ?string
 	{
+		// Get a db connection.
+		$db = $this->getDatabase();
+
         	// get the columns
-		$columns = $this->_db->getTableColumns("#__" . $tableName);
+		$columns = $db->getTableColumns("#__" . $tableName);
 		if (UtilitiesArrayHelper::check($columns))
 		{
         	   	// build the return string
-			$tableColumns = array();
+			$tableColumns = [];
+
 			foreach ($columns as $column => $type)
 			{
 				$tableColumns[] = $column . ' => ' . $column;
 			}
+
 			return implode("\n",$tableColumns);
 		}
+
 		return null;
 	}
 
 	/**
-	 * Get Linked
-	 * 
-	 * @param   int   $type   The display return type
+	 * Get linked item references.
 	 *
-	 * @return  string  The display return type on success
-	 * @since   3.0.0
+	 * @param   int  $type  The display return type.
+	 *
+	 * @return  string  The linked item display HTML.
+	 * @since   6.1.6
 	 */
 	public function getLinked($type): string
 	{
-		// get the view name & id
+		// Kept for backward compatibility with the existing method signature.
+		unset($type);
+
+		// Get the current view context and item ID.
 		$values = $this->getViewID();
 
-		// check if item is set
-		if (!is_null($values['a_id']) && $values['a_id'] > 0 && strlen($values['a_view']))
+		$view   = isset($values['a_view']) ? (string) $values['a_view'] : '';
+		$id     = isset($values['a_id']) ? (int) $values['a_id'] : 0;
+		$guid   = $values['a_guid'] ?? null;
+		$return = $values['a_return'] ?? null;
+
+		// Validate the current context before attempting to load links.
+		if ($view !== '' && $id > 0 && isset($this->linkedKeys[$view]))
 		{
-			// check if we have any linked to config
-			if (isset($this->linkedKeys[$values['a_view']]))
+			// Build the return URL.
+			$returnUrl = 'index.php?option=com_componentbuilder&view=' . $view . '&layout=edit&id=' . $id;
+
+			if ($return !== null && $return !== '')
 			{
-				// set a return value
-				$return_url = 'index.php?option=com_componentbuilder&view=' . (string) $values['a_view'] .  '&layout=edit&id=' . (int) $values['a_id'];
-				if (isset($values['a_return']))
-				{
-					$return_url .= '&return=' . (string) $values['a_return'];
-				}
-
-				// make sure the ref is set
-				$this->ref = '&ref=' . $values['a_view'] . '&refid=' . $values['a_id'] . '&return=' . urlencode(base64_encode($return_url));
-
-				// specail treatment of powers
-				$guid = $values['a_guid'] ?? null;
-
-				// get the linked to
-				if ($linked = $this->getLinkedTo($values['a_view'], $values['a_id'], $guid))
-				{
-					// just return it for now a table
-					$table =  '<div class="control-group"><table class="uk-table uk-table-hover uk-table-striped uk-table-condensed">';
-					$table .=  '<caption>'.Text::sprintf('COM_COMPONENTBUILDER_PLACES_ACROSS_JCB_WHERE_THIS_S_IS_LINKED', StringHelper::safe($values['a_view'], 'w')).'</caption>';
-					$table .=  '<thead><tr><th>'.Text::_('COM_COMPONENTBUILDER_TYPE_NAME').'</th></tr></thead>';
-					$table .=  '<tbody><tr><td>' .implode('</td></tr><tr><td>', $linked) . '</td></tr></tbody></table></div>';
-					return $table;
-				}
+				$returnUrl .= '&return=' . (string) $return;
 			}
+
+			// Build the reference string used elsewhere in the class.
+			$this->ref = '&ref=' . $view . '&refid=' . $id . '&return=' . urlencode(base64_encode($returnUrl));
+
+			// Load linked references.
+			$linked = $this->getLinkedTo($view, $id, $guid);
+
+			if (!empty($linked) && is_array($linked))
+			{
+				$viewSafeCaption = StringHelper::safe($view, 'w');
+				$rows = [];
+
+				foreach ($linked as $item)
+				{
+					$rows[] = '<tr><td>' . (string) $item . '</td></tr>';
+				}
+
+				return
+					'<div class="card mb-3">' .
+						'<div class="card-body">' .
+							'<div class="table-responsive">' .
+								'<table class="table table-striped table-hover align-middle mb-0">' .
+									'<caption class="caption-top">' .
+										Text::sprintf('COM_COMPONENTBUILDER_PLACES_ACROSS_JCB_WHERE_THIS_S_IS_LINKED', $viewSafeCaption) .
+									'</caption>' .
+									'<thead>' .
+										'<tr>' .
+											'<th scope="col">' .
+												Text::_('COM_COMPONENTBUILDER_TYPE_NAME') .
+											'</th>' .
+										'</tr>' .
+									'</thead>' .
+									'<tbody>' . implode('', $rows) . '</tbody>' .
+								'</table>' .
+							'</div>' .
+						'</div>' .
+					'</div>';
+			}
+
+			// Valid context, but no links found.
+			$viewSafeTitle = StringHelper::safe($view, 'Ww');
+
+			return
+				'<div class="alert alert-info">' .
+					'<h4 class="alert-heading">' .
+						Text::sprintf('COM_COMPONENTBUILDER_S_NOT_LINKED', $viewSafeTitle) .
+					'</h4>' .
+					'<p class="mb-0">' .
+						Text::sprintf('COM_COMPONENTBUILDER_THIS_STRONGSSTRONG_IS_NOT_LINKED_TO_ANY_OTHER_AREAS_OF_JCB_AT_THIS_TIME', $view) .
+					'</p>' .
+				'</div>';
 		}
 
-		// if not found but has session view name
-		if (strlen($values['a_view']))
-		{
-			return '<div class="control-group"><div class="alert alert-info"><h4>' .
-				Text::sprintf('COM_COMPONENTBUILDER_S_NOT_LINKED', StringHelper::safe($values['a_view'], 'Ww')) .
-				'</h4><p>' . Text::sprintf('COM_COMPONENTBUILDER_THIS_BSB_IS_NOT_LINKED_TO_ANY_OTHER_AREAS_OF_JCB_AT_THIS_TIME', $values['a_view']) .
-				'</p></div></div>';
-		}
-
-		// no view or id found in session, or view not allowed to access area
-		return '<div class="control-group"><div class="alert alert-error"><h4>' . Text::_('COM_COMPONENTBUILDER_ERROR') . '</h4><p>' .
-			Text::_('COM_COMPONENTBUILDER_THERE_WAS_A_PROBLEM_BNO_VIEW_OR_ID_FOUND_IN_SESSION_OR_VIEW_NOT_ALLOWED_TO_ACCESS_AREAB_WE_COULD_NOT_LOAD_ANY_LINKED_TO_VALUES_PLEASE_INFORM_YOUR_SYSTEM_ADMINISTRATOR') .
-			'</p></div></div>';
+		// Invalid context or access not allowed.
+		return
+			'<div class="alert alert-danger">' .
+				'<h4 class="alert-heading">' .
+					Text::_('COM_COMPONENTBUILDER_ERROR') .
+				'</h4>' .
+				'<p class="mb-0">' .
+					Text::_('COM_COMPONENTBUILDER_THERE_WAS_A_PROBLEM_STRONGNO_VIEW_OR_ID_FOUND_IN_SESSION_OR_VIEW_NOT_ALLOWED_TO_ACCESS_AREASTRONG_WE_COULD_NOT_LOAD_ANY_LINKED_TO_VALUES_PLEASE_INFORM_YOUR_SYSTEM_ADMINISTRATOR') .
+				'</p>' .
+			'</div>';
 	}
 
 	/**
-	 * Get Linked to Items
-	 * 
-	 * @param   string         $view    View that is being searched for
-	 * @param   int            $id      ID
-	 * @param   string|null    $guid    GUID
+	 * Get linked to items.
 	 *
-	 * @return  array|null   Found items
+	 * @param   string       $view  View that is being searched for.
+	 * @param   int          $id    ID.
+	 * @param   string|null  $guid  GUID.
+	 *
+	 * @return  array|null  Found items.
 	 * @since   3.0.0
 	 */
 	protected function getLinkedTo(string $view, int $id, ?string $guid): ?array
 	{
-		// reset bucket
-		$linked = [];
+		if (
+			!isset($this->linkedKeys[$view])
+			|| !UtilitiesArrayHelper::check($this->linkedKeys[$view])
+		)
+		{
+			return null;
+		}
 
-		// start search
+		$linked = [];
+		$db = $this->getDatabase();
+
 		foreach ($this->linkedKeys[$view] as $search)
 		{
-			// Create a new query object.
-			$query = $this->_db->getQuery(true);
+			$items = $this->getLinkedSearchItems($db, $search);
 
-			// get all history values
-			$selection = array_keys($search['fields']);
-			$selection[] = 'id';
-			$query->select($selection);
-			$query->from('#__componentbuilder_' . $search['table']);
-			$this->_db->setQuery($query);
-			$this->_db->execute();
-			if ($this->_db->getNumRows())
+			if ($items === [])
 			{
-				// load all items
-				$items = $this->_db->loadObjectList();
+				continue;
+			}
 
-				// search the items
-				foreach ($items as $item)
+			foreach ($items as $item)
+			{
+				$match = $this->findLinkedItemMatch($item, $search, $id, $guid);
+
+				if ($match['found'])
 				{
-					$found = false;
-					$type_name = null;
-					foreach ($search['fields'] as $key => $target)
-					{
-						if ('NAME' === $target)
-						{
-							$linked_name = $item->{$key};
-							$linked_nameTable = $key;
-							continue;
-						}
-						elseif ('TYPE' === $target)
-						{
-							$type_name = $item->{$key};
-							$type_nameTable = $key;
-							continue;
-						}
-						elseif (!$found)
-						{
-							if ('INT' === $target)
-							{
-								// check if ID match
-								if ($item->{$key} == $id)
-								{
-									$found = true;
-								}
-							}
-							elseif ('GUID' === $target)
-							{
-								// check if GUID match
-								if ($this->linkedGuid($guid, $item->{$key}))
-								{
-									$found = true;
-								}
-							}
-							else
-							{
-								// check if we have a json
-								if (JsonHelper::check($item->{$key}))
-								{
-									$item->{$key} = json_decode($item->{$key}, true);
-								}
-								// if array
-								if (UtilitiesArrayHelper::check($item->{$key}))
-								{
-									if ('ARRAY' === $target)
-									{
-										// check if ID match
-										foreach ($item->{$key} as $_id)
-										{
-											if ($_id == $id || $this->linkedGuid($guid, $_id))
-											{
-												$found = true;
-											}
-										}
-									}
-									else
-									{
-										// check if this is a sub sub form target
-										if (strpos($target, '.') !== false)
-										{
-											$_target = (array) explode('.', $target);
-											// check that we have an array and get the size
-											if (($_size = UtilitiesArrayHelper::check($_target)) !== false)
-											{
-												foreach ($item->{$key} as $row)
-												{
-													if ($_size == 2)
-													{
-														if (isset($row[$_target[0]]) && isset($row[$_target[0]][$_target[1]]) && ($row[$_target[0]][$_target[1]] == $id || $this->linkedGuid($guid, $row[$_target[0]][$_target[1]])))
-														{
-															$found = true;
-														}
-													}
-													elseif ($_size == 3 && isset($row[$_target[0]]) && UtilitiesArrayHelper::check($row[$_target[0]]))
-													{
-														foreach ($row[$_target[0]] as $_row)
-														{
-															if (!$found && isset($_row[$_target[2]]) && ($_row[$_target[2]] == $id || $this->linkedGuid($guid, $_row[$_target[2]]))) 
-															{
-																$found = true;
-															}
-														}
-													}
-												}
-											}
-										}
-										elseif (strpos($target, ':') !== false)
-										{
-											$_target = (array) explode(':', $target);
-											// check that we have an array and get the size
-											if (($_size = UtilitiesArrayHelper::check($_target)) == 2)
-											{
-												foreach ($item->{$key} as $field_name => $row)
-												{
-													if (!$found && $field_name === $_target[0])
-													{
-														foreach ($row as $_key => $_ids)
-														{
-															if (!$found && strpos($_key, $_target[1]) !== false && (in_array($id, $_ids) || $this->linkedGuid($guid, $_ids)))
-															{
-																$found = true;
-															}
-														}
-													}
-												}
-											}
-											// check that we have an array and get the size
-											if (($_size = UtilitiesArrayHelper::check($_target)) == 3)
-											{
-												foreach ($item->{$key} as $field_name => $row)
-												{
-													if (!$found && $field_name === $_target[0])
-													{
-														foreach ($row as $_key => $_items)
-														{
-															if (!$found && strpos($_key, $_target[1]) !== false && is_array($_items) && count($_items) > 0)
-															{
-																foreach ($_items as $_item)
-																{
-																	if (!$found && isset($_item[$_target[2]]) && ($id == $_item[$_target[2]] || $this->linkedGuid($guid, $_item[$_target[2]])))
-																	{
-																		$found = true;
-																	}
-																}
-															}
-														}
-													}
-												}
-											}
-										}
-										else
-										{
-											foreach ($item->{$key} as $row)
-											{
-												if (!$found && isset($row[$target]) && ($row[$target] == $id || $this->linkedGuid($guid, $row[$target])))
-												{
-													$found = true;
-												}
-											}
-										}
-									}
-								}
-								// if string (fields)
-								if (!$found &&  'xml' === $key && StringHelper::check($item->{$key})
-									&& strpos($item->{$key}, $target.'="') !== false)
-								{
-									// now get the fields between
-									$_fields = GetHelper::between($item->{$key},  $target.'="', '"');
-									// check the result
-									if (StringHelper::check($_fields))
-									{
-										// get the ids of all the fields linked here
-										$_fields = array_map('trim', (array) explode(',', $_fields));
-										// check the result
-										if (UtilitiesArrayHelper::check($_fields))
-										{
-											foreach ($_fields as $_field)
-											{
-												if ($_field == $id || $this->linkedGuid($guid, $_field))
-												{
-													$found = true;
-												}
-											}
-										}
-									}
-								}
-							}
-						}
-					}
-					// check if found
-					if ($found)
-					{
-						// build the name
-						$edit = true;
-						if ((is_numeric($linked_name) || GuidHelper::valid($linked_name)) && isset($search['linked_name']))
-						{
-							$key_field = GuidHelper::valid($linked_name) ? 'guid':'id';
-							if (!$linked_name =  GetHelper::var($linked_nameTable, $linked_name, $key_field, $search['linked_name']))
-							{
-								$linked_name = Text::_('COM_COMPONENTBUILDER_NO_FOUND');
-								$edit = false;
-							}
-						}
-
-						// build the local type
-						if ((is_numeric($type_name) || GuidHelper::valid($type_name)) && isset($search['type_name']))
-						{
-							$key_field = GuidHelper::valid($type_name) ? 'guid':'id';
-							if (!$type_name =  GetHelper::var($type_nameTable, $type_name, $key_field, $search['type_name']))
-							{
-								$type_name = '';
-							}
-							else
-							{
-								$type_name = ' (' . $type_name . ') ';
-							}
-						}
-						elseif (StringHelper::check($type_name) || is_numeric($type_name))
-						{
-							$type_name = ' (' . $type_name . ') ';
-						}
-
-						// set edit link
-						$link = ($edit) ? ComponentbuilderHelper::getEditButton($item->id, $search['table'], $search['tables'], $this->ref) : '';
-						// build the linked
-						$linked[] = Text::_($search['linked']) . $type_name . ' - ' . $linked_name . ' ' . $link;
-					}
+					$linked[] = $this->buildLinkedItemDisplay($item, $search, $match);
 				}
 			}
 		}
-		// check if we found any
+
 		if (UtilitiesArrayHelper::check($linked))
 		{
 			return $linked;
 		}
+
 		return null;
 	}
 
 	/**
-	 * Check if we have a GUID match
-	 * 
-	 * @param   string|null      $guid       The active power guid
-	 * @param   string|array     $setGuid    The linked power guid
+	 * Load candidate items for a linked search definition.
 	 *
-	 * @return  bool true if match is found
-	 * @since  3.0.0
+	 * @param   object  $db      The database object.
+	 * @param   array   $search  The linked search configuration.
+	 *
+	 * @return  array
+	 * @since   6.1.6
 	 */
-	protected function linkedGuid(?string $guid, $setGuid): bool
+	protected function getLinkedSearchItems($db, array $search): array
 	{
-		// check if GUID is valid
-		if ($guid !== null && GuidHelper::valid($guid))
+		$query = $db->getQuery(true);
+
+		$selection = array_keys($search['fields']);
+		$selection[] = 'id';
+
+		$query->select($selection);
+		$query->from('#__componentbuilder_' . $search['table']);
+
+		$db->setQuery($query);
+
+		$items = $db->loadObjectList();
+
+		if (!UtilitiesArrayHelper::check($items))
 		{
-			if (is_string($setGuid) && GuidHelper::valid($setGuid) && $guid === $setGuid)
+			return [];
+		}
+
+		return $items;
+	}
+
+	/**
+	 * Find a match for the current linked item.
+	 *
+	 * @param   object       $item    The database row item.
+	 * @param   array        $search  The linked search configuration.
+	 * @param   int          $id      The target ID.
+	 * @param   string|null  $guid    The target GUID.
+	 *
+	 * @return  array  Match result with keys: found, linked_name, linked_name_table, type_name, type_name_table.
+	 * @since   6.1.6
+	 */
+	protected function findLinkedItemMatch(object $item, array $search, int $id, ?string $guid): array
+	{
+		$match = [
+			'found' => false,
+			'linked_name' => null,
+			'linked_name_table' => null,
+			'type_name' => null,
+			'type_name_table' => null,
+		];
+
+		foreach ($search['fields'] as $key => $target)
+		{
+			if ('NAME' === $target)
 			{
-				return true;
+				$match['linked_name'] = property_exists($item, $key) ? $item->{$key} : null;
+				$match['linked_name_table'] = $key;
+				continue;
 			}
-			elseif (is_array($setGuid) && in_array($guid, $setGuid))
+
+			if ('TYPE' === $target)
+			{
+				$match['type_name'] = property_exists($item, $key) ? $item->{$key} : null;
+				$match['type_name_table'] = $key;
+				continue;
+			}
+
+			if ($match['found'])
+			{
+				continue;
+			}
+
+			$value = property_exists($item, $key) ? $item->{$key} : null;
+
+			if ($value !== null && $this->fieldContainsLinkedReference($key, $target, $value, $id, $guid))
+			{
+				$match['found'] = true;
+			}
+		}
+
+		return $match;
+	}
+
+	/**
+	 * Determine whether a field contains the linked reference.
+	 *
+	 * @param   string       $key     The field name.
+	 * @param   string       $target  The field target definition.
+	 * @param   mixed        $value   The field value.
+	 * @param   int          $id      The target ID.
+	 * @param   string|null  $guid    The target GUID.
+	 *
+	 * @return  bool
+	 * @since   6.1.6
+	 */
+	protected function fieldContainsLinkedReference(
+		string $key,
+		string $target,
+		$value,
+		int $id,
+		?string $guid
+	): bool
+	{
+		if ('INT' === $target)
+		{
+			return ($value == $id);
+		}
+
+		if ('GUID' === $target)
+		{
+			return $this->linkedGuid($guid, $value);
+		}
+
+		// Attempt JSON decode for complex field types.
+		$decodedValue = $this->decodeLinkedFieldValue($value);
+
+		// Check array-based structures first.
+		if (UtilitiesArrayHelper::check($decodedValue))
+		{
+			return $this->arrayFieldContainsLinkedReference($decodedValue, $target, $id, $guid);
+		}
+
+		// Fall through to XML check using the raw value (not decoded),
+		// since only non-array string values can be valid XML fields.
+		if ('xml' === $key)
+		{
+			return $this->xmlFieldContainsLinkedReference($value, $target, $id, $guid);
+		}
+
+		return false;
+	}
+
+	/**
+	 * Decode a linked field value from JSON when possible.
+	 *
+	 * @param   mixed  $value  The raw field value.
+	 *
+	 * @return  mixed  The decoded value, or the original value if decoding fails or is not applicable.
+	 * @since   6.1.6
+	 */
+	protected function decodeLinkedFieldValue($value)
+	{
+		if (JsonHelper::check($value))
+		{
+			$decoded = json_decode($value, true);
+
+			if (json_last_error() === JSON_ERROR_NONE)
+			{
+				return $decoded;
+			}
+		}
+
+		return $value;
+	}
+
+	/**
+	 * Determine whether an array-based field contains the linked reference.
+	 *
+	 * @param   array        $value   The decoded array value.
+	 * @param   string       $target  The field target definition.
+	 * @param   int          $id      The target ID.
+	 * @param   string|null  $guid    The target GUID.
+	 *
+	 * @return  bool
+	 * @since   6.1.6
+	 */
+	protected function arrayFieldContainsLinkedReference(array $value, string $target, int $id, ?string $guid): bool
+	{
+		if ('ARRAY' === $target)
+		{
+			return $this->simpleArrayContainsLinkedReference($value, $id, $guid);
+		}
+
+		if (strpos($target, '.') !== false)
+		{
+			return $this->dotTargetContainsLinkedReference($value, $target, $id, $guid);
+		}
+
+		if (strpos($target, ':') !== false)
+		{
+			return $this->colonTargetContainsLinkedReference($value, $target, $id, $guid);
+		}
+
+		return $this->rowFieldContainsLinkedReference($value, $target, $id, $guid);
+	}
+
+	/**
+	 * Check a simple array for a linked reference.
+	 *
+	 * @param   array        $values  The array values.
+	 * @param   int          $id      The target ID.
+	 * @param   string|null  $guid    The target GUID.
+	 *
+	 * @return  bool
+	 * @since   6.1.6
+	 */
+	protected function simpleArrayContainsLinkedReference(array $values, int $id, ?string $guid): bool
+	{
+		foreach ($values as $_id)
+		{
+			if ($_id == $id || $this->linkedGuid($guid, $_id))
 			{
 				return true;
 			}
 		}
+
 		return false;
+	}
+
+	/**
+	 * Check a dot-notation target for a linked reference.
+	 *
+	 * Supports two-level (e.g. "subfield.key") and three-level (e.g. "subfield.ignored.key")
+	 * dot-separated targets within subform row structures.
+	 *
+	 * @param   array        $value   The array value.
+	 * @param   string       $target  The dot notation target.
+	 * @param   int          $id      The target ID.
+	 * @param   string|null  $guid    The target GUID.
+	 *
+	 * @return  bool
+	 * @since   6.1.6
+	 */
+	protected function dotTargetContainsLinkedReference(array $value, string $target, int $id, ?string $guid): bool
+	{
+		$_target = explode('.', $target);
+		$_size = UtilitiesArrayHelper::check($_target);
+
+		if ($_size === false)
+		{
+			return false;
+		}
+
+		foreach ($value as $row)
+		{
+			if (!is_array($row))
+			{
+				continue;
+			}
+
+			if ($_size == 2 && $this->dotTwoLevelMatch($row, $_target, $id, $guid))
+			{
+				return true;
+			}
+
+			if ($_size == 3 && $this->dotThreeLevelMatch($row, $_target, $id, $guid))
+			{
+				return true;
+			}
+		}
+
+		return false;
+	}
+
+	/**
+	 * Check a two-level dot target match within a single row.
+	 *
+	 * @param   array        $row      The row data.
+	 * @param   array        $_target  The exploded target parts.
+	 * @param   int          $id       The target ID.
+	 * @param   string|null  $guid     The target GUID.
+	 *
+	 * @return  bool
+	 * @since   6.1.6
+	 */
+	protected function dotTwoLevelMatch(array $row, array $_target, int $id, ?string $guid): bool
+	{
+		return (
+			isset($row[$_target[0]][$_target[1]])
+			&& (
+				$row[$_target[0]][$_target[1]] == $id
+				|| $this->linkedGuid($guid, $row[$_target[0]][$_target[1]])
+			)
+		);
+	}
+
+	/**
+	 * Check a three-level dot target match within a single row.
+	 *
+	 * @param   array        $row      The row data.
+	 * @param   array        $_target  The exploded target parts.
+	 * @param   int          $id       The target ID.
+	 * @param   string|null  $guid     The target GUID.
+	 *
+	 * @return  bool
+	 * @since   6.1.6
+	 */
+	protected function dotThreeLevelMatch(array $row, array $_target, int $id, ?string $guid): bool
+	{
+		if (
+			!isset($row[$_target[0]])
+			|| !UtilitiesArrayHelper::check($row[$_target[0]])
+		)
+		{
+			return false;
+		}
+
+		foreach ($row[$_target[0]] as $_row)
+		{
+			if (
+				is_array($_row)
+				&& isset($_row[$_target[2]])
+				&& (
+					$_row[$_target[2]] == $id
+					|| $this->linkedGuid($guid, $_row[$_target[2]])
+				)
+			)
+			{
+				return true;
+			}
+		}
+
+		return false;
+	}
+
+	/**
+	 * Check a colon-notation target for a linked reference.
+	 *
+	 * @param   array        $value   The array value.
+	 * @param   string       $target  The colon notation target.
+	 * @param   int          $id      The target ID.
+	 * @param   string|null  $guid    The target GUID.
+	 *
+	 * @return  bool
+	 * @since   6.1.6
+	 */
+	protected function colonTargetContainsLinkedReference(array $value, string $target, int $id, ?string $guid): bool
+	{
+		$_target = explode(':', $target);
+		$_size = UtilitiesArrayHelper::check($_target);
+
+		if ($_size == 2)
+		{
+			return $this->colonTwoPartMatch($value, $_target, $id, $guid);
+		}
+
+		if ($_size == 3)
+		{
+			return $this->colonThreePartMatch($value, $_target, $id, $guid);
+		}
+
+		return false;
+	}
+
+	/**
+	 * Check a two-part colon target for a linked reference.
+	 *
+	 * @param   array        $value    The array value.
+	 * @param   array        $_target  The exploded target parts.
+	 * @param   int          $id       The target ID.
+	 * @param   string|null  $guid     The target GUID.
+	 *
+	 * @return  bool
+	 * @since   6.1.6
+	 */
+	protected function colonTwoPartMatch(array $value, array $_target, int $id, ?string $guid): bool
+	{
+		foreach ($value as $field_name => $row)
+		{
+			if ($field_name !== $_target[0] || !is_array($row))
+			{
+				continue;
+			}
+
+			foreach ($row as $_key => $_ids)
+			{
+				if (
+					strpos($_key, $_target[1]) !== false
+					&& is_array($_ids)
+					&& (
+						in_array($id, $_ids)
+						|| $this->linkedGuid($guid, $_ids)
+					)
+				)
+				{
+					return true;
+				}
+			}
+		}
+
+		return false;
+	}
+
+	/**
+	 * Check a three-part colon target for a linked reference.
+	 *
+	 * @param   array        $value    The array value.
+	 * @param   array        $_target  The exploded target parts.
+	 * @param   int          $id       The target ID.
+	 * @param   string|null  $guid     The target GUID.
+	 *
+	 * @return  bool
+	 * @since   6.1.6
+	 */
+	protected function colonThreePartMatch(array $value, array $_target, int $id, ?string $guid): bool
+	{
+		foreach ($value as $field_name => $row)
+		{
+			if ($field_name !== $_target[0] || !is_array($row))
+			{
+				continue;
+			}
+
+			foreach ($row as $_key => $_items)
+			{
+				if (
+					strpos($_key, $_target[1]) === false
+					|| !is_array($_items)
+					|| count($_items) === 0
+				)
+				{
+					continue;
+				}
+
+				foreach ($_items as $_item)
+				{
+					if (
+						is_array($_item)
+						&& isset($_item[$_target[2]])
+						&& (
+							$id == $_item[$_target[2]]
+							|| $this->linkedGuid($guid, $_item[$_target[2]])
+						)
+					)
+					{
+						return true;
+					}
+				}
+			}
+		}
+
+		return false;
+	}
+
+	/**
+	 * Check row arrays for a linked reference using a direct field name.
+	 *
+	 * @param   array        $value   The array value.
+	 * @param   string       $target  The target field name.
+	 * @param   int          $id      The target ID.
+	 * @param   string|null  $guid    The target GUID.
+	 *
+	 * @return  bool
+	 * @since   6.1.6
+	 */
+	protected function rowFieldContainsLinkedReference(array $value, string $target, int $id, ?string $guid): bool
+	{
+		foreach ($value as $row)
+		{
+			if (
+				is_array($row)
+				&& isset($row[$target])
+				&& (
+					$row[$target] == $id
+					|| $this->linkedGuid($guid, $row[$target])
+				)
+			)
+			{
+				return true;
+			}
+		}
+
+		return false;
+	}
+
+	/**
+	 * Check whether an XML field contains the linked reference.
+	 *
+	 * @param   mixed        $value   The raw field value (must be a string for XML parsing).
+	 * @param   string       $target  The target XML attribute.
+	 * @param   int          $id      The target ID.
+	 * @param   string|null  $guid    The target GUID.
+	 *
+	 * @return  bool
+	 * @since   6.1.6
+	 */
+	protected function xmlFieldContainsLinkedReference($value, string $target, int $id, ?string $guid): bool
+	{
+		if (
+			!StringHelper::check($value)
+			|| strpos($value, $target . '="') === false
+		)
+		{
+			return false;
+		}
+
+		$_fields = GetHelper::between($value, $target . '="', '"');
+
+		if (!StringHelper::check($_fields))
+		{
+			return false;
+		}
+
+		$_fields = array_map('trim', (array) explode(',', $_fields));
+
+		if (!UtilitiesArrayHelper::check($_fields))
+		{
+			return false;
+		}
+
+		foreach ($_fields as $_field)
+		{
+			if ($_field == $id || $this->linkedGuid($guid, $_field))
+			{
+				return true;
+			}
+		}
+
+		return false;
+	}
+
+	/**
+	 * Build the display value for a found linked item.
+	 *
+	 * @param   object  $item    The database row item.
+	 * @param   array   $search  The linked search configuration.
+	 * @param   array   $match   The match details.
+	 *
+	 * @return  string
+	 * @since   6.1.6
+	 */
+	protected function buildLinkedItemDisplay(object $item, array $search, array $match): string
+	{
+		$nameResult = $this->resolveLinkedName($match, $search);
+		$typeName = $this->resolveTypeName($match, $search);
+		$link = $this->buildLinkedEditButton($item, $search, $nameResult['edit']);
+
+		return Text::_($search['linked']) . $typeName . ' - ' . $nameResult['name'] . ' ' . $link;
+	}
+
+	/**
+	 * Resolve the linked item name.
+	 *
+	 * @param   array  $match   The match details.
+	 * @param   array  $search  The linked search configuration.
+	 *
+	 * @return  array  With keys 'name' (string) and 'edit' (bool).
+	 * @since   6.1.6
+	 */
+	protected function resolveLinkedName(array $match, array $search): array
+	{
+		$linkedName = $match['linked_name'];
+		$linkedNameTable = $match['linked_name_table'];
+		$edit = true;
+
+		if (
+			(is_numeric($linkedName) || GuidHelper::valid($linkedName))
+			&& isset($search['linked_name'])
+		)
+		{
+			$key_field = GuidHelper::valid($linkedName) ? 'guid' : 'id';
+
+			$resolved = GetHelper::var(
+				$linkedNameTable,
+				$linkedName,
+				$key_field,
+				$search['linked_name']
+			);
+
+			if (!$resolved)
+			{
+				return ['name' => Text::_('COM_COMPONENTBUILDER_NO_FOUND'), 'edit' => false];
+			}
+
+			$linkedName = $resolved;
+		}
+
+		return ['name' => (string) $linkedName, 'edit' => $edit];
+	}
+
+	/**
+	 * Resolve the linked item type display.
+	 *
+	 * @param   array  $match   The match details.
+	 * @param   array  $search  The linked search configuration.
+	 *
+	 * @return  string  The formatted type string (empty if none).
+	 * @since   6.1.6
+	 */
+	protected function resolveTypeName(array $match, array $search): string
+	{
+		$typeName = $match['type_name'];
+		$typeNameTable = $match['type_name_table'];
+
+		if (
+			(is_numeric($typeName) || GuidHelper::valid($typeName))
+			&& isset($search['type_name'])
+		)
+		{
+			$key_field = GuidHelper::valid($typeName) ? 'guid' : 'id';
+
+			$resolved = GetHelper::var(
+				$typeNameTable,
+				$typeName,
+				$key_field,
+				$search['type_name']
+			);
+
+			if (!$resolved)
+			{
+				return '';
+			}
+
+			return ' (' . $resolved . ') ';
+		}
+
+		if (StringHelper::check($typeName) || is_numeric($typeName))
+		{
+			return ' (' . $typeName . ') ';
+		}
+
+		return '';
+	}
+
+	/**
+	 * Build the edit button for a linked item.
+	 *
+	 * @param   object  $item    The database row item.
+	 * @param   array   $search  The linked search configuration.
+	 * @param   bool    $edit    Whether edit access is enabled.
+	 *
+	 * @return  string
+	 * @since   6.1.6
+	 */
+	protected function buildLinkedEditButton(object $item, array $search, bool $edit): string
+	{
+		if (!$edit)
+		{
+			return '';
+		}
+
+		return ComponentbuilderHelper::getEditButton(
+			$item->id,
+			$search['table'],
+			$search['tables'],
+			$this->ref
+		);
+	}
+
+	/**
+	 * Check if we have a GUID match.
+	 *
+	 * @param   string|null   $guid     The active power GUID.
+	 * @param   string|array  $setGuid  The linked power GUID.
+	 *
+	 * @return  bool  True if match is found.
+	 * @since   3.0.0
+	 */
+	protected function linkedGuid(?string $guid, $setGuid): bool
+	{
+		if ($guid === null || !GuidHelper::valid($guid))
+		{
+			return false;
+		}
+
+		if (
+			is_string($setGuid)
+			&& GuidHelper::valid($setGuid)
+			&& $guid === $setGuid
+		)
+		{
+			return true;
+		}
+
+		if (is_array($setGuid) && in_array($guid, $setGuid))
+		{
+			return true;
+		}
+
+		return false;
+	}
+
+	/**
+	 * Converts Add Api Type values into human-readable strings.
+	 *
+	 * This function translates numeric values into add API types.
+	 *
+	 * @param string $header The header name (not used in this function but kept for consistency).
+	 * @param mixed  $value  The numeric value representing the Api Type.
+	 *
+	 * @return string The human-readable label for the add API Type. Returns "not set" if the value is invalid.
+	 * @since  6.1.6
+	 */
+	protected function setAddApiType($header, $value)
+	{
+		switch ($value)
+		{
+			case 0:
+				return Text::_('COM_COMPONENTBUILDER_NONE');
+			break;
+			case 1:
+				return Text::_('COM_COMPONENTBUILDER_LIST');
+			break;
+			case 2:
+				return Text::_('COM_COMPONENTBUILDER_BOTH');
+			break;
+			case 3:
+				return Text::_('COM_COMPONENTBUILDER_ITEM');
+			break;
+		}
+		return  Text::_('COM_COMPONENTBUILDER_NOT_SET');
 	}
 
 	/**
@@ -2313,25 +2828,27 @@ class AjaxModel extends ListModel
 	 */
 	public function getButton(string $type, int $size): string
 	{
-		// Ensure the type exists in the button definition array
+		// Ensure the type exists in the button definition array.
 		if (!isset($this->buttonArray[$type]))
 		{
 			return '';
 		}
 
 		$app = $this->app ?? Factory::getApplication();
-		$user = method_exists($this, 'getCurrentUser') ? $this->getCurrentUser() : $this->app->getIdentity();
+		$user = method_exists($this, 'getCurrentUser')
+			? $this->getCurrentUser()
+			: $app->getIdentity();
 
-		// Only add if user is authorized to create this type
-		if (!$user->authorise("{$type}.create", 'com_componentbuilder'))
+		// Only add if user is authorized to create this type.
+		if (!$user->authorise($type . '.create', 'com_componentbuilder'))
 		{
 			return '';
 		}
 
-		// Initialize reference string
-		$ref = '';
+		// Build the destination URL.
+		$url = 'index.php?option=com_componentbuilder&view=' . rawurlencode($type) . '&layout=edit';
 
-		// Get view and ID information
+		// Initialize reference string based on current view context.
 		$values = $this->getViewID();
 
 		if (!empty($values['a_id']) && !empty($values['a_view']))
@@ -2339,49 +2856,44 @@ class AjaxModel extends ListModel
 			$returnUrl = 'index.php?option=com_componentbuilder&view=' . (string) $values['a_view']
 				. '&layout=edit&id=' . (int) $values['a_id'];
 
-			// Add return if available
+			// Add return if available.
 			if (!empty($values['a_return']))
 			{
 				$returnUrl .= '&return=' . (string) $values['a_return'];
 			}
 
-			// Encode and attach return URL
-			$ref = '&amp;return=' . urlencode(base64_encode($returnUrl));
+			$url .= '&amp;return=' . urlencode(base64_encode($returnUrl));
 
-			// Add GUID initialization if available
+			// Add GUID initialization if available.
 			if (!empty($values['a_guid']))
 			{
-				$ref .= '&amp;init_defaults=' . urlencode(json_encode([
+				$url .= '&amp;init_defaults=' . urlencode((string) json_encode([
 					$values['a_view'] => $values['a_guid']
 				]));
 			}
 		}
 
-		// Confirmation text
+		// Confirmation text.
 		$confirmText = Text::_('COM_COMPONENTBUILDER_ALL_UNSAVED_WORK_ON_THIS_PAGE_WILL_BE_LOST_ARE_YOU_SURE_YOU_WANT_TO_CONTINUE');
 
-		// Safe label for title
+		// Safe label for title.
 		$safeType = StringHelper::safe($type, 'W');
 		$title = Text::sprintf('COM_COMPONENTBUILDER_CREATE_NEW_S', $safeType);
 
-		// Build onclick A tag
-		$startATag = sprintf(
-			'onclick="UIkit2.modal.confirm(\'%s\', function(){ window.location.href = \'index.php?option=com_componentbuilder&amp;view=%s&amp;layout=edit%s\' })" href="javascript:void(0)" title="%s"',
-			addslashes($confirmText),
-			htmlspecialchars($type, ENT_QUOTES, 'UTF-8'),
-			$ref,
-			htmlspecialchars($title, ENT_QUOTES, 'UTF-8')
-		);
+		// Build Joomla dialog confirmation flow.
+		$href = ComponentbuilderHelper::buildEditHref($url, $confirmText);
 
-		// Build button markup based on size
+		$attributes = $href . ' title="' . $title . '"';
+
+		// Build button markup based on size.
 		return match ($size) {
 			3 => sprintf(
-				'<a class="btn btn-small btn-success" style="margin:0 0 5px 0;" %s><span class="icon-new icon-white"></span></a>',
-				$startATag
+				'<a class="btn btn-sm btn-success" style="margin:0 0 5px 0;" %s><span class="icon-plus" aria-hidden="true"></span></a>',
+				$attributes
 			),
 			2 => sprintf(
-				'<a class="btn btn-success vdm-button-new" %s><span class="icon-new icon-white"></span> %s</a>',
-				$startATag,
+				'<a class="btn btn-success vdm-button-new" %s><span class="icon-plus" aria-hidden="true"></span> %s</a>',
+				$attributes,
 				Text::_('COM_COMPONENTBUILDER_CREATE')
 			),
 			default => sprintf(
@@ -2391,12 +2903,12 @@ class AjaxModel extends ListModel
 					</div>
 					<div class="controls">
 						<a class="btn btn-success vdm-button-new" %s>
-							<span class="icon-new icon-white"></span> %s
+							<span class="icon-plus" aria-hidden="true"></span> %s
 						</a>
 					</div>
 				</div>',
-				ucwords($type),
-				$startATag,
+				$type,
+				$attributes,
 				Text::_('COM_COMPONENTBUILDER_NEW')
 			),
 		};
@@ -2413,38 +2925,44 @@ class AjaxModel extends ListModel
 	 */
 	public function getButtonID(string $type, int $size): string
 	{
-		// Ensure the type exists in the button definition array
+		// Ensure the type exists in the button definition array.
 		if (!isset($this->buttonArray[$type]))
 		{
 			return '';
 		}
 
-		$app  = $this->app ?? Factory::getApplication();
-		$user = method_exists($this, 'getCurrentUser') ? $this->getCurrentUser() : $app->getIdentity();
+		$app = $this->app ?? Factory::getApplication();
+		$user = method_exists($this, 'getCurrentUser')
+			? $this->getCurrentUser()
+			: $app->getIdentity();
 
-		// Only add if user is authorized to create this type
-		if (!$user->authorise("{$type}.create", 'com_componentbuilder'))
+		// Only add if user is authorized to create this type.
+		if (!$user->authorise($type . '.create', 'com_componentbuilder'))
 		{
 			return '';
 		}
 
-		// Initialize
+		// Initialize.
 		$values = $this->getViewID();
-		$ref = '';
-		$cssClass = 'control-group-' . StringHelper::safe("{$type}-{$size}", 'L', '-');
+		$cssClass = 'control-group-' . StringHelper::safe($type . '-' . $size, 'L', '-');
 
-		// Require both ID and view to continue
+		// Require both ID and view to continue.
 		if (empty($values['a_id']) || empty($values['a_view']))
 		{
-			// Show an info message only for large buttons
+			// Show an info message only for large buttons.
 			if ($size === 1)
 			{
 				return sprintf(
 					'<div class="control-group %s"><div class="alert alert-info">%s</div></div>',
-					$cssClass,
-					Text::sprintf('COM_COMPONENTBUILDER_BUTTON_TO_CREATE_S_WILL_SHOW_ONCE_S_IS_SAVED_FOR_THE_FIRST_TIME',
-						StringHelper::safe($type, 'w'),
-						StringHelper::safe($values['a_view'] ?? '', 'w')
+					htmlspecialchars($cssClass, ENT_QUOTES, 'UTF-8'),
+					htmlspecialchars(
+						Text::sprintf(
+							'Button to create %s will show once %s is saved for the first time.',
+							StringHelper::safe($type, 'w'),
+							StringHelper::safe((string) ($values['a_view'] ?? ''), 'w')
+						),
+						ENT_QUOTES,
+						'UTF-8'
 					)
 				);
 			}
@@ -2452,105 +2970,101 @@ class AjaxModel extends ListModel
 			return '';
 		}
 
-		// Build return URL
-		$returnUrl = sprintf(
-			'index.php?option=com_componentbuilder&view=%s&layout=edit&id=%d',
-			(string) $values['a_view'],
-			(int) $values['a_id']
-		);
+		// Build return URL.
+		$returnUrl = 'index.php?option=com_componentbuilder&view=' . (string) $values['a_view']
+			. '&layout=edit&id=' . (int) $values['a_id'];
 
 		if (!empty($values['a_return']))
 		{
 			$returnUrl .= '&return=' . (string) $values['a_return'];
 		}
 
-		// Base64 encode the return URL
 		$ref = '&amp;return=' . urlencode(base64_encode($returnUrl));
 
-		// Key get value defaults to the item ID
+		// Key value defaults to the item ID.
 		$keyValue = $values['a_id'];
 
-		// Add GUID defaults if available
+		// Add GUID defaults if available.
 		if (!empty($values['a_guid']))
 		{
-			$ref .= '&amp;init_defaults=' . urlencode(json_encode([
-				$values['a_view'] => $values['a_guid']
-			]));
+			$ref .= '&amp;init_defaults=' . urlencode((string) json_encode(
+				[
+					$values['a_view'] => $values['a_guid'],
+				],
+				JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES
+			));
 			$keyValue = $values['a_guid'];
 		}
 
-		// Determine if the record already exists
+		// Determine if the related record already exists.
 		$id = GetHelper::var(
-			$type, $keyValue, $values['a_view'], 'id'
+			$type,
+			$keyValue,
+			$values['a_view'],
+			'id'
 		);
 
-		$isExisting = (!empty($id) && $id > 0);
+		$isExisting = (!empty($id) && (int) $id > 0);
 
-		// Determine button details
+		// Determine button details.
 		if ($isExisting)
 		{
-			$buttonText = Text::sprintf('COM_COMPONENTBUILDER_EDIT_S_FOR_THIS_S',
+			$buttonText = Text::sprintf(
+				'Edit %s for this %s',
 				StringHelper::safe($type, 'w'),
 				StringHelper::safe($values['a_view'], 'w')
 			);
 			$buttonTextSmall = Text::_('COM_COMPONENTBUILDER_EDIT');
-			$editLink = sprintf(
-				'index.php?option=com_componentbuilder&amp;view=%s&amp;task=%s.edit&amp;id=%d',
-				$this->buttonArray[$type],
-				$type,
-				(int) $id
-			);
-			$icon = 'icon-apply';
+			$targetUrl = 'index.php?option=com_componentbuilder&view=' . $this->buttonArray[$type]
+				. '&task=' . $type . '.edit&id=' . (int) $id . $ref;
+			$icon = 'icon-edit';
 		}
 		else
 		{
-			$buttonText = Text::sprintf('COM_COMPONENTBUILDER_CREATE_S_FOR_THIS_S',
+			$buttonText = Text::sprintf(
+				'Create %s for this %s',
 				StringHelper::safe($type, 'w'),
 				StringHelper::safe($values['a_view'], 'w')
 			);
 			$buttonTextSmall = Text::_('COM_COMPONENTBUILDER_CREATE');
-			$editLink = sprintf(
-				'index.php?option=com_componentbuilder&amp;view=%s&amp;layout=edit',
-				$type
-			);
-			$icon = 'icon-new';
+			$targetUrl = 'index.php?option=com_componentbuilder&view=' . $type
+				. '&layout=edit' . $ref;
+			$icon = 'icon-plus';
 		}
 
-		// Confirmation message
+		// Confirmation message aligned with the Joomla dialog flow used in your example.
 		$confirmText = Text::_('COM_COMPONENTBUILDER_ALL_UNSAVED_WORK_ON_THIS_PAGE_WILL_BE_LOST_ARE_YOU_SURE_YOU_WANT_TO_CONTINUE');
 
-		// Build onclick attribute
-		$onclick = sprintf(
-			'onclick="UIkit2.modal.confirm(\'%s\', function(){ window.location.href = \'%s%s\' })"',
-			addslashes($confirmText),
-			$editLink,
-			$ref
-		);
+		$href = ComponentbuilderHelper::buildEditHref($targetUrl, $confirmText);
 
-		// Common button HTML
-		$buttonStart = sprintf(
-			'<a class="btn btn-success vdm-button-new" %s href="javascript:void(0)" title="%s">',
-			$onclick,
-			htmlspecialchars($buttonText, ENT_QUOTES, 'UTF-8')
-		);
+		$buttonAttributes = $href . ' title="' . $buttonText . '"';
 
-		// Build button markup
+		// Build button markup.
 		$output = [];
 
 		if ($size === 1)
 		{
-			$output[] = sprintf('<div class="control-group %s">', $cssClass);
-			$output[] = '<div class="control-label">';
-			$output[] = '<label>' . StringHelper::safe($type, 'Ww') . '</label>';
-			$output[] = '</div><div class="controls">';
-			$output[] = $buttonStart;
-			$output[] = sprintf('<span class="%s icon-white"></span> %s', $icon, $buttonText);
-			$output[] = '</a></div></div>';
+			$output[] = '<div class="control-group ' . $cssClass . '">';
+			$output[] = '	<div class="control-label">';
+			$output[] = '		<label>' . StringHelper::safe($type, 'Ww') . '</label>';
+			$output[] = '	</div>';
+			$output[] = '	<div class="controls">';
+			$output[] = '		<a class="btn btn-success vdm-button-new" ' . $buttonAttributes . '>';
+			$output[] = '			<span class="' . $icon . '" aria-hidden="true"></span> ' . $buttonText;
+			$output[] = '		</a>';
+			$output[] = '	</div>';
+			$output[] = '</div>';
 		}
 		elseif ($size === 2)
 		{
-			$output[] = $buttonStart;
-			$output[] = sprintf('<span class="%s icon-white"></span> %s', $icon, $buttonTextSmall);
+			$output[] = '<a class="btn btn-success vdm-button-new" ' . $buttonAttributes . '>';
+			$output[] = '	<span class="' . $icon . '" aria-hidden="true"></span> ' . $buttonTextSmall;
+			$output[] = '</a>';
+		}
+		elseif ($size === 3)
+		{
+			$output[] = '<a class="btn btn-sm btn-success" ' . $buttonAttributes . '>';
+			$output[] = '	<span class="' . $icon . '" aria-hidden="true"></span>';
 			$output[] = '</a>';
 		}
 
@@ -2975,137 +3489,497 @@ class AjaxModel extends ListModel
 	}
 
 	// Used in template
+	/**
+	 * Get template code snippet details for other published templates.
+	 *
+	 * @param   int  $id  The current template ID to exclude.
+	 *
+	 * @return  string|false  The generated Bootstrap table HTML, or false when no templates are found.
+	 * @since   3.0.0
+	 */
 	public function getTemplateDetails($id)
 	{
-		// set table
-		$table = false;
-		// Get a db connection.
-		$db = Factory::getDbo();	
-		// Create a new query object.
-		$query = $db->getQuery(true);
-		$query->select($db->quoteName(array('a.id', 'a.alias', 'a.template', 'b.name', 'a.dynamic_get')));
-		$query->from($db->quoteName('#__componentbuilder_template', 'a'));
-		$query->join('LEFT', $db->quoteName('#__componentbuilder_dynamic_get', 'b') . ' ON (' . $db->quoteName('b.id') . ' = ' . $db->quoteName('a.dynamic_get') . ')');
-		$query->where($db->quoteName('a.id') . ' != '. (int) $id);
-		$query->where($db->quoteName('a.published') . ' = 1');
-		// Reset the query using our newly populated query object.
-		$db->setQuery($query);
-		$db->execute();
-		if ($db->getNumRows())
-		{ 
-			$results = $db->loadObjectList();
-			$templateString = array();
-			// get the view name & id
-			$values = $this->getViewID();
-			// set a return value
-			$return_url = 'index.php?option=com_componentbuilder&view=' . (string) $values['a_view'] .  '&layout=edit&id=' . (int) $values['a_id'];
-			if (isset($values['a_return']))
-			{
-				$return_url .= '&return=' . (string) $values['a_return'];
-			}
-			// start the ref builder
-			$ref = '';
-			if (!is_null($values['a_id']) && $values['a_id'] > 0 && strlen($values['a_view']))
-			{
-				// set the return ref
-				$ref = '&ref=' . $values['a_view'] . '&refid=' . $values['a_id'] . '&return=' . urlencode(base64_encode($return_url));
-			}
-			// load the template data
-			foreach ($results as $result)
-			{
-				$edit = (($button = ComponentbuilderHelper::getEditButton($result->id, 'template', 'templates', $ref)) !== false) ? $button : '';
-				$editget = (isset($result->dynamic_get) && $result->dynamic_get > 0 && ($button = ComponentbuilderHelper::getEditButton($result->dynamic_get, 'dynamic_get', 'dynamic_gets', $ref)) !== false) ? $button : '';
-				$result->name = (StringHelper::check($result->name)) ? $result->name : Text::_('COM_COMPONENTBUILDER_NONE_SELECTED');
-				$templateString[] = "<td><b>".$result->name."</b> ".$editget."</td><td><code>&lt;?php echo \$this->loadTemplate('".StringHelper::safe($result->alias)."'); ?&gt;</code> ".$edit."</td>";
-			}
-			// build the table
-			$table = '<h2>' . Text::_('COM_COMPONENTBUILDER_TEMPLATE_CODE_SNIPPETS') . '</h2><div class="uk-scrollable-box"><table class="uk-table uk-table-hover uk-table-striped uk-table-condensed">';
-			$table .= '<caption>' . Text::_('COM_COMPONENTBUILDER_TO_ADD_SIMPLY_COPY_AND_PAST_THE_SNIPPET_INTO_YOUR_CODE') . '</caption>';
-			$table .= '<thead><tr><th>' . Text::_('COM_COMPONENTBUILDER_NAME_OF_DYNAMICGET') . '</th><th>' . Text::_('COM_COMPONENTBUILDER_SNIPPET') . '</th></thead>';
-			$table .= '<tbody><tr>' . implode("</tr><tr>", $templateString) . "</tr></tbody></table></div>";
+		// Get the matching template records.
+		$results = $this->getPublishedTemplateDetails((int) $id);
+
+		if (empty($results))
+		{
+			return false;
 		}
-		return $table;
+
+		// Get the current view context used for edit references.
+		$values = $this->getViewID();
+		$ref    = $this->buildTemplateReference($values);
+
+		// Build all table rows.
+		$rows = [];
+
+		foreach ($results as $result)
+		{
+			$rows[] = $this->buildTemplateDetailsRow($result, $ref);
+		}
+
+		// Build and return the Bootstrap table.
+		return $this->buildTemplateDetailsTable($rows);
+	}
+
+	/**
+	 * Get all published template details except the current one.
+	 *
+	 * @param   int  $id  The current template ID to exclude.
+	 *
+	 * @return  array  The matching template records.
+	 * @since   6.1.6
+	 */
+	protected function getPublishedTemplateDetails(int $id): array
+	{
+		$db    = $this->getDatabase();
+		$query = $db->getQuery(true);
+
+		$query->select(
+			$db->quoteName(
+				[
+					'a.id',
+					'a.alias',
+					'a.template',
+					'b.name',
+					'a.dynamic_get',
+				]
+			)
+		)
+			->from($db->quoteName('#__componentbuilder_template', 'a'))
+			->join(
+				'LEFT',
+				$db->quoteName('#__componentbuilder_dynamic_get', 'b')
+				. ' ON (' . $db->quoteName('b.guid') . ' = ' . $db->quoteName('a.dynamic_get') . ')'
+			)
+			->where($db->quoteName('a.id') . ' != ' . $id)
+			->where($db->quoteName('a.published') . ' = 1');
+
+		$db->setQuery($query);
+
+		return (array) $db->loadObjectList();
+	}
+
+	/**
+	 * Build the template edit reference string.
+	 *
+	 * @param   array  $values  The current view values.
+	 *
+	 * @return  string  The reference query string.
+	 * @since   6.1.6
+	 */
+	protected function buildTemplateReference(array $values): string
+	{
+		$view = isset($values['a_view']) ? (string) $values['a_view'] : '';
+		$id   = isset($values['a_id']) ? (int) $values['a_id'] : 0;
+
+		if ($id <= 0 || $view === '')
+		{
+			return '';
+		}
+
+		$returnUrl = 'index.php?option=com_componentbuilder&view=' . $view . '&layout=edit&id=' . $id;
+
+		if (isset($values['a_return']))
+		{
+			$returnUrl .= '&return=' . (string) $values['a_return'];
+		}
+
+		return '&ref=' . $view . '&refid=' . $id . '&return=' . urlencode(base64_encode($returnUrl));
+	}
+
+	/**
+	 * Build a single template details table row.
+	 *
+	 * @param   object  $result  The template result object.
+	 * @param   string  $ref     The reference query string.
+	 *
+	 * @return  string  The HTML table row.
+	 * @since   6.1.6
+	 */
+	protected function buildTemplateDetailsRow(object $result, string $ref): string
+	{
+		$edit    = $this->getTemplateEditButton((int) $result->id, $ref);
+		$editGet = $this->getTemplateDynamicGetEditButton($result, $ref);
+		$name    = $this->getTemplateDynamicGetName($result);
+		$snippet = $this->buildTemplateSnippet($result);
+
+		return '<tr>'
+			. '<td><strong>' . $name . '</strong> ' . $editGet . '</td>'
+			. '<td><code>' . $snippet . '</code> ' . $edit . '</td>'
+			. '</tr>';
+	}
+
+	/**
+	 * Get the template edit button HTML.
+	 *
+	 * @param   int     $id   The template ID.
+	 * @param   string  $ref  The reference query string.
+	 *
+	 * @return  string  The button HTML or empty string.
+	 * @since   6.1.6
+	 */
+	protected function getTemplateEditButton(int $id, string $ref): string
+	{
+		$button = ComponentbuilderHelper::getEditButton($id, 'template', 'templates', $ref);
+
+		return ($button !== false) ? $button : '';
+	}
+
+	/**
+	 * Get the dynamic get edit button HTML for the template.
+	 *
+	 * @param   object  $result  The template result object.
+	 * @param   string  $ref     The reference query string.
+	 *
+	 * @return  string  The button HTML or empty string.
+	 * @since   6.1.6
+	 */
+	protected function getTemplateDynamicGetEditButton(object $result, string $ref): string
+	{
+		if (!isset($result->dynamic_get) || (int) $result->dynamic_get <= 0)
+		{
+			return '';
+		}
+
+		$button = ComponentbuilderHelper::getEditButton((int) $result->dynamic_get, 'dynamic_get', 'dynamic_gets', $ref);
+
+		return ($button !== false) ? $button : '';
+	}
+
+	/**
+	 * Get the display name of the dynamic get for the template.
+	 *
+	 * @param   object  $result  The template result object.
+	 *
+	 * @return  string  The display name.
+	 * @since   6.1.6
+	 */
+	protected function getTemplateDynamicGetName(object $result): string
+	{
+		if (isset($result->name) && StringHelper::check($result->name))
+		{
+			return (string) $result->name;
+		}
+
+		return Text::_('COM_COMPONENTBUILDER_NONE_SELECTED');
+	}
+
+	/**
+	 * Build the template snippet string.
+	 *
+	 * @param   object  $result  The template result object.
+	 *
+	 * @return  string  The template snippet.
+	 * @since   6.1.6
+	 */
+	protected function buildTemplateSnippet(object $result): string
+	{
+		$alias = StringHelper::safe((string) $result->alias);
+
+		return "&lt;?php echo \$this->loadTemplate('" . $alias . "'); ?&gt;";
+	}
+
+	/**
+	 * Build the Bootstrap-based template details table.
+	 *
+	 * @param   array  $rows  The table rows.
+	 *
+	 * @return  string  The full HTML table output.
+	 * @since   6.1.6
+	 */
+	protected function buildTemplateDetailsTable(array $rows): string
+	{
+		$html = [];
+		$html[] = '<div class="mt-4">';
+		$html[] = '<h2>' . Text::_('COM_COMPONENTBUILDER_TEMPLATE_CODE_SNIPPETS') . '</h2>';
+		$html[] = '<p class="text-muted">' . Text::_('COM_COMPONENTBUILDER_TO_ADD_SIMPLY_COPY_AND_PAST_THE_SNIPPET_INTO_YOUR_CODE') . '</p>';
+		$html[] = '<div class="border rounded p-2 bg-body-tertiary" style="max-height: 380px; overflow: auto;">';
+		$html[] = '<div class="table-responsive">';
+		$html[] = '<table class="table table-striped table-hover table-sm align-middle mb-0">';
+		$html[] = '<caption class="caption-top">' . Text::_('COM_COMPONENTBUILDER_AVAILABLE_TEMPLATE_RENDERING_SNIPPETS') . '</caption>';
+		$html[] = '<thead>';
+		$html[] = '<tr>';
+		$html[] = '<th scope="col">' . Text::_('COM_COMPONENTBUILDER_NAME_OF_DYNAMICGET') . '</th>';
+		$html[] = '<th scope="col">' . Text::_('COM_COMPONENTBUILDER_SNIPPET') . '</th>';
+		$html[] = '</tr>';
+		$html[] = '</thead>';
+		$html[] = '<tbody>';
+		$html[] = implode('', $rows);
+		$html[] = '</tbody>';
+		$html[] = '</table>';
+		$html[] = '</div>';
+		$html[] = '</div>';
+		$html[] = '</div>';
+
+		return implode('', $html);
 	}
 
 	// Used in layout
+	/**
+	 * Get layout code snippet details for other published layouts.
+	 *
+	 * @param   int  $id  The current layout ID to exclude.
+	 *
+	 * @return  string|false  The generated Bootstrap table HTML, or false when no layouts are found.
+	 * @since   3.0.0
+	 */
 	public function getLayoutDetails($id)
 	{
-		// set table
-		$table = false;
-		// Get a db connection.
-		$db = Factory::getDbo();	
-		// Create a new query object.
-		$query = $db->getQuery(true);
-		$query->select($db->quoteName(array('a.id','a.alias','a.layout','b.getcustom','b.gettype','b.name','a.dynamic_get')));
-		$query->from($db->quoteName('#__componentbuilder_layout', 'a'));
-		$query->join('LEFT', $db->quoteName('#__componentbuilder_dynamic_get', 'b') . ' ON (' . $db->quoteName('b.id') . ' = ' . $db->quoteName('a.dynamic_get') . ')');
-		$query->where($db->quoteName('a.id') . ' != '.(int) $id);
-		$query->where($db->quoteName('a.published') . ' = 1');
-		// Reset the query using our newly populated query object.
-		$db->setQuery($query);
-		$db->execute();
-		if ($db->getNumRows())
-		{ 
-			$results = $db->loadObjectList();
-			$layoutString = array();
-			// get the view name & id
-			$values = $this->getViewID();
-			// set a return value
-			$return_url = 'index.php?option=com_componentbuilder&view=' . (string) $values['a_view'] .  '&layout=edit&id=' . (int) $values['a_id'];
-			if (isset($values['a_return']))
-			{
-				$return_url .= '&return=' . (string) $values['a_return'];
-			}
-			// start the ref builder
-			$ref = '';
-			if (!is_null($values['a_id']) && $values['a_id'] > 0 && strlen($values['a_view']))
-			{
-				// set the return ref
-				$ref = '&ref=' . $values['a_view'] . '&refid=' . $values['a_id'] . '&return=' . urlencode(base64_encode($return_url));
-			}
-			foreach ($results as $result)
-			{
-				$edit = (($button = ComponentbuilderHelper::getEditButton($result->id, 'layout', 'layouts', $ref)) !== false) ? $button : '';
-				$editget = (isset($result->dynamic_get) && $result->dynamic_get > 0 && ($button = ComponentbuilderHelper::getEditButton($result->dynamic_get, 'dynamic_get', 'dynamic_gets', $ref)) !== false) ? $button : '';
-				$result->name = (StringHelper::check($result->name)) ? $result->name : Text::_('COM_COMPONENTBUILDER_NONE_SELECTED');
+		// Get the matching layout records.
+		$results = $this->getPublishedLayoutDetails((int) $id);
 
-				switch ($result->gettype)
-				{
-					case 1:
-						// single
-						$layoutString[] = "<td><b>" . $result->name . "</b> " . $editget . "</td><td><code>&lt;?php echo LayoutHelper::render('" . StringHelper::safe($result->alias) . "', \$this->item); ?&gt;</code> " . $edit . "</td>";
-					break;
-					case 2:
-						// list
-						$layoutString[] = "<td><b>" . $result->name . "</b> " . $editget . "</td><td><code>&lt;?php echo LayoutHelper::render('" . StringHelper::safe($result->alias) . "', \$this->items); ?&gt;</code> " . $edit . "</td>";
-					break;
-					case 3:
-					case 4:
-						// custom
-						$result->getcustom = StringHelper::safe($result->getcustom);
-						if (substr($result->getcustom, 0, strlen('get')) == 'get')
-						{
-							$varName = substr($result->getcustom, strlen('get'));
-						}
-						else
-						{
-							$varName = $result->getcustom;
-						}
-						$layoutString[] = "<td><b>" . $result->name . "</b> " . $editget . "</td><td><code>&lt;?php echo LayoutHelper::render('" . StringHelper::safe($result->alias) . "', \$this->" . $varName . "); ?&gt;</code> " . $edit . "</td>";
-					break;
-					default:
-						// no get
-						$layoutString[] = "<td>" . Text::_('COM_COMPONENTBUILDER_NONE_SELECTED') . "</td><td><code>&lt;?php echo LayoutHelper::render('" . StringHelper::safe($result->alias) . "', [?]); ?&gt;</code> " . $edit . "</td>";
-					break;
-				}
-			}
-			// build the table
-			$table = '<h2>' . Text::_('COM_COMPONENTBUILDER_LAYOUT_CODE_SNIPPETS') . '</h2><div class="uk-scrollable-box"><table class="uk-table uk-table-hover uk-table-striped uk-table-condensed">';
-			$table .= '<caption>' . Text::_('COM_COMPONENTBUILDER_TO_ADD_SIMPLY_COPY_AND_PAST_THE_SNIPPET_INTO_YOUR_CODE') . '</caption>';
-			$table .= '<thead><tr><th>' . Text::_('COM_COMPONENTBUILDER_NAME_OF_DYNAMICGET') . '</th><th>' . Text::_('COM_COMPONENTBUILDER_SNIPPET') . '</th></thead>';
-			$table .= '<tbody><tr>' . implode("</tr><tr>",$layoutString) . "</tr></tbody></table></div>";
+		if (empty($results))
+		{
+			return false;
 		}
-		return $table;
+
+		// Get the current view context used for edit references.
+		$values = $this->getViewID();
+		$ref    = $this->buildLayoutReference($values);
+
+		// Build all table rows.
+		$rows = [];
+
+		foreach ($results as $result)
+		{
+			$rows[] = $this->buildLayoutDetailsRow($result, $ref);
+		}
+
+		// Build and return the Bootstrap table.
+		return $this->buildLayoutDetailsTable($rows);
+	}
+
+	/**
+	 * Get all published layout details except the current one.
+	 *
+	 * @param   int  $id  The current layout ID to exclude.
+	 *
+	 * @return  array  The matching layout records.
+	 * @since   6.1.6
+	 */
+	protected function getPublishedLayoutDetails(int $id): array
+	{
+		$db    = $this->getDatabase();
+		$query = $db->getQuery(true);
+
+		$query->select(
+			$db->quoteName(
+				[
+					'a.id',
+					'a.alias',
+					'a.layout',
+					'b.getcustom',
+					'b.gettype',
+					'b.name',
+					'a.dynamic_get',
+				]
+			)
+		)
+			->from($db->quoteName('#__componentbuilder_layout', 'a'))
+			->join(
+				'LEFT',
+				$db->quoteName('#__componentbuilder_dynamic_get', 'b')
+				. ' ON (' . $db->quoteName('b.guid') . ' = ' . $db->quoteName('a.dynamic_get') . ')'
+			)
+			->where($db->quoteName('a.id') . ' != ' . $id)
+			->where($db->quoteName('a.published') . ' = 1');
+
+		$db->setQuery($query);
+
+		return (array) $db->loadObjectList();
+	}
+
+	/**
+	 * Build the layout edit reference string.
+	 *
+	 * @param   array  $values  The current view values.
+	 *
+	 * @return  string  The reference query string.
+	 * @since   6.1.6
+	 */
+	protected function buildLayoutReference(array $values): string
+	{
+		$view = isset($values['a_view']) ? (string) $values['a_view'] : '';
+		$id   = isset($values['a_id']) ? (int) $values['a_id'] : 0;
+
+		if ($id <= 0 || $view === '')
+		{
+			return '';
+		}
+
+		$returnUrl = 'index.php?option=com_componentbuilder&view=' . $view . '&layout=edit&id=' . $id;
+
+		if (isset($values['a_return']))
+		{
+			$returnUrl .= '&return=' . (string) $values['a_return'];
+		}
+
+		return '&ref=' . $view . '&refid=' . $id . '&return=' . urlencode(base64_encode($returnUrl));
+	}
+
+	/**
+	 * Build a single layout details table row.
+	 *
+	 * @param   object  $result  The layout result object.
+	 * @param   string  $ref     The reference query string.
+	 *
+	 * @return  string  The HTML table row.
+	 * @since   6.1.6
+	 */
+	protected function buildLayoutDetailsRow(object $result, string $ref): string
+	{
+		$edit    = $this->getLayoutEditButton((int) $result->id, $ref);
+		$editGet = $this->getDynamicGetEditButton($result, $ref);
+		$name    = $this->getDynamicGetName($result);
+		$snippet = $this->buildLayoutSnippet($result);
+
+		return '<tr>'
+			. '<td><strong>' . $name . '</strong> ' . $editGet . '</td>'
+			. '<td><code>' . $snippet . '</code> ' . $edit . '</td>'
+			. '</tr>';
+	}
+
+	/**
+	 * Get the layout edit button HTML.
+	 *
+	 * @param   int     $id   The layout ID.
+	 * @param   string  $ref  The reference query string.
+	 *
+	 * @return  string  The button HTML or empty string.
+	 * @since   6.1.6
+	 */
+	protected function getLayoutEditButton(int $id, string $ref): string
+	{
+		$button = ComponentbuilderHelper::getEditButton($id, 'layout', 'layouts', $ref);
+
+		return ($button !== false) ? $button : '';
+	}
+
+	/**
+	 * Get the dynamic get edit button HTML.
+	 *
+	 * @param   object  $result  The layout result object.
+	 * @param   string  $ref     The reference query string.
+	 *
+	 * @return  string  The button HTML or empty string.
+	 * @since   6.1.6
+	 */
+	protected function getDynamicGetEditButton(object $result, string $ref): string
+	{
+		if (!isset($result->dynamic_get) || (int) $result->dynamic_get <= 0)
+		{
+			return '';
+		}
+
+		$button = ComponentbuilderHelper::getEditButton((int) $result->dynamic_get, 'dynamic_get', 'dynamic_gets', $ref);
+
+		return ($button !== false) ? $button : '';
+	}
+
+	/**
+	 * Get the display name of the dynamic get.
+	 *
+	 * @param   object  $result  The layout result object.
+	 *
+	 * @return  string  The display name.
+	 * @since   6.1.6
+	 */
+	protected function getDynamicGetName(object $result): string
+	{
+		if (isset($result->name) && StringHelper::check($result->name))
+		{
+			return (string) $result->name;
+		}
+
+		return Text::_('COM_COMPONENTBUILDER_NONE_SELECTED');
+	}
+
+	/**
+	 * Build the layout snippet string.
+	 *
+	 * @param   object  $result  The layout result object.
+	 *
+	 * @return  string  The layout snippet.
+	 * @since   6.1.6
+	 */
+	protected function buildLayoutSnippet(object $result): string
+	{
+		$alias = StringHelper::safe((string) $result->alias);
+
+		switch ((int) $result->gettype)
+		{
+			case 1:
+				return "&lt;?php echo Joomla__" . "_7ab82272_0b3d_4bb1_af35_e63a096cfe0b___Power::render('" . $alias . "', \$this->item); ?&gt;";
+
+			case 2:
+				return "&lt;?php echo Joomla__" . "_7ab82272_0b3d_4bb1_af35_e63a096cfe0b___Power::render('" . $alias . "', \$this->items); ?&gt;";
+
+			case 3:
+			case 4:
+				$varName = $this->getCustomVariableName((string) $result->getcustom);
+
+				return "&lt;?php echo Joomla__" . "_7ab82272_0b3d_4bb1_af35_e63a096cfe0b___Power::render('" . $alias . "', \$this->" . $varName . "); ?&gt;";
+
+			default:
+				return "&lt;?php echo Joomla__" . "_7ab82272_0b3d_4bb1_af35_e63a096cfe0b___Power::render('" . $alias . "', [?]); ?&gt;";
+		}
+	}
+
+	/**
+	 * Get the custom variable name from the dynamic get method name.
+	 *
+	 * @param   string  $getcustom  The custom get name.
+	 *
+	 * @return  string  The variable name.
+	 * @since   6.1.6
+	 */
+	protected function getCustomVariableName(string $getcustom): string
+	{
+		$getcustom = StringHelper::safe($getcustom);
+
+		if (substr($getcustom, 0, 3) === 'get')
+		{
+			return (string) substr($getcustom, 3);
+		}
+
+		return $getcustom;
+	}
+
+	/**
+	 * Build the Bootstrap-based layout details table.
+	 *
+	 * @param   array  $rows  The table rows.
+	 *
+	 * @return  string  The full HTML table output.
+	 * @since   6.1.6
+	 */
+	protected function buildLayoutDetailsTable(array $rows): string
+	{
+		$html = [];
+		$html[] = '<div class="mt-4">';
+		$html[] = '<h2>' . Text::_('COM_COMPONENTBUILDER_LAYOUT_CODE_SNIPPETS') . '</h2>';
+		$html[] = '<p class="text-muted">' . Text::_('COM_COMPONENTBUILDER_TO_ADD_SIMPLY_COPY_AND_PAST_THE_SNIPPET_INTO_YOUR_CODE') . '</p>';
+		$html[] = '<div class="border rounded p-2 bg-body-tertiary" style="max-height: 380px; overflow: auto;">';
+		$html[] = '<div class="table-responsive">';
+		$html[] = '<table class="table table-striped table-hover table-sm align-middle mb-0">';
+		$html[] = '<caption class="caption-top">' . Text::_('COM_COMPONENTBUILDER_AVAILABLE_LAYOUT_RENDERING_SNIPPETS') . '</caption>';
+		$html[] = '<thead>';
+		$html[] = '<tr>';
+		$html[] = '<th scope="col">' . Text::_('COM_COMPONENTBUILDER_NAME_OF_DYNAMICGET') . '</th>';
+		$html[] = '<th scope="col">' . Text::_('COM_COMPONENTBUILDER_SNIPPET') . '</th>';
+		$html[] = '</tr>';
+		$html[] = '</thead>';
+		$html[] = '<tbody>';
+		$html[] = implode('', $rows);
+		$html[] = '</tbody>';
+		$html[] = '</table>';
+		$html[] = '</div>';
+		$html[] = '</div>';
+		$html[] = '</div>';
+
+		return implode('', $html);
 	}
 
 	// Used in dynamic_get
@@ -4375,7 +5249,7 @@ class AjaxModel extends ListModel
 			return false;
 		}
 
-		$db = Factory::getDbo();
+		$db = $this->getDatabase();
 		$query = $db->getQuery(true)
 			->select($db->quoteName('a.id'))
 			->from($db->quoteName('#__componentbuilder_snippet', 'a'))
@@ -4457,7 +5331,7 @@ class AjaxModel extends ListModel
 			return false;
 		}
 
-		$db = Factory::getDbo();
+		$db = $this->getDatabase();
 		$query = $db->getQuery(true);
 
 		$query
@@ -4531,126 +5405,298 @@ class AjaxModel extends ListModel
 	}
 
 	// Used in validation_rule
+	/**
+	 * Get the source code body of an existing Joomla validation rule.
+	 *
+	 * This method loads the PHP source file of a known Joomla validation rule
+	 * and extracts the code inside the rule class body.
+	 *
+	 * The original production logic is preserved by first attempting the known
+	 * and working Joomla class split pattern:
+	 * FormRule followed by a new line and opening brace.
+	 *
+	 * A few lightweight fallback patterns are then checked to improve tolerance
+	 * for formatting differences without adding unnecessary complexity.
+	 *
+	 * The return structure is preserved for backward compatibility:
+	 *
+	 * [
+	 *     'values' => '...class body code...'
+	 * ]
+	 *
+	 * @param   string  $name  The validation rule name.
+	 *
+	 * @return  array|bool  The extracted class body on success, or false on failure.
+	 * @since   6.1.6
+	 */
 	public function getExistingValidationRuleCode($name)
 	{
-		// make sure we have all the exiting rule names
-		if ($names = ComponentbuilderHelper::getExistingValidationRuleNames())
+		// Make sure we have all the existing rule names.
+		if (!($names = ComponentbuilderHelper::getExistingValidationRuleNames()))
 		{
-			// check that this is a valid rule file
-			if (UtilitiesArrayHelper::check($names) && in_array($name, $names))
-			{
-				// get the full path to rule file
-				$path = JPATH_LIBRARIES . '/src/Form/Rule/'.$name.'Rule.php';
-				// get all the code
-				if ($code = FileHelper::getContent($path))
-				{
-					// remove the class details and the ending }
-					$codeArray = (array) explode("FormRule\n{\n", $code);
-					if (isset($codeArray[1]))
-					{
-						return array('values' => rtrim(rtrim(rtrim($codeArray[1]),'}')));
-					}
-				}
-			}
+			return false;
 		}
-		return false;
+
+		// Check that this is a valid rule file.
+		if (
+			!UtilitiesArrayHelper::check($names)
+			|| !in_array($name, $names, true)
+		)
+		{
+			return false;
+		}
+
+		// Get the full path to the rule file.
+		$path = JPATH_LIBRARIES . '/src/Form/Rule/' . $name . 'Rule.php';
+
+		if (!is_file($path) || !is_readable($path))
+		{
+			return false;
+		}
+
+		// Get all the code.
+		if (!($code = FileHelper::getContent($path)))
+		{
+			return false;
+		}
+
+		// Preserve the original working production pattern first.
+		$codeArray = explode("FormRule\n{\n", $code, 2);
+
+		// Add a few lightweight fallbacks for formatting differences.
+		if (!isset($codeArray[1]))
+		{
+			$codeArray = explode("FormRule\r\n{\r\n", $code, 2);
+		}
+		if (!isset($codeArray[1]))
+		{
+			$codeArray = explode("FormRule\r\n{\n", $code, 2);
+		}
+		if (!isset($codeArray[1]))
+		{
+			$codeArray = explode("FormRule\n{\r\n", $code, 2);
+		}
+		if (!isset($codeArray[1]))
+		{
+			$codeArray = explode("FormRule\n{", $code, 2);
+		}
+		if (!isset($codeArray[1]))
+		{
+			$codeArray = explode("FormRule\r\n{", $code, 2);
+		}
+		if (!isset($codeArray[1]))
+		{
+			$codeArray = explode("FormRule {", $code, 2);
+		}
+		if (!isset($codeArray[1]))
+		{
+			$codeArray = explode("FormRule\t{", $code, 2);
+		}
+
+		if (!isset($codeArray[1]))
+		{
+			return false;
+		}
+
+		return ['values' => rtrim(rtrim(rtrim($codeArray[1]), '}'))];
 	}
 
+	/**
+	 * Check whether a validation rule name is available.
+	 *
+	 * This method sanitizes the given rule name, checks whether it already
+	 * exists in the local custom validation rules table, and then checks
+	 * whether it already exists as part of the Joomla core validation rules.
+	 *
+	 * If the name is already used by another local rule or by Joomla core,
+	 * a danger response is returned. Otherwise, a success response is returned
+	 * together with the sanitized name.
+	 *
+	 * @param   string     $name  The proposed validation rule name.
+	 * @param   int|string $id    The current validation rule ID.
+	 *
+	 * @return  array  The validation response array.
+	 * @since   6.1.6
+	 */
 	public function checkRuleName($name, $id)
 	{
 		$name = StringHelper::safe($name);
-		if ($found = GetHelper::var('validation_rule', $name, 'name', 'id'))
+		$id = (int) $id;
+
+		// Check whether this rule name already exists in the custom rules table.
+		$found = GetHelper::var(
+			'validation_rule',
+			$name,
+			'name',
+			'id'
+		);
+
+		if ($found && $id !== (int) $found)
 		{
-			if ((int) $id !== (int) $found)
-			{
-				return array (
-					'message' => Text::sprintf('COM_COMPONENTBUILDER_SORRY_THIS_VALIDATION_RULE_NAME_S_ALREADY_EXIST_IN_YOUR_SYSTEM', $name),
-					'status' => 'danger',
-					'timeout' => 6000);
-			}
+			return [
+				'message' => Text::sprintf('COM_COMPONENTBUILDER_SORRY_THIS_VALIDATION_RULE_NAME_S_ALREADY_EXISTS_IN_YOUR_SYSTEM',
+					$name
+				),
+				'status' => 'danger',
+				'timeout' => 6000,
+			];
 		}
-		// now check the existing once
-		if ($names = ComponentbuilderHelper::getExistingValidationRuleNames(true))
+
+		// Check whether this rule name already exists in Joomla core.
+		$names = ComponentbuilderHelper::getExistingValidationRuleNames(true);
+
+		if ($names && in_array($name, $names, true))
 		{
-			if (in_array($name, $names))
-			{
-				return array (
-					'message' => Text::sprintf('COM_COMPONENTBUILDER_SORRY_THIS_VALIDATION_RULE_NAME_S_ALREADY_EXIST_AS_PART_OF_THE_JOOMLA_CORE_NO_NEED_TO_CREATE_IT_IF_YOU_ARE_ADAPTING_IT_GIVE_IT_YOUR_OWN_UNIQUE_NAME', $name),
-					'status' => 'danger',
-					'timeout' => 10000);
-			}
+			return [
+				'message' => Text::sprintf('COM_COMPONENTBUILDER_SORRY_THIS_VALIDATION_RULE_NAME_S_ALREADY_EXISTS_AS_PART_OF_THE_JOOMLA_CORE_THERE_IS_NO_NEED_TO_CREATE_IT_IF_YOU_ARE_ADAPTING_IT_GIVE_IT_YOUR_OWN_UNIQUE_NAME',
+					$name
+				),
+				'status' => 'danger',
+				'timeout' => 10000,
+			];
 		}
-		return array (
+
+		return [
 			'name' => $name,
-			'message' => Text::sprintf('COM_COMPONENTBUILDER_GREAT_THIS_VALIDATION_RULE_NAME_S_WILL_WORK', $name),
+			'message' => Text::sprintf('COM_COMPONENTBUILDER_GREAT_THIS_VALIDATION_RULE_NAME_S_WILL_WORK',
+				$name
+			),
 			'status' => 'success',
-			'timeout' => 5000);
+			'timeout' => 5000,
+		];
 	}
 
+	/**
+	 * Get the validation rules table markup.
+	 *
+	 * This method builds an HTML table showing all available validation rules
+	 * for the form field validate attribute.
+	 *
+	 * The table is rendered using Joomla 6 compatible Bootstrap 5 classes and
+	 * no longer depends on UIkit.
+	 *
+	 * @param   string|int  $id  The field or context identifier.
+	 *
+	 * @return  string|bool  The HTML table markup on success, or false if no
+	 *                       validation rules could be loaded.
+	 * @since   6.1.6
+	 */
 	public function getValidationRulesTable($id)
 	{
-		// get all the validation rules
-		if ($rules = $this->getValidationRules())
-		{
-			// build table
-			$table =  '<div class="control-group"><table class="uk-table uk-table-hover uk-table-striped uk-table-condensed">';
-			$table .=  '<caption>'.Text::sprintf('COM_COMPONENTBUILDER_THE_AVAILABLE_VALIDATION_RULES_FOR_THE_VALIDATE_ATTRIBUTE_ARE').'</caption>';
-			$table .=  '<thead><tr><th class="uk-text-right">'.Text::_('COM_COMPONENTBUILDER_VALIDATE').'</th><th>'.Text::_('COM_COMPONENTBUILDER_DESCRIPTION').'</th></tr></thead>';
-			$table .=  '<tbody>';
-			foreach ($rules as $name => $decs)
-			{
-				// just load the values
-				$decs = (StringHelper::check($decs) && !is_numeric($decs)) ? $decs : '';
-				$table .=  '<tr><td class="uk-text-right"><code>'.$name.'</code></td><td>'. $decs. '</td></tr>';
-			}
-			return $table.'</tbody></table></div>';
-		}
-		return false;
-	}
+		// Keep the parameter for backward compatibility.
+		unset($id);
 
-	public function getValidationRules()
-	{
-		// custom rule names
-		$names = array();
-		// make sure we have all the exiting rule names
-		if (!$exitingNames = ComponentbuilderHelper::getExistingValidationRuleNames(true))
+		// Get all validation rules.
+		$rules = $this->getValidationRules();
+
+		if (!$rules || !is_array($rules))
 		{
-			// stop (something is wrong)
 			return false;
 		}
-		// convert names to keys
-		$exitingNames = array_flip($exitingNames);
-		// load the descriptions (taken from https://docs.joomla.org/Server-side_form_validation)
-		$exitingNames["boolean"] = Text::_("COM_COMPONENTBUILDER_ACCEPTS_ONLY_THE_VALUES_ZERO_ONE_TRUE_OR_FALSE_CASEINSENSITIVE");
-		$exitingNames["color"] = Text::_("COM_COMPONENTBUILDER_ACCEPTS_ONLY_EMPTY_VALUES_CONVERTED_TO_ZERO_AND_STRINGS_IN_THE_FORM_RGB_OR_RRGGBB_WHERE_R_G_AND_B_ARE_HEX_VALUES");
-		$exitingNames["email"] =  Text::_("COM_COMPONENTBUILDER_ACCEPTS_AN_EMAIL_ADDRESS_SATISFIES_A_BASIC_SYNTAX_CHECK_IN_THE_PATTERN_OF_QUOTXYZZQUOT_WITH_NO_INVALID_CHARACTERS");
-		$exitingNames["equals"] = Text::sprintf("COM_COMPONENTBUILDER_REQUIRES_THE_VALUE_TO_BE_THE_SAME_AS_THAT_HELD_IN_THE_FIELD_NAMED_QUOTFIELDQUOT_EGS", '<br /><code>&lt;input<br />&nbsp;&nbsp;type="text"<br />&nbsp;&nbsp;name="email_check"<br />&nbsp;&nbsp;validate="equals"<br />&nbsp;&nbsp;field="email"<br />/&gt;</code>');
-		$exitingNames["options"] = Text::_("COM_COMPONENTBUILDER_REQUIRES_THE_VALUE_ENTERED_BE_ONE_OF_THE_OPTIONS_IN_AN_ELEMENT_OF_TYPEQUOTLISTQUOT_THAT_IS_THAT_THE_ELEMENT_IS_A_SELECT_LIST");
-		$exitingNames["tel"] = Text::_("COM_COMPONENTBUILDER_REQUIRES_THE_VALUE_TO_BE_A_TELEPHONE_NUMBER_COMPLYING_WITH_THE_STANDARDS_OF_NANPA_ITUT_TRECEONE_HUNDRED_AND_SIXTY_FOUR_OR_IETF_RFCFOUR_THOUSAND_NINE_HUNDRED_AND_THIRTY_THREE");
-		$exitingNames["url"] = Text::sprintf("COM_COMPONENTBUILDER_VALIDATES_THAT_THE_VALUE_IS_A_URL_WITH_A_VALID_SCHEME_WHICH_CAN_BE_RESTRICTED_BY_THE_OPTIONAL_COMMASEPARATED_FIELD_SCHEME_AND_PASSES_A_BASIC_SYNTAX_CHECK_EGS", '<br /><code>&lt;input<br />&nbsp;&nbsp;type="text"<br />&nbsp;&nbsp;name="link"<br />&nbsp;&nbsp;validate="url"<br />&nbsp;&nbsp;scheme="http,https,mailto"<br />/&gt;</code>');
-		$exitingNames["username"] = Text::_("COM_COMPONENTBUILDER_VALIDATES_THAT_THE_VALUE_DOES_NOT_APPEAR_AS_A_USERNAME_ON_THE_SYSTEM_THAT_IS_THAT_IT_IS_A_VALID_NEW_USERNAME_DOES_NOT_SYNTAX_CHECK_IT_AS_A_VALID_NAME");
-		// now get the custom created rules
+
+		$table = [];
+		$table[] = '<div class="table-responsive">';
+		$table[] = '<table class="table table-striped table-hover table-sm caption-top">';
+		$table[] = '<caption>' . Text::_('COM_COMPONENTBUILDER_THE_AVAILABLE_VALIDATION_RULES_FOR_THE_VALIDATE_ATTRIBUTE_ARE') . '</caption>';
+		$table[] = '<thead>';
+		$table[] = '<tr>';
+		$table[] = '<th scope="col" class="text-end">' . Text::_('COM_COMPONENTBUILDER_VALIDATE') . '</th>';
+		$table[] = '<th scope="col">' . Text::_('COM_COMPONENTBUILDER_DESCRIPTION') . '</th>';
+		$table[] = '</tr>';
+		$table[] = '</thead>';
+		$table[] = '<tbody>';
+
+		foreach ($rules as $name => $description)
+		{
+			$description = (StringHelper::check($description)
+				&& !is_numeric($description))
+				? $description
+				: '';
+
+			$table[] = '<tr>';
+			$table[] = '<td class="text-end"><code>' . $name . '</code></td>';
+			$table[] = '<td>' . $description . '</td>';
+			$table[] = '</tr>';
+		}
+
+		$table[] = '</tbody>';
+		$table[] = '</table>';
+		$table[] = '</div>';
+
+		return implode('', $table);
+	}
+
+	/**
+	 * Get all available validation rules.
+	 *
+	 * Ensures all rules have readable descriptions, including dynamically
+	 * discovered Joomla and custom validation rules.
+	 *
+	 * @return array|bool
+	 * @since  6.1.6
+	 */
+	public function getValidationRules()
+	{
+		$existingNames = ComponentbuilderHelper::getExistingValidationRuleNames(true);
+
+		if (!$existingNames)
+		{
+			return false;
+		}
+
+		// Initialize all rules with a safe default description
+		$existingRules = [];
+
+		foreach ($existingNames as $name)
+		{
+			$existingRules[$name] = Text::sprintf('COM_COMPONENTBUILDER_VALIDATION_RULE_S',
+				$name
+			);
+		}
+
+		// Override known Joomla rule descriptions
+		$existingRules['boolean'] = Text::_("COM_COMPONENTBUILDER_ACCEPTS_ONLY_THE_VALUES_ZERO_ONE_TRUE_OR_FALSE_CASEINSENSITIVE");
+		$existingRules['color'] = Text::_("COM_COMPONENTBUILDER_ACCEPTS_RGB_OR_RRGGBB_EMPTY_BECOMES_ZERO");
+		$existingRules['email'] = Text::_("COM_COMPONENTBUILDER_VALID_EMAIL_ADDRESS_IN_THE_FORMAT_XYZZ");
+		$existingRules['equals'] = Text::sprintf("COM_COMPONENTBUILDER_VALUE_MUST_MATCH_ANOTHER_FIELD_SEE_FIELD_ATTRIBUTE_EGS",
+			'<br /><code>&lt;input name="email_check" validate="equals" field="email" /&gt;</code>'
+		);
+		$existingRules['options'] = Text::_("COM_COMPONENTBUILDER_VALUE_MUST_EXIST_IN_A_LIST_FIELD");
+		$existingRules['tel'] = Text::_("COM_COMPONENTBUILDER_VALID_TELEPHONE_NUMBER_EONE_HUNDRED_AND_SIXTY_FOUR_NANPA_RFCTHREE_THOUSAND_NINE_HUNDRED_AND_SIXTY_SIX");
+		$existingRules['url'] = Text::sprintf("COM_COMPONENTBUILDER_VALID_URL_WITH_OPTIONAL_SCHEME_RESTRICTION_EGS",
+			'<br /><code>&lt;input name="link" validate="url" scheme="http,https" /&gt;</code>'
+		);
+		$existingRules['username'] = Text::_("COM_COMPONENTBUILDER_MUST_NOT_ALREADY_EXIST_AS_A_USERNAME");
+
+		// Load custom rules
+		$customRules = [];
+
 		$db = Factory::getDbo();
-		// Create a new query object.
 		$query = $db->getQuery(true);
-		$query->select($db->quoteName(array('a.name','a.short_description')));
-		$query->from($db->quoteName('#__componentbuilder_validation_rule','a'));
-		$query->where($db->quoteName('a.published') . ' >= 1');
+
+		$query->select($db->quoteName(['a.name', 'a.short_description']))
+			->from($db->quoteName('#__componentbuilder_validation_rule', 'a'))
+			->where($db->quoteName('a.published') . ' >= 1');
+
 		$db->setQuery($query);
 		$db->execute();
+
 		if ($db->getNumRows())
 		{
-			$names = $db->loadAssocList('name', 'short_description');
+			$customRules = $db->loadAssocList('name', 'short_description');
 		}
-		// merge the arrays
-		$rules = UtilitiesArrayHelper::merge(array($exitingNames, $names));
-		// sort the array
-		 ksort($rules);
-		// return the validation rules
+
+		$rules = UtilitiesArrayHelper::merge(
+			[$existingRules, $customRules]
+		);
+
+		ksort($rules);
+
 		return $rules;
 	}
 
 	// Used in field
+
 	/**
 	 * The current extras available
 	 *
@@ -4718,7 +5764,12 @@ class AjaxModel extends ListModel
 			});
 
 			// get subform field object
-			$extras = $this->buildFieldOptionsSubform($extraValues, $extraNameListOption, 'extraproperties',  'COM_COMPONENTBUILDER_EXTRA_PROPERTIES_LIKE_LISTCLASS_ESCAPE_DISPLAY_VALIDATEBR_SMALLHERE_YOU_CAN_SET_THE_EXTRA_PROPERTIES_FOR_THIS_FIELDSMALL');
+			$extras = $this->buildFieldOptionsSubform(
+				$extraValues,
+				$extraNameListOption,
+				'extraproperties',
+				'COM_COMPONENTBUILDER_EXTRA_PROPERTIES_LIKE_LISTCLASS_ESCAPE_DISPLAY_VALIDATEBR_SMALLHERE_YOU_CAN_SET_THE_EXTRA_PROPERTIES_FOR_THIS_FIELDSMALL'
+			);
 
 			// load the html 
 			$field['subform'] = '<div class="control-label prop_removal">'. $properties->label . '</div><div class="controls prop_removal">' . $properties->input . '</div>';
@@ -4727,7 +5778,7 @@ class AjaxModel extends ListModel
 			// check if we have PHP values
 			if (UtilitiesArrayHelper::check($field['php']))
 			{
-				$field['textarea'] = array();
+				$field['textarea'] = [];
 				foreach($field['php'] as $name => $values)
 				{
 					$value = implode(PHP_EOL, $values['value']);
@@ -4791,7 +5842,7 @@ class AjaxModel extends ListModel
 			}
 		}
 
-		// return only if extras founb
+		// return only if extras found
 		if (UtilitiesArrayHelper::check($values))
 		{
 			return $values;
@@ -4827,15 +5878,16 @@ class AjaxModel extends ListModel
 		// start building the name field XML
 		$textareaXML = new \SimpleXMLElement('<field/>');
 		// textarea attributes
-		$textareaAttribute = array(
+		$textareaAttribute = [
 			'type' => 'textarea',
-			'name' => 'property_'.$name,
+			'name' => 'property_' . $name,
 			'label' => $desc,
 			'rows' => (int) ($rows >= 3) ? $rows : $rows + 2,
 			'cols' => '15',
 			'class' => 'text_area  span12',
 			'filter' => 'RAW',
-			'hint' => 'COM_COMPONENTBUILDER__ADD_YOUR_PHP_SCRIPT_HERE');
+			'hint' => 'COM_COMPONENTBUILDER__ADD_YOUR_PHP_SCRIPT_HERE'
+		];
 		// load the textarea attributes
 		FormHelper::attributes($textareaXML, $textareaAttribute);
 
@@ -4883,7 +5935,8 @@ class AjaxModel extends ListModel
 			'layout' => 'joomla.form.field.subform.repeatable-table',
 			'multiple' => 'true',
 			'icon' => 'list',
-			'max' =>  (UtilitiesArrayHelper::check($nameListOptions)) ? (int) count($nameListOptions) : 4];
+			'max' =>  (UtilitiesArrayHelper::check($nameListOptions)) ? (int) count($nameListOptions) : 4
+		];
 		// load the subform attributes
 		FormHelper::attributes($subformXML, $subformAttribute);
 		// now add the subform child form
@@ -4892,7 +5945,8 @@ class AjaxModel extends ListModel
 		$childFormAttribute = [
 			'hidden' => 'true',
 			'name' => 'list_properties',
-			'repeat' => 'true'];
+			'repeat' => 'true'
+		];
 		// load the child form attributes
 		FormHelper::attributes($childForm, $childFormAttribute);
 
@@ -4942,7 +5996,8 @@ class AjaxModel extends ListModel
 			'cols' => '15',
 			'class' => 'text_area full-column-in-subform',
 			'filter' => 'STRING',
-			'hint' => 'COM_COMPONENTBUILDER_PROPERTY_VALUE'];
+			'hint' => 'COM_COMPONENTBUILDER_PROPERTY_VALUE'
+		];
 		// load the subform attributes
 		FormHelper::attributes($valueXML, $valueAttribute);
 		// now add the fields to the child form
@@ -4960,7 +6015,8 @@ class AjaxModel extends ListModel
 			'readonly' => 'true',
 			'class' => 'text_area full-column-in-subform',
 			'filter' => 'WORD',
-			'hint' => 'COM_COMPONENTBUILDER_SELECT_A_PROPERTY'];
+			'hint' => 'COM_COMPONENTBUILDER_SELECT_A_PROPERTY'
+		];
 		// load the desc attributes
 		FormHelper::attributes($descXML, $descAttribute);
 		// now add the fields to the child form
@@ -5006,12 +6062,12 @@ class AjaxModel extends ListModel
 			return false;
 		}
 
-		// Get a db connection.
-		$db = Factory::getDbo();
+		// Get a db connection.  
+		$db = Factory::getContainer()->get(DatabaseInterface::class);
 
 		// Create a new query object.
 		$query = $db->getQuery(true);
-		$query->select($db->quoteName(array('properties', 'short_description', 'description')));
+		$query->select($db->quoteName(['properties', 'short_description', 'description']));
 		$query->from($db->quoteName('#__componentbuilder_fieldtype'));
 		$query->where($db->quoteName($key) . ' = '. $db->quote($fieldtype));
 
@@ -5921,12 +6977,12 @@ class AjaxModel extends ListModel
 				{
 					$displayData =  ['data' => [(object) $fileDefinition], 'entity' => $entity, 'target' => $target];
 					// change this to the layout of your custom importer columns display
-					$display = LayoutHelper::render('translationimportercolumnsdisplay', $displayData);
+					$display = LayoutHelper::render('translationimportercolumnsdisplayjsix', $displayData);
 				}
 				else
 				{
 					// change this to the layout of your custom importer easy mapping
-					return ['data' => LayoutHelper::render('translationimportereasymapping', []), 'state' => 0];
+					return ['data' => LayoutHelper::render('translationimportereasymappingjsix', []), 'state' => 0];
 				}
 			}
 			catch (\Exception $error)

@@ -42,25 +42,51 @@ $read_branch = $displayData['repo']->read_branch ?? 'error';
 $guid = $displayData['repo']->guid ?? 'error';
 
 ?>
-<div>
-	<div class="uk-card repo-selection-card">
-		<div class="uk-card-header">
-			<?php echo $name; ?>: <a class="uk-link-heading" href="<?php echo $url; ?>" target="_blank" title="<?php echo Text::sprintf('COM_COMPONENTBUILDER_OPEN_THIS_REMOTE_S_REPOSITORY', $name); ?>"><?php echo $url; ?></a>
+<div class="repo-selection-card-wrapper">
+	<div class="card h-100 repo-selection-card shadow-sm">
+		<div class="card-header">
+			<div class="fw-semibold">
+				<?php echo $this->escape($name); ?>:
+				<a
+					class="link-primary text-break"
+					href="<?php echo $this->escape($url); ?>"
+					target="_blank"
+					rel="noopener noreferrer"
+					title="<?php echo $this->escape(Text::sprintf('COM_COMPONENTBUILDER_OPEN_THIS_REMOTE_S_REPOSITORY', $name)); ?>"
+				>
+					<?php echo $this->escape($url); ?>
+				</a>
+			</div>
 		</div>
-		<div class="uk-card-body">
-			<ul class="uk-list uk-list-disc">
-				<li><?php echo Text::_('COM_COMPONENTBUILDER_ORGANISATION'); ?>: <code><?php echo $organisation; ?></code></li>
-				<li><?php echo Text::_('COM_COMPONENTBUILDER_REPOSITORY'); ?>: <code><?php echo $repository; ?></code></li>
-				<li><?php echo Text::_('COM_COMPONENTBUILDER_BRANCH'); ?>: <code><?php echo $read_branch; ?></code></li>
+
+		<div class="card-body">
+			<ul class="list-unstyled mb-0">
+				<li class="mb-2">
+					<strong><?php echo Text::_('COM_COMPONENTBUILDER_ORGANISATION'); ?>:</strong>
+					<code><?php echo $this->escape($organisation); ?></code>
+				</li>
+				<li class="mb-2">
+					<strong><?php echo Text::_('COM_COMPONENTBUILDER_REPOSITORY'); ?>:</strong>
+					<code><?php echo $this->escape($repository); ?></code>
+				</li>
+				<li class="mb-0">
+					<strong><?php echo Text::_('COM_COMPONENTBUILDER_BRANCH'); ?>:</strong>
+					<code><?php echo $this->escape($read_branch); ?></code>
+				</li>
 			</ul>
 		</div>
-		<div class="uk-card-footer">
-			<button type="button"
-				class="uk-button uk-button-primary uk-width-1-1 select-repo-to-load"
-				data-repo="<?php echo $guid; ?>"
-				data-area="<?php echo $area; ?>">
+
+		<div class="card-footer bg-transparent border-top-0">
+			<div class="d-grid">
+				<button
+					type="button"
+					class="btn btn-primary select-repo-to-load"
+					data-repo="<?php echo $this->escape($guid); ?>"
+					data-area="<?php echo $this->escape($area); ?>"
+				>
 					<?php echo Text::sprintf('COM_COMPONENTBUILDER_LOAD_ITEMS_FROM_THIS_S_REPOSITORY', $name); ?>
-			</button>
+				</button>
+			</div>
 		</div>
 	</div>
 </div>

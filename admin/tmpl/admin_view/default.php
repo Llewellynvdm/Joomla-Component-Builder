@@ -687,33 +687,40 @@ jQuery('#adminForm').on('change', '#jform_add_custom_button',function (e)
 
 
 
-<?php $numberAddtables = range(0, count( (array) $this->item->addtables) + 3, 1);?>
 
-// for the values already set
-jQuery(document).ready(function(){
-<?php foreach($numberAddtables as $fieldNr): ?>
-	jQuery('#adminForm').on('change', '#jform_addtables__addtables<?php echo $fieldNr ?>__table',function (e) {
-		e.preventDefault();
-		getTableColumns(<?php echo $fieldNr ?>, "_", "_");
-	});
-<?php endforeach; ?>
-	jQuery(document).on('subform-row-add', function(event, row){
-		var groupName = jQuery(row).data('group');
-		var fieldName = groupName.replace(/([0-9])/g, '');
-		var fieldNr = groupName.replace(/([A-z_])/g, '');
-		if ('addtables' === fieldName) {
-			jQuery('#adminForm').on('change', '#jform_addtables_addtables'+fieldNr+'_table',function (e) {
-				e.preventDefault();
-				getTableColumns(fieldNr, "", "");
-			});
+document.addEventListener('DOMContentLoaded', () => {
+	const adminForm = document.getElementById('adminForm');
+
+	if (!adminForm) {
+		return;
+	}
+
+	adminForm.addEventListener('change', (event) => {
+		const target = event.target;
+
+		if (!(target instanceof Element)) {
+			return;
+		}
+
+		const id = target.id || '';
+
+		// Existing preloaded fields:
+		// jform_addtables__addtables0__table
+		let match = id.match(/^jform_addtables__addtables(\d+)__table$/);
+
+		if (match) {
+			getTableColumns(match[1], '_', '_');
+			return;
+		}
+
+		// Dynamically added subform rows:
+		// jform_addtables_addtables3_table
+		match = id.match(/^jform_addtables_addtables(\d+)_table$/);
+
+		if (match) {
+			getTableColumns(match[1], '', '');
 		}
 	});
-});
-
-// #jform_add_custom_import listeners
-jQuery('#jform_add_custom_import').on('change',function() {
-	var valueSwitch = jQuery("#jform_add_custom_import input[type='radio']:checked").val();
-	getDynamicScripts(valueSwitch);
 });
 
 <?php

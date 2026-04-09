@@ -215,42 +215,42 @@ jQuery('#adminForm').on('change', '#jform_target',function (e)
 
 
 
-jQuery('#adminForm').on('change', '#jform_function_name',function (e)
-{
-	e.preventDefault();
-	var target = jQuery("#jform_target input[type='radio']:checked").val();
-	if (target == 2) {
-		jQuery('#usedin').show();
-		var functioName = jQuery('#jform_function_name').val();
-		// check if this function name is taken
-		checkFunctionName(functioName);
-	} else {
-		jQuery('#usedin').hide();
+document.getElementById('adminForm').addEventListener('change', function (e) {
+	var el = e.target;
+
+	if (el.closest('#jform_function_name')) {
+		var target = document.querySelector('#jform_target input[type="radio"]:checked');
+		if (target && target.value == 2) {
+			document.getElementById('usedin').style.display = '';
+			var functioName = document.getElementById('jform_function_name').value;
+			// check if this function name is taken
+			checkFunctionName(functioName);
+		} else {
+			document.getElementById('usedin').style.display = 'none';
+		}
 	}
-});
-jQuery('#adminForm').on('change', '#jform_target',function (e)
-{
-	e.preventDefault();
-	var target = jQuery("#jform_target input[type='radio']:checked").val();
-	if (target == 2) {
-		jQuery('#usedin').show();
-		var functioName = jQuery('#jform_function_name').val();
-		// check if this function name is taken
-		checkFunctionName(functioName);
-	} else {
-		jQuery('#usedin').hide();
+
+	if (el.closest('#jform_target')) {
+		var target = document.querySelector('#jform_target input[type="radio"]:checked');
+		if (target && target.value == 2) {
+			document.getElementById('usedin').style.display = '';
+			var functioName = document.getElementById('jform_function_name').value;
+			// check if this function name is taken
+			checkFunctionName(functioName);
+		} else {
+			document.getElementById('usedin').style.display = 'none';
+		}
 	}
-});
-jQuery('#adminForm').on('change', '#jform_comment_type',function (e)
-{
-	e.preventDefault();
-	var type = jQuery("#jform_comment_type input[type='radio']:checked").val();
-	if (type == 2) {
-		jQuery('#html-comment-info').show();
-		jQuery('#phpjs-comment-info').hide();
-	} else {
-		jQuery('#html-comment-info').hide();
-		jQuery('#phpjs-comment-info').show();
+
+	if (el.closest('#jform_comment_type')) {
+		var type = document.querySelector('#jform_comment_type input[type="radio"]:checked');
+		if (type && type.value == 2) {
+			document.getElementById('html-comment-info').style.display = '';
+			document.getElementById('phpjs-comment-info').style.display = 'none';
+		} else {
+			document.getElementById('html-comment-info').style.display = 'none';
+			document.getElementById('phpjs-comment-info').style.display = '';
+		}
 	}
 });
 

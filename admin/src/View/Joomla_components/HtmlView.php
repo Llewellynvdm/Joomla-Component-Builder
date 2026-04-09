@@ -288,6 +288,11 @@ class HtmlView extends BaseHtmlView
 			// add Clear tmp button.
 			ToolbarHelper::custom('joomla_components.clearTmp', 'purge custom-button-cleartmp', '', 'COM_COMPONENTBUILDER_CLEAR_TMP', false);
 		}
+		if ($this->user->authorise('joomla_component.health_check', 'com_componentbuilder'))
+		{
+			// add Health Check button.
+			ToolbarHelper::custom('joomla_components.healthCheck', 'health custom-button-healthcheck', '', 'COM_COMPONENTBUILDER_HEALTH_CHECK', false);
+		}
 		if ($this->user->authorise('joomla_component.init', 'com_componentbuilder'))
 		{
 			// add Init button.

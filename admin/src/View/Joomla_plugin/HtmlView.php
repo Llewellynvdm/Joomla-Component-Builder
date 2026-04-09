@@ -27,7 +27,6 @@ use Joomla\CMS\Document\Document;
 use VDM\Component\Componentbuilder\Administrator\Helper\ComponentbuilderHelper;
 use VDM\Joomla\Componentbuilder\Utilities\Permitted\Actions;
 use VDM\Joomla\Utilities\StringHelper;
-use VDM\Joomla\Utilities\ArrayHelper;
 use Joomla\CMS\Application\CMSApplicationInterface;
 use Joomla\Input\Input;
 use Joomla\Registry\Registry;
@@ -460,86 +459,22 @@ class HtmlView extends BaseHtmlView
 			Html::_('script', $script, ['version' => 'auto']);
 		}
 
-
-		// add the Uikit v2 style sheets
-		Html::_('stylesheet', 'media/com_componentbuilder/uikit-v2/css/uikit.gradient.min.css', ['version' => 'auto']);
-		// add Uikit v2 JavaScripts
-		Html::_('script', 'media/com_componentbuilder/uikit-v2/js/uikit.min.js', ['version' => 'auto']);
-
-		// add the Uikit v2 extra style sheets
-		Html::_('stylesheet', 'media/com_componentbuilder/uikit-v2/css/components/notify.gradient.min.css', ['version' => 'auto']);
-		// add Uikit v2 extra JavaScripts
-		Html::_('script', 'media/com_componentbuilder/uikit-v2/js/components/lightbox.min.js', ['version' => 'auto']);
-		Html::_('script', 'media/com_componentbuilder/uikit-v2/js/components/notify.min.js', ['version' => 'auto']);
-		// Add the JavaScript for JStore
-		Html::_('script', 'media/com_componentbuilder/js/jquery.json.min.js', ['version' => 'auto']);
-		Html::_('script', 'media/com_componentbuilder/js/jstorage.min.js', ['version' => 'auto']);
-		Html::_('script', 'media/com_componentbuilder/js/strtotime.js', ['version' => 'auto']);
+		// get Model
+		$model = $this->getModel();
+		// get the web asset manager :(
+		$web = $this -> getDocument() -> getWebAssetManager();
 		// add var key
-		$this->getDocument()->getWebAssetManager()->addInlineScript("var vastDevMod = '" . $this->get('VDM') . "';");
+		$web->addInlineScript("var vastDevMod = '" . $model->getVDM() . "';")
 		// add return_here
-		$this->getDocument()->getWebAssetManager()->addInlineScript("var return_here = '" . urlencode(base64_encode((string) Uri::getInstance())) . "';");
+		->addInlineScript("var return_here = '" . urlencode(base64_encode((string) Uri::getInstance())) . "';")
+		// add joomla dialog
+		->useScript('core')->useScript('joomla.dialog');
 		// set some lang
 		Text::script('COM_COMPONENTBUILDER_ALREADY_SELECTED_TRY_ANOTHER');
 		Text::script('COM_COMPONENTBUILDER_TYPE_OR_SELECT_SOME_OPTIONS');
 		Text::script('COM_COMPONENTBUILDER_NO_RESULTS_MATCH');
 		Text::script('COM_COMPONENTBUILDER_SELECT_A_PROPERTY');
 		Text::script('COM_COMPONENTBUILDER_NO_DESCRIPTION_FOUND');
-		// check if we should use browser storage
-		$setBrowserStorage = $this->params->get('set_browser_storage', null);
-		if ($setBrowserStorage)
-		{
-			// check what (Time To Live) show we use
-			$storageTimeToLive = $this->params->get('storage_time_to_live', 'global');
-			if ('global' == $storageTimeToLive)
-			{
-				// use the global session time
-				$session = $this->app->getSession();
-				// must have itin milliseconds
-				$expire = ($session->getExpire()*60)* 1000;
-			}
-			else
-			{
-				// use the Componentbuilder Global setting
-				if (0 !=  $storageTimeToLive)
-				{
-					// this will convert the time into milliseconds
-					$storageTimeToLive =  $storageTimeToLive * 1000;
-				}
-				$expire = $storageTimeToLive;
-			}
-		}
-		else
-		{
-			// set to use no storage
-			$expire = 30000; // only 30 seconds
-		}
-		// Set the Time To Live To JavaScript
-		$this->getDocument()->getWebAssetManager()->addInlineScript("var expire = ". (int) $expire.";");
-		$this->getDocument()->getWebAssetManager()->addInlineScript("selectionArray = {'property':{},'method':{}};");
-		// add a few field options via PHP
-		$tmp_ = FormHelper::loadFieldType('pluginsclassproperties')->options;
-		if (ArrayHelper::check($tmp_))
-		{
-			$_tmp = array();
-			foreach ($tmp_ as $item)
-			{
-				$_tmp[$item->value] = $item->text;
-			}
-			// Set the values to JavaScript
-			$this->getDocument()->getWebAssetManager()->addInlineScript("selectionArray['property'] = ". json_encode($_tmp) . ";");
-		}
-		$tmp_ = FormHelper::loadFieldType('pluginsclassmethods')->options;
-		if (ArrayHelper::check($tmp_))
-		{
-			$_tmp = array();
-			foreach ($tmp_ as $item)
-			{
-				$_tmp[$item->value] = $item->text;
-			}
-			// Set the values to JavaScript
-			$this->getDocument()->getWebAssetManager()->addInlineScript("selectionArray['method'] = ". json_encode($_tmp) . ";");
-		}
 	}
 
 	/**

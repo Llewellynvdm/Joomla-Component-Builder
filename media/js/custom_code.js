@@ -269,96 +269,114 @@ function isSet(val)
 }
 
 
-jQuery(document).ready(function()
-{
-	var target = jQuery("#jform_target input[type='radio']:checked").val();
-	if (target == 2) {
-		jQuery('#usedin').show();
-		var functioName = jQuery('#jform_function_name').val();
+document.addEventListener('DOMContentLoaded', function () {
+	var target = document.querySelector('#jform_target input[type="radio"]:checked');
+	if (target && target.value == 2) {
+		document.getElementById('usedin').style.display = '';
+		var functioName = document.getElementById('jform_function_name').value;
 		// check if this function name is taken
 		checkFunctionName(functioName);
 	}
-	var type = jQuery("#jform_comment_type input[type='radio']:checked").val();
-	if (type == 2) {
-		jQuery('#html-comment-info').show();
-		jQuery('#phpjs-comment-info').hide();
+	var type = document.querySelector('#jform_comment_type input[type="radio"]:checked');
+	if (type && type.value == 2) {
+		document.getElementById('html-comment-info').style.display = '';
+		document.getElementById('phpjs-comment-info').style.display = 'none';
 	} else {
-		jQuery('#html-comment-info').hide();
-		jQuery('#phpjs-comment-info').show();
+		document.getElementById('html-comment-info').style.display = 'none';
+		document.getElementById('phpjs-comment-info').style.display = '';
 	}
 	// check and load all the custom code edit buttons
 	getEditCustomCodeButtons();
 });
+
 function setCustomCodePlaceholder() {
-	var ide = jQuery('#jform_id').val();
-	var functioName = jQuery('#jform_function_name').val();
+	var ide = document.getElementById('jform_id').value;
+	var functioName = document.getElementById('jform_function_name').value;
 	if (ide > 0 && functioName.length > 2) {
-		jQuery('#jcb-placeholder').html('<code>[CUSTO'+'MCODE='+functioName+']</code>');
-		jQuery('#jcb-placeholder-arg').html('<code>[CUSTO'+'MCODE='+functioName+'&#43;value1,value2]</code>');
-	} else if (ide > 0){
-		jQuery('#jcb-placeholder').html('<code>[not ready]</code>');
-		jQuery('#jcb-placeholder-arg').html('<code>[not ready]</code>');
+		document.getElementById('jcb-placeholder').innerHTML = '<code>[CUSTO'+'MCODE='+functioName+']</code>';
+		document.getElementById('jcb-placeholder-arg').innerHTML = '<code>[CUSTO'+'MCODE='+functioName+'&#43;value1,value2]</code>';
+	} else if (ide > 0) {
+		document.getElementById('jcb-placeholder').innerHTML = '<code>[not ready]</code>';
+		document.getElementById('jcb-placeholder-arg').innerHTML = '<code>[not ready]</code>';
 	} else if (functioName.length > 2) {
-		jQuery('#jcb-placeholder').html('<code>[CUSTO'+'MCODE='+functioName+']</code>');
-		jQuery('#jcb-placeholder-arg').html('<code>[CUSTO'+'MCODE='+functioName+'&#43;value1,value2]</code>');
+		document.getElementById('jcb-placeholder').innerHTML = '<code>[CUSTO'+'MCODE='+functioName+']</code>';
+		document.getElementById('jcb-placeholder-arg').innerHTML = '<code>[CUSTO'+'MCODE='+functioName+'&#43;value1,value2]</code>';
 	} else {
-		jQuery('#jcb-placeholder').html('<code>[save to see]</code>');
-		jQuery('#jcb-placeholder-arg').html('<code>[save to see]</code>');
+		document.getElementById('jcb-placeholder').innerHTML = '<code>[save to see]</code>';
+		document.getElementById('jcb-placeholder-arg').innerHTML = '<code>[save to see]</code>';
 	}
 	// update the notes
 	if (ide > 0) {
-		jQuery('.placeholder-key-id').text(ide);
+		document.querySelectorAll('.placeholder-key-id').forEach(function (el) { el.textContent = ide; });
 	}
 }
 
 function checkFunctionName(functioName) {
 	if (functioName.length > 2) {
-		var ide = jQuery('#jform_id').val();
+		var ide = document.getElementById('jform_id').value;
 		if (ide == 0) {
 			ide = -1;
 		}
-		checkFunctionName_server(functioName, ide).done(function(result) {
+		checkFunctionName_server(functioName, ide).then(function(result) {
 			if(result.name && result.message){
 				// show notice that functioName is okay
-				jQuery.UIkit.notify({message: result.message, timeout: 5000, status: result.status, pos: 'top-right'});
-				jQuery('#jform_function_name').val(result.name);
+				showNotice(result.message, result.status);
+				document.getElementById('jform_function_name').value = result.name;
 				// now start search for where the function is used
 				usedin(result.name, ide);
 			} else if(result.message){
 				// show notice that functioName is not okay
-				jQuery.UIkit.notify({message: result.message, timeout: 5000, status: result.status, pos: 'top-right'});
-				jQuery('#jform_function_name').val('');
+				showNotice(result.message, result.status);
+				document.getElementById('jform_function_name').value = '';
 			} else {
 				// set an error that message was not send
-				jQuery.UIkit.notify({message: Joomla.Text._('COM_COMPONENTBUILDER_FUNCTION_NAME_ALREADY_TAKEN_PLEASE_TRY_AGAIN'), timeout: 5000, status: 'danger', pos: 'top-right'});
-				jQuery('#jform_function_name').val('');
+				showNotice(Joomla.Text._('COM_COMPONENTBUILDER_FUNCTION_NAME_ALREADY_TAKEN_PLEASE_TRY_AGAIN'), 'danger');
+				document.getElementById('jform_function_name').value = '';
 			}
 			// set custom code placeholder
 			setCustomCodePlaceholder();
 		});
 	} else {
 		// set an error that message was not send
-		jQuery.UIkit.notify({message: Joomla.Text._('COM_COMPONENTBUILDER_YOU_MUST_ADD_AN_UNIQUE_FUNCTION_NAME'), timeout: 5000, status: 'danger', pos: 'top-right'});
-		jQuery('#jform_function_name').val('');
+		showNotice(Joomla.Text._('COM_COMPONENTBUILDER_YOU_MUST_ADD_AN_UNIQUE_FUNCTION_NAME'), 'danger');
+		document.getElementById('jform_function_name').value = '';
 		// set custom code placeholder
 		setCustomCodePlaceholder();
 	}
 }
 // check Function name
 function checkFunctionName_server(functioName, ide){
-	var getUrl = "index.php?option=com_componentbuilder&task=ajax.checkFunctionName&raw=true&format=json";
+	var getUrl = 'index.php?option=com_componentbuilder&task=ajax.checkFunctionName&raw=true&format=json';
 	if(token.length > 0){
 		var request = 'token='+token+'&functioName='+functioName+'&id='+ide;
 	}
-	return jQuery.ajax({
-		type: 'POST',
-		url: getUrl,
-		dataType: 'json',
-		data: request,
-		jsonp: false
-	});
+	return fetch(getUrl, {
+		method: 'POST',
+		headers: { 'Content-Type': 'application/x-www-form-urlencoded', 'Accept': 'application/json' },
+		body: request
+	}).then(function(r) { return r.json(); });
 }
-
+//show notices
+function showNotice(message, status) {
+	var bsClass = status === 'danger' ? 'danger' : status === 'warning' ? 'warning' : 'success';
+	var container = document.getElementById('jcb-toast-container');
+	if (!container) {
+		container = document.createElement('div');
+		container.id = 'jcb-toast-container';
+		container.style.cssText = 'position:fixed;top:1rem;right:1rem;z-index:1090;max-width:350px;';
+		document.body.appendChild(container);
+	}
+	var alert = document.createElement('div');
+	alert.className = 'alert alert-' + bsClass + ' alert-dismissible fade show shadow';
+	alert.setAttribute('role', 'alert');
+	alert.innerHTML = message +
+		'<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>';
+	container.appendChild(alert);
+	setTimeout(function () {
+		alert.classList.remove('show');
+		setTimeout(function () { alert.remove(); }, 300);
+	}, 5000);
+}
 
 /**
  * Checks where a given function is used by iterating through a list of numeric targets (0–29).
@@ -438,17 +456,8 @@ function usedin(functioName, ide) {
 						areaEl.innerHTML = used.in;
 					}
 
-					// Notify the user using UIkit.notification if available, otherwise log to the console.
-					if (typeof UIkit !== 'undefined' && UIkit.notify) {
-						UIkit.notify({
-							message: used.in,
-							timeout: 5000,
-							status: 'success',
-							pos: 'top-right'
-						});
-					} else {
-						console.log('Notification:', used.in);
-					}
+					// Notify the user.
+					showNotice(used.in, 'success');
 					found = true;
 				} else {
 					// If no valid response, hide the element with id "usedin-{target}".

@@ -459,56 +459,16 @@ class HtmlView extends BaseHtmlView
 			Html::_('script', $script, ['version' => 'auto']);
 		}
 
-
-		// add the Uikit v2 style sheets
-		Html::_('stylesheet', 'media/com_componentbuilder/uikit-v2/css/uikit.gradient.min.css', ['version' => 'auto']);
-		// add Uikit v2 JavaScripts
-		Html::_('script', 'media/com_componentbuilder/uikit-v2/js/uikit.min.js', ['version' => 'auto']);
-
-		// add the Uikit v2 extra style sheets
-		Html::_('stylesheet', 'media/com_componentbuilder/uikit-v2/css/components/notify.gradient.min.css', ['version' => 'auto']);
-		// add Uikit v2 extra JavaScripts
-		Html::_('script', 'media/com_componentbuilder/uikit-v2/js/components/lightbox.min.js', ['version' => 'auto']);
-		Html::_('script', 'media/com_componentbuilder/uikit-v2/js/components/notify.min.js', ['version' => 'auto']);
-		// Add the JavaScript for JStore
-		Html::_('script', 'media/com_componentbuilder/js/jquery.json.min.js', ['version' => 'auto']);
-		Html::_('script', 'media/com_componentbuilder/js/jstorage.min.js', ['version' => 'auto']);
-		Html::_('script', 'media/com_componentbuilder/js/strtotime.js', ['version' => 'auto']);
+		// get Model
+		$model = $this->getModel();
+		// get the web asset manager :(
+		$web = $this -> getDocument() -> getWebAssetManager();
 		// add var key
-		$this->getDocument()->getWebAssetManager()->addInlineScript("var vastDevMod = '" . $this->get('VDM') . "';");
+		$web->addInlineScript("var vastDevMod = '" . $model->getVDM() . "';")
 		// add return_here
-		$this->getDocument()->getWebAssetManager()->addInlineScript("var return_here = '" . urlencode(base64_encode((string) Uri::getInstance())) . "';");
-		// check if we should use browser storage
-		$setBrowserStorage = $this->params->get('set_browser_storage', null);
-		if ($setBrowserStorage)
-		{
-			// check what (Time To Live) show we use
-			$storageTimeToLive = $this->params->get('storage_time_to_live', 'global');
-			if ('global' == $storageTimeToLive)
-			{
-				// use the global session time
-				$session = Factory::getSession();
-				// must have itin milliseconds
-				$expire = ($session->getExpire()*60)* 1000;
-			}
-			else
-			{
-				// use the Componentbuilder Global setting
-				if (0 !=  $storageTimeToLive)
-				{
-					// this will convert the time into milliseconds
-					$storageTimeToLive =  $storageTimeToLive * 1000;
-				}
-				$expire = $storageTimeToLive;
-			}
-		}
-		else
-		{
-			// set to use no storage
-			$expire = 30000; // only 30 seconds
-		}
-		// Set the Time To Live To JavaScript
-		$this->getDocument()->getWebAssetManager()->addInlineScript("var expire = ". (int) $expire.";");
+		->addInlineScript("var return_here = '" . urlencode(base64_encode((string) Uri::getInstance())) . "';")
+		// add joomla dialog
+		->useScript('core')->useScript('joomla.dialog');
 	}
 
 	/**

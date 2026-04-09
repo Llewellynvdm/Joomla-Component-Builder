@@ -458,12 +458,17 @@ class HtmlView extends BaseHtmlView
 		{
 			Html::_('script', $script, ['version' => 'auto']);
 		}
+
+		// get Model
+		$model = $this->getModel();
 		// get the web asset manager :(
-		$web =$this->getDocument()->getWebAssetManager();
+		$web = $this -> getDocument() -> getWebAssetManager();
 		// add var key
-		$web->addInlineScript("var vastDevMod = '" . $this->get('VDM') . "';");
+		$web->addInlineScript("var vastDevMod = '" . $model->getVDM() . "';")
 		// add return_here
-		$web->addInlineScript("var return_here = '" . urlencode(base64_encode((string) Uri::getInstance())) . "';");
+		->addInlineScript("var return_here = '" . urlencode(base64_encode((string) Uri::getInstance())) . "';")
+		// add joomla dialog
+		->useScript('core')->useScript('joomla.dialog');
 		// add the libs for subform (since not adding it via xml but ajax)
 		$web->useScript('webcomponent.field-subform')
 			->usePreset('choicesjs')

@@ -29,6 +29,9 @@ use Joomla\Utilities\ArrayHelper;
 use Joomla\Input\Input;
 use VDM\Component\Componentbuilder\Administrator\Helper\ComponentbuilderHelper;
 use Joomla\CMS\Helper\TagsHelper;
+use VDM\Joomla\Utilities\SessionHelper;
+use VDM\Joomla\Utilities\StringHelper as UtilitiesStringHelper;
+use VDM\Joomla\Utilities\ObjectHelper;
 use VDM\Joomla\Utilities\GuidHelper;
 use VDM\Joomla\Utilities\GetHelper;
 use VDM\Joomla\Utilities\ArrayHelper as UtilitiesArrayHelper;
@@ -122,6 +125,72 @@ class Component_admin_viewsModel extends AdminModel
 		return parent::getTable($type, $prefix, $config);
 	}
 
+
+	/**
+	 * The VDM view key
+	 *
+	 * @var    string
+	 * @since   3.0.13
+	 */
+	protected string $vastDevMod;
+
+	/**
+	 * Retrieves or generates a Vast Development Method (VDM) key for the current item.
+	 *
+	 * This function performs the following operations:
+	 * 1. Checks if the VDM key is already set. If not, it proceeds to generate or retrieve one.
+	 * 2. Determines the item ID based on the presence of a specific argument.
+	 * 3. Attempts to retrieve an existing VDM key from a helper method using the item ID.
+	 * 4. If a VDM key is not found, it generates a new random VDM key.
+	 * 5. Stores the VDM key and associates it with the item ID in a helper method.
+	 * 6. Optionally, stores return and GUID values if available.
+	 * 7. Returns the VDM key.
+	 *
+	 * @return string The VDM key for the current item.
+	 * @since   3.0.13
+	 */
+	public function getVDM(): string
+	{
+		if (!isset($this->vastDevMod))
+		{
+			$_id = 0; // new item probably (since it was not set in the getItem method)
+
+			if (empty($_id))
+			{
+				$id = 0;
+			}
+			else
+			{
+				$id = $_id;
+			}
+			// set the id and view name to session
+			if (($vdm = SessionHelper::get('component_admin_views__' . $id)) !== null)
+			{
+				$this->vastDevMod = $vdm;
+			}
+			else
+			{
+				// set the vast development method key
+				$this->vastDevMod = UtilitiesStringHelper::random(50);
+				SessionHelper::set($this->vastDevMod, 'component_admin_views__' . $id);
+				SessionHelper::set('component_admin_views__' . $id, $this->vastDevMod);
+				// set a return value if found
+				$app = $this->app ?? Factory::getApplication();
+				$input = method_exists($app, 'getInput') ? $app->getInput() : $app->input;
+				$return = $input->get('return', null, 'base64');
+				SessionHelper::set($this->vastDevMod . '__return', $return);
+				// set a GUID value if found
+				if (isset($item) && ObjectHelper::check($item) && isset($item->guid)
+					&& GuidHelper::valid($item->guid))
+				{
+					SessionHelper::set($this->vastDevMod . '__guid', $item->guid);
+				}
+			}
+		}
+
+		return $this->vastDevMod;
+	}
+
 	/**
 	 * Method to get a single record.
 	 *
@@ -156,6 +225,39 @@ class Component_admin_viewsModel extends AdminModel
 				$addadmin_views = new Registry;
 				$addadmin_views->loadString($item->addadmin_views);
 				$item->addadmin_views = $addadmin_views->toArray();
+			}
+
+
+			if (empty($item->id))
+			{
+				$id = 0;
+			}
+			else
+			{
+				$id = $item->id;
+			}
+			// set the id and view name to session
+			if (($vdm = SessionHelper::get('component_admin_views__' . $id)) !== null)
+			{
+				$this->vastDevMod = $vdm;
+			}
+			else
+			{
+				// set the vast development method key
+				$this->vastDevMod = UtilitiesStringHelper::random(50);
+				SessionHelper::set($this->vastDevMod, 'component_admin_views__' . $id);
+				SessionHelper::set('component_admin_views__' . $id, $this->vastDevMod);
+				// set a return value if found
+				$app = $this->app ?? Factory::getApplication();
+				$input = method_exists($app, 'getInput') ? $app->getInput() : $app->input;
+				$return = $input->get('return', null, 'base64');
+				SessionHelper::set($this->vastDevMod . '__return', $return);
+				// set a GUID value if found
+				if (isset($item) && ObjectHelper::check($item) && isset($item->guid)
+					&& GuidHelper::valid($item->guid))
+				{
+					SessionHelper::set($this->vastDevMod . '__guid', $item->guid);
+				}
 			}
 		}
 

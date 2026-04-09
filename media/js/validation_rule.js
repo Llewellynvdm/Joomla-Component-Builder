@@ -11,90 +11,172 @@
 
 
 
-jQuery(document).ready(function()
-{
-	// get the rule name
-	var ruleName = jQuery('#jform_name').val();
-	// check if this rule name is taken
-	checkRuleName(ruleName);
+document.addEventListener('DOMContentLoaded', () => {
 
-	// get type value
-	var rulefilename = jQuery("#jform_inherit option:selected").val();
-	if(jQuery('#jform_php').length == 0) {
+	// get rule name
+	const nameField = document.querySelector('#jform_name');
+	if (nameField) {
+		const ruleName = nameField.value || '';
+		checkRuleName(ruleName);
+	}
+
+	// get inherit value
+	const inheritField = document.querySelector('#jform_inherit');
+	const phpField = document.querySelector('#jform_php');
+
+	if (inheritField && !phpField) {
+		const rulefilename = inheritField.value || '';
 		getExistingValidationRuleCode(rulefilename);
 	}
 
-	// load the used in div
-	// jQuery('#usedin').show();
-
-	// check and load all the customcode edit buttons
+	// delayed load
 	setTimeout(getEditCustomCodeButtons, 300);
 });
 
-function getExistingValidationRuleCode_server(rulefilename){
-	var getUrl = JRouter("index.php?option=com_componentbuilder&task=ajax.getExistingValidationRuleCode&format=json&raw=true");
-	if(token.length > 0 && rulefilename.length > 0){
-		var request = token+'=1&name='+rulefilename;
+
+// ----------------------------
+// AJAX HELPERS (FETCH)
+// ----------------------------
+
+function buildRequestParams(params) {
+	const search = new URLSearchParams();
+
+	if (typeof token !== 'undefined' && token.length > 0) {
+		search.append(token, '1');
 	}
-	return jQuery.ajax({
-		type: 'GET',
-		url: getUrl,
-		dataType: 'json',
-		data: request,
-		jsonp: false
+
+	Object.entries(params).forEach(([key, value]) => {
+		search.append(key, value);
+	});
+
+	return search.toString();
+}
+
+function fetchJSON(url, params = {}) {
+	const query = buildRequestParams(params);
+	return fetch(url + '&' + query, {
+		method: 'GET',
+		headers: {
+			'Accept': 'application/json'
+		}
+	}).then(response => {
+		if (!response.ok) {
+			throw new Error('Network response was not ok');
+		}
+		return response.json();
 	});
 }
 
-function getExistingValidationRuleCode(rulefilename,setValue){
-	getExistingValidationRuleCode_server(rulefilename).done(function(result) {
-		if(result.values){
-			jQuery('textarea#jform_php').val(result.values);
-		}
-	})
+
+// ----------------------------
+// SERVER CALLS
+// ----------------------------
+
+function getExistingValidationRuleCode_server(rulefilename) {
+	const url = JRouter("index.php?option=com_componentbuilder&task=ajax.getExistingValidationRuleCode&format=json&raw=true");
+
+	if (!rulefilename) return Promise.resolve({});
+
+	return fetchJSON(url, { name: rulefilename });
+}
+
+function checkRuleName_server(ruleName, ide) {
+	const url = JRouter("index.php?option=com_componentbuilder&task=ajax.checkRuleName&format=json&raw=true");
+
+	return fetchJSON(url, {
+		name: ruleName,
+		id: ide
+	});
+}
+
+
+// ----------------------------
+// UI HELPERS (JOOMLA DIALOG)
+// ----------------------------
+
+function getDialog() {
+	return window.customElements?.get('joomla-dialog') || null;
+}
+
+function showAlert(message) {
+	const Dialog = getDialog();
+
+	if (Dialog) {
+		Dialog.alert(message);
+	} else {
+		alert(message); // fallback only
+	}
+}
+
+function showConfirm(message) {
+	const Dialog = getDialog();
+
+	if (Dialog) {
+		return Dialog.confirm(message);
+	}
+
+	return Promise.resolve(confirm(message)); // fallback
+}
+
+
+// ----------------------------
+// CORE LOGIC
+// ----------------------------
+
+function getExistingValidationRuleCode(rulefilename) {
+	getExistingValidationRuleCode_server(rulefilename)
+		.then(result => {
+			if (result.values) {
+				const textarea = document.querySelector('textarea#jform_php');
+				if (textarea) {
+					textarea.value = result.values;
+				}
+			}
+		})
+		.catch(console.error);
 }
 
 function checkRuleName(ruleName) {
-	if (ruleName.length > 2) {
-		var ide = jQuery('#jform_id').val();
-		if (ide == 0) {
-			ide = -1;
-		}
-		checkRuleName_server(ruleName, ide).done(function(result) {
-			if(result.name && result.message){
-				// show notice that functioName is okay
-				jQuery.UIkit.notify({message: result.message, timeout: result.timeout, status: result.status, pos: 'top-right'});
-				jQuery('#jform_name').val(result.name);
-				// now start search for where the function is used
+
+	const nameField = document.querySelector('#jform_name');
+
+	if (!ruleName || ruleName.length <= 2) {
+		showAlert(Joomla.Text._('COM_COMPONENTBUILDER_YOU_MUST_ADD_AN_UNIQUE_VALIDATION_RULE_NAME'));
+		if (nameField) nameField.value = '';
+		return;
+	}
+
+	let ide = document.querySelector('#jform_id')?.value || 0;
+	if (ide == 0) ide = -1;
+
+	checkRuleName_server(ruleName, ide)
+		.then(result => {
+
+			if (result.name && result.message) {
+
+				showAlert(result.message);
+
+				if (nameField) nameField.value = result.name;
+
+				// continue flow
 				usedin(result.name, ide);
-			} else if(result.message){
-				// show notice that ruleName is not okay
-				jQuery.UIkit.notify({message: result.message, timeout: result.timeout, status: result.status, pos: 'top-right'});
-				jQuery('#jform_name').val('');
+
+			} else if (result.message) {
+
+				showAlert(result.message);
+
+				if (nameField) nameField.value = '';
+
 			} else {
-				// set an error that message was not send
-				jQuery.UIkit.notify({message: Joomla.Text._('COM_COMPONENTBUILDER_VALIDATION_RULE_NAME_ALREADY_TAKEN_PLEASE_TRY_AGAIN'), timeout: 7000, status: 'danger', pos: 'top-right'});
-				jQuery('#jform_name').val('');
+
+				showAlert(Joomla.Text._('COM_COMPONENTBUILDER_VALIDATION_RULE_NAME_ALREADY_TAKEN_PLEASE_TRY_AGAIN'));
+
+				if (nameField) nameField.value = '';
 			}
+		})
+		.catch(() => {
+			showAlert(Joomla.Text._('COM_COMPONENTBUILDER_VALIDATION_RULE_NAME_ALREADY_TAKEN_PLEASE_TRY_AGAIN'));
 		});
-	} else {
-		// set an error that message was not send
-		jQuery.UIkit.notify({message: Joomla.Text._('COM_COMPONENTBUILDER_YOU_MUST_ADD_AN_UNIQUE_VALIDATION_RULE_NAME'), timeout: 5000, status: 'danger', pos: 'top-right'});
-		jQuery('#jform_name').val('');
-	}
-}
-// check Function Name
-function checkRuleName_server(ruleName, ide){
-	var getUrl = JRouter("index.php?option=com_componentbuilder&task=ajax.checkRuleName&format=json&raw=true");
-	if(token.length > 0){
-		var request = token+'=1&name='+ruleName+'&id='+ide;
-	}
-	return jQuery.ajax({
-		type: 'GET',
-		url: getUrl,
-		dataType: 'json',
-		data: request,
-		jsonp: false
-	});
 }
 
 /**

@@ -147,6 +147,11 @@ class HtmlView extends BaseHtmlView
 		parent::display($tpl);
 	}
 
+	// These are subform layouts used in JCB
+	// LayoutHelper::render('sectionjcbjsix', [?]); // added to ensure the layout are loaded
+	// LayoutHelper::render('repeatablejcbjsix', [?]); // added to ensure the layout are loaded
+	// LayoutHelper::render('jcbbuildersuccessmessage', [?]); // added to ensure the layout are loaded
+
 	/**
 	 * Add the page title and toolbar.
 	 *
@@ -245,10 +250,10 @@ class HtmlView extends BaseHtmlView
 		 		// these comments are here so the layouts will be linked and loaded for the ajax (don't remove it)
 		
 				// change this to the layout of your custom importer columns display
-				// LayoutHelper::render('translationimportercolumnsdisplay', [?]);
+				// LayoutHelper::render('translationimportercolumnsdisplayjsix', [?]);
 		
 				// change this to the layout of your custom importer easy mapping
-				// LayoutHelper::render('translationimportereasymapping', [?]);
+				// LayoutHelper::render('translationimportereasymappingjsix', [?]);
 		
 				// add the libs for subform (since not adding it via xml but ajax)
 				$this->getDocument()

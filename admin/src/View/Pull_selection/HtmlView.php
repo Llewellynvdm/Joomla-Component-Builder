@@ -210,12 +210,6 @@ class HtmlView extends BaseHtmlView
 		$HeaderCheck = new HeaderCheck();
 
 		// always load these files.
-		Html::_('stylesheet', 'media/com_componentbuilder/uikit-v3/css/uikit.min.css', ['version' => 'auto']);
-		Html::_('script', 'media/com_componentbuilder/uikit-v3/js/uikit.min.js', ['version' => 'auto']);
-		Html::_('script', 'media/com_componentbuilder/uikit-v3/js/uikit-icons.min.js', ['version' => 'auto']);
-		Html::_('script', 'media/com_componentbuilder/uikit-v3/js/Uploader.min.js', ['version' => 'auto']);
-
-		// always load these files.
 		Html::_('stylesheet', 'media/com_componentbuilder/datatable-bootstrap5/css/datatables.min.css', ['version' => 'auto']);
 		Html::_('script', 'media/com_componentbuilder/datatable-bootstrap5/js/pdfmake.min.js', ['version' => 'auto']);
 		Html::_('script', 'media/com_componentbuilder/datatable-bootstrap5/js/vfs_fonts.js', ['version' => 'auto']);

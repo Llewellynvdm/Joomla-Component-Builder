@@ -283,9 +283,6 @@ class Component_updatesModel extends AdminModel
 				}
 			}
 		}
-
-		// update the version_update (sub form) layout
-		$form->setFieldAttribute('version_update', 'layout', ComponentbuilderHelper::getSubformLayout('component_updates', 'version_update'));
 		return $form;
 	}
 

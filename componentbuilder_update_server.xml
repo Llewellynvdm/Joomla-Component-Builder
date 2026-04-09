@@ -5,7 +5,7 @@
 		<description>Builds Complex Joomla Components</description>
 		<element>pkg_component_builder</element>
 		<type>package</type>
-		<client>admininstrator</client>
+		<client>administrator</client>
 		<version>3.2.5</version>
 		<infourl title="Component Builder!">https://dev.vdm.io</infourl>
 		<downloads>
@@ -17,18 +17,17 @@
 		<maintainer>Llewellyn van der Merwe</maintainer>
 		<maintainerurl>https://dev.vdm.io</maintainerurl>
 		<targetplatform name="joomla" version="3.*"/>
-		<sha512>f592b05f2c569d9b403a46c82c8e7a09cd4e2772f471f9a4eba56b2c69a6baf13244f2e4c4da5c4989d2393cfce4074696266820811c4b08b22b26373ac29deb</sha512>
 	</update>
 	<update>
 		<name>Component Builder</name>
 		<description>Builds Complex Joomla Components</description>
 		<element>pkg_component_builder</element>
 		<type>package</type>
-		<client>admininstrator</client>
-		<version>4.1.3</version>
+		<client>administrator</client>
+		<version>4.1.4</version>
 		<infourl title="Component Builder!">https://dev.vdm.io</infourl>
 		<downloads>
-			<downloadurl type="full" format="zip">https://github.com/joomengine/pkg-component-builder/archive/refs/tags/v4.1.3.zip</downloadurl>
+			<downloadurl type="full" format="zip">https://github.com/joomengine/pkg-component-builder/archive/refs/tags/v4.1.4.zip</downloadurl>
 		</downloads>
 		<tags>
 			<tag>stable</tag>
@@ -36,18 +35,17 @@
 		<maintainer>Llewellyn van der Merwe</maintainer>
 		<maintainerurl>https://dev.vdm.io</maintainerurl>
 		<targetplatform name="joomla" version="4\.[01234]"/>
-		<sha512>37aaab28b87d958584cd225de9a1b4de2c20b1f99d3e5856c9f9658c027a6e97a18d2a4016a2d04850cf29e0f64f30e7ab6dee6d09496448cadecddc40589dad</sha512>
 	</update>
 	<update>
 		<name>Component Builder</name>
 		<description>Builds Complex Joomla Components</description>
 		<element>pkg_component_builder</element>
 		<type>package</type>
-		<client>admininstrator</client>
-		<version>5.1.4</version>
+		<client>administrator</client>
+		<version>5.1.5</version>
 		<infourl title="Component Builder!">https://dev.vdm.io</infourl>
 		<downloads>
-			<downloadurl type="full" format="zip">https://github.com/joomengine/pkg-component-builder/archive/refs/tags/v5.1.4.zip</downloadurl>
+			<downloadurl type="full" format="zip">https://github.com/joomengine/pkg-component-builder/archive/refs/tags/v5.1.5.zip</downloadurl>
 		</downloads>
 		<tags>
 			<tag>stable</tag>
@@ -55,14 +53,13 @@
 		<maintainer>Llewellyn van der Merwe</maintainer>
 		<maintainerurl>https://dev.vdm.io</maintainerurl>
 		<targetplatform name="joomla" version="5\.[01234]"/>
-		<sha512>8ee66ec4040b40ca6c051b069d946f883cc741c91d75d7edad0fe17f06a3001dc6e5c09aa9dbf4f35d0d08b524f0e4fdc63683571c68c8651ea6bb521169fbca</sha512>
 	</update>
 	<update>
 		<name>Component Builder</name>
 		<description>Builds Complex Joomla Components</description>
 		<element>pkg_component_builder</element>
 		<type>package</type>
-		<client>admininstrator</client>
+		<client>administrator</client>
 		<version>6.1.2</version>
 		<infourl title="Component Builder!">https://dev.vdm.io</infourl>
 		<downloads>
@@ -74,14 +71,13 @@
 		<maintainer>Llewellyn van der Merwe</maintainer>
 		<maintainerurl>https://dev.vdm.io</maintainerurl>
 		<targetplatform name="joomla" version="6\.0"/>
-		<sha512>987a41234f52a9e632825445039b6feb8ca5d2c2118f570a0777d78603efe7ad6bd31547a2d2fe31421d5105e04799b31dc86c55f77a3d53e1a60d7a174c4f45</sha512>
 	</update>
 	<update>
 		<name>Component Builder</name>
 		<description>Builds Complex Joomla Components</description>
 		<element>pkg_component_builder</element>
 		<type>package</type>
-		<client>admininstrator</client>
+		<client>administrator</client>
 		<version>6.1.3</version>
 		<infourl title="Component Builder!">https://dev.vdm.io</infourl>
 		<downloads>
@@ -93,14 +89,13 @@
 		<maintainer>Llewellyn van der Merwe</maintainer>
 		<maintainerurl>https://dev.vdm.io</maintainerurl>
 		<targetplatform name="joomla" version="6\.0"/>
-		<sha512>987a41234f52a9e632825445039b6feb8ca5d2c2118f570a0777d78603efe7ad6bd31547a2d2fe31421d5105e04799b31dc86c55f77a3d53e1a60d7a174c4f45</sha512>
 	</update>
 	<update>
 		<name>Component Builder</name>
 		<description>Builds Complex Joomla Components</description>
 		<element>pkg_component_builder</element>
 		<type>package</type>
-		<client>admininstrator</client>
+		<client>administrator</client>
 		<version>6.1.4</version>
 		<infourl title="Component Builder!">https://dev.vdm.io</infourl>
 		<downloads>
@@ -112,14 +107,13 @@
 		<maintainer>Llewellyn van der Merwe</maintainer>
 		<maintainerurl>https://dev.vdm.io</maintainerurl>
 		<targetplatform name="joomla" version="6\.0"/>
-		<sha512>cde289bdd21689dcb90ac68d44573ce52c0ff861ff02780327b1ff7f3a58918ddcf010f1e4a2b79af17cd91bf33ee4b81d99a8be9d98ce81e560614bd26d6a66</sha512>
 	</update>
 	<update>
 		<name>Component Builder</name>
 		<description>Builds Complex Joomla Components</description>
 		<element>pkg_component_builder</element>
 		<type>package</type>
-		<client>admininstrator</client>
+		<client>administrator</client>
 		<version>6.1.5</version>
 		<infourl title="Component Builder!">https://dev.vdm.io</infourl>
 		<downloads>
@@ -131,6 +125,23 @@
 		<maintainer>Llewellyn van der Merwe</maintainer>
 		<maintainerurl>https://dev.vdm.io</maintainerurl>
 		<targetplatform name="joomla" version="6\.0"/>
-		<sha512>ce658189d350262580e91c76162d4d2f3c375dc20c0496147be93fb82dd3792698da95a5c07a15da7d682e00da6c2ef19c597acb1f6645a1cba6700fd8060d71</sha512>
+	</update>
+	<update>
+		<name>Component Builder</name>
+		<description>Builds Complex Joomla Components</description>
+		<element>pkg_component_builder</element>
+		<type>package</type>
+		<client>administrator</client>
+		<version>6.1.6-alpha1</version>
+		<infourl title="Component Builder!">https://dev.vdm.io</infourl>
+		<downloads>
+			<downloadurl type="full" format="zip">https://github.com/joomengine/pkg-component-builder/archive/refs/tags/v6.1.6-alpha1.zip</downloadurl>
+		</downloads>
+		<tags>
+			<tag>alpha</tag>
+		</tags>
+		<maintainer>Llewellyn van der Merwe</maintainer>
+		<maintainerurl>https://dev.vdm.io</maintainerurl>
+		<targetplatform name="joomla" version="6\.0"/>
 	</update>
 </updates>
